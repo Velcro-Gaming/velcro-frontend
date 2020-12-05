@@ -6,6 +6,11 @@ import {
 import DottedBoxOverlay from '../../components/utils/overlay/DottedBoxOverlay'
 import { withRouter } from 'react-router-dom';
 
+import IsDesktop from '../../components/utils/breakpoints/IsDesktop';
+import IsTablet from '../../components/utils/breakpoints/IsTablet';
+import IsPhone from '../../components/utils/breakpoints/IsPhone';
+
+
 class TermsCondition extends Component {
     constructor(props) {
         super(props)
@@ -49,6 +54,7 @@ class TermsCondition extends Component {
                             },
                             color: colors.white
                         },
+                        isProtected: false,
                         linkTo: "/register",
                     },
                 ],
@@ -122,7 +128,10 @@ class TermsCondition extends Component {
                 <div style={styles.bannerArea}>
                     <div style={styles.bannerWrapper}>
 
-                        <DottedBoxOverlay />
+                        {/* <DottedBoxOverlay /> */}
+                        <IsDesktop>
+                            <DottedBoxOverlay />
+                        </IsDesktop>
 
                         <div className="container" style={styles.bannerInnerWrapper}>
 

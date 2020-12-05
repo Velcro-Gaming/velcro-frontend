@@ -10,6 +10,11 @@ import FormFields from '../../components/utils/FormFields';
 
 import DottedBoxOverlay from '../../components/utils/overlay/DottedBoxOverlay'
 
+import Breakpoint from '../../components/utils/breakpoints/Base';
+import IsDesktop from '../../components/utils/breakpoints/IsDesktop';
+import IsTablet from '../../components/utils/breakpoints/IsTablet';
+import IsPhone from '../../components/utils/breakpoints/IsPhone';
+
 import { withRouter } from 'react-router-dom';
 
 
@@ -56,6 +61,7 @@ class ContactUs extends Component {
                             },
                             color: colors.white
                         },
+                        isProtected: false,
                         linkTo: "/register",
                     },
                 ],
@@ -107,44 +113,47 @@ class ContactUs extends Component {
         })
     };
 
-    render() {
-        // console.log("Contact Us Props: ", this.props)
-
-        const {
-            formData
-        } = this.state
-
+    mainContent = (formData, config) => {
         return (
             <div>
-                <Header {...this.props} headerConfig={this.state.headerConfig} />
-
-                <div style={styles.dummyHeader} />
-
                 <div style={styles.bannerArea}>
                     <div style={styles.bannerWrapper}>
 
                         <DottedBoxOverlay />
-                        
+
                         <div className="container" style={styles.bannerInnerWrapper}>
                             <img style={{ ...styles.helpdesk }} src={require('../../assets/images/helpdesk.png')} />
 
-                            <div style={styles.pageTitle}>
-                                Contact Us
-                            </div>
+                            <IsDesktop>
+                                <div style={styles.pageTitle}>
+                                    Contact Us
+                                </div>
+                            </IsDesktop>
 
-                            <img style={{ ...styles.boxes }} src={require('../../assets/icons/boxes.png')} />
+                            <Breakpoint name='notPhone'>
+                                <img style={{ ...styles.boxes }} src={require('../../assets/icons/boxes.png')} />
+                            </Breakpoint>
                         </div>
 
                     </div>
                 </div>
 
                 <div className="container">
-                    <div style={{ padding: '0 150px', }}>
-                        <div style={styles.formWrapper}>
+                    <div className="d-flex justify-content-center align-items-center">
+
+                        <div style={{ ...styles.formWrapper, padding: `${config.formPadding}` }}>
+                            <Breakpoint name='notDesktop'>
+                                <div
+                                    className="text-center my-3 mb-lg-5"
+                                    style={{ ...styles.pageTitle, color: `${colors.primary}` }}
+                                >
+                                    Contact Us
+                                </div>
+                            </Breakpoint>
 
                             <div className="row">
-                                <div className="col-6">
-                                    <FormField 
+                                <div className="col-12 col-lg-6">
+                                    <FormField
                                         formData={this.state.formData}
                                         change={(newFormData) => this.setState({
                                             formData: newFormData
@@ -156,7 +165,7 @@ class ContactUs extends Component {
                                     />
                                 </div>
 
-                                <div className="col-6">
+                                <div className="col-12 col-lg-6">
                                     <FormField
                                         formData={this.state.formData}
                                         change={(newFormData) => this.setState({
@@ -189,9 +198,52 @@ class ContactUs extends Component {
                     </div>
                 </div>
 
-                <div style={styles.bgBoxes}>
-                    <img style={{ ...styles.boxes, }} src={require('../../assets/icons/boxes.png')} />
-                </div>
+                <Breakpoint name='notPhone'>
+                    <div style={styles.bgBoxes}>
+                        <img style={{ ...styles.boxes, }} src={require('../../assets/icons/boxes.png')} />
+                    </div>
+                </Breakpoint>
+            </div>
+        )
+    }
+
+    render() {
+        // console.log("Contact Us Props: ", this.props)
+
+        const {
+            formData
+        } = this.state
+
+        return (
+            <div>
+                <Header {...this.props} headerConfig={this.state.headerConfig} />
+
+                <div style={styles.dummyHeader} />
+
+                <IsDesktop>
+                    {
+                        this.mainContent(formData, {
+                            formPadding: '50px 100px'
+                        })
+                    }
+                </IsDesktop>
+
+                <IsTablet>
+                    {
+                        this.mainContent(formData, {
+                            formPadding: '50px 50px'
+                        })
+                    }
+                </IsTablet>
+
+                <IsPhone>
+                    {
+                        this.mainContent(formData, {
+                            formPadding: '50px 25px'
+                        })
+                    }
+                </IsPhone>
+
             </div>
         )
     }
@@ -239,13 +291,13 @@ const styles = {
         color: colors.white,
     },
     formWrapper: {
-        marginTop: '-30px',
-        zIndex: 99999,
+        margin: '-30px 0 150px',
+        zIndex: 99,
         position: 'relative',
         background: colors.white,
         boxShadow: '0px 20px 40px rgba(239, 241, 243, 0.72)',
         borderRadius: '10px',
-        padding: '50px 100px',
+        maxWidth: '700px',
     },
     bgBoxes: {
         position: 'absolute',

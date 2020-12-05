@@ -19,15 +19,15 @@ export default class Login extends Component {
 
         this.state = {
             buttons: {
-                next: {
+                changePassword: {
                     text: {
                         color: colors.black,
-                        value: "Next",
+                        value: "Change Password",
                     },
                     styles: {
                         height: '50px',
                         width: '100%',
-                        margin: '20px 0 10px 0',
+                        margin: '60px 0 60px 0',
                         backgroundColor: colors.primary,
                         border: {
                             width: "1px",
@@ -37,27 +37,7 @@ export default class Login extends Component {
                         },
                         color: colors.white
                     },
-                    linkTo: "/password-reset",
-                },
-                resendLink: {
-                    text: {
-                        color: colors.primary,
-                        value: "Resend Link",
-                    },
-                    styles: {
-                        height: '50px',
-                        width: '100%',
-                        margin: '10px 0 10px 0',
-                        backgroundColor: null,
-                        border: {
-                            width: "1px",
-                            style: "solid",
-                            color: colors.white,
-                            radius: "3px",
-                        },
-                        color: colors.primary
-                    },
-                    onClick: () => window.location.reload(),
+                    linkTo: "/login",
                 },
             },
             headerConfig: {
@@ -142,27 +122,39 @@ export default class Login extends Component {
         return (
             <div style={styles.panelRight}>
 
-                <div
-                    className="d-flex justify-content-center" 
-                    style={{ ...styles.heading, fontSize: `${config.headingSize}` }}
-                >
-                    Check Your Mail
+                <div style={{ ...styles.heading, fontSize: `${config.headingSize}` }}>
+                    Reset Your Password
                 </div>
 
-                <div className="d-flex flex-column align-items-center justify-content-center" style={styles.subHeading} >
-                    <span>A Link has been sent to your Email address.</span>
-                    <span>Follow it to reset your password</span>
-                </div>
-
-                <div className="d-flex justify-content-center" style={{  }}>
-                    <img src={require('../../../assets/icons/done.png')} />
-                </div>
+                {/* <div style={styles.subHeading}>
+                    Sign in to  your account
+                </div> */}
 
                 <div style={{ marginTop: '35px', minWidth: `${config.formMinWidth}` }}>
                     <form>
-                        
-                        <Button {...buttons.next} />
-                        <Button {...buttons.resendLink} />
+                        <FormField
+                            formData={formData}
+                            change={(newFormData) => this.setState({
+                                formData: newFormData
+                            })}
+                            field={{
+                                id: 'password',
+                                config: formData.password
+                            }}
+                        />
+
+                        <FormField
+                            formData={formData}
+                            change={(newFormData) => this.setState({
+                                formData: newFormData
+                            })}
+                            field={{
+                                id: 'passwordConfirm',
+                                config: formData.passwordConfirm
+                            }}
+                        />
+
+                        <Button {...buttons.changePassword} />
 
                     </form>
                 </div>
@@ -204,7 +196,7 @@ export default class Login extends Component {
                         {
                             this.mainContent({
                                 formMinWidth: null,
-                                headingSize: '24px',
+                                headingSize: '34px',
                             })
                         }
                     </div>
@@ -215,7 +207,7 @@ export default class Login extends Component {
                         {
                             this.mainContent({
                                 formMinWidth: '200px',
-                                headingSize: '20px',
+                                headingSize: '30px',
                             })
                         }
                     </div>
@@ -245,27 +237,27 @@ const styles = {
         },
     },
     panelRight: {
-        padding: '200px 50px 0',
+        padding: '120px 50px 0',
         height: '100%',
     },
     heading: {
-        // fontFamily: 'Raleway',
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
-        fontWeight: 500,
-        lineHeight: '28px',
-        color: colors.black,
+        fontWeight: 800,
+        lineHeight: '60px',
+        color: colors.primary,
     },
     subHeading: {
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
         fontWeight: 400,
-        fontSize: '12px',
-        // lineHeight: '24px',
-        color: 'rgba(45, 58, 48, 0.5)',
+        fontSize: '16px',
+        lineHeight: '24px',
+        color: colors.secondary,
 
-        margin: '20px 0'
+        margin: '10px 0'
     },
+
     formLabel: {
         fontFamily: 'Source Sans Pro',
         fontStyle: 'normal',

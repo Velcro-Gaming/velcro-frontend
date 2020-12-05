@@ -10,6 +10,8 @@ import {
 } from '../../App.json'
 
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class HomeScreen extends Component {
     constructor(props) {
@@ -22,6 +24,7 @@ class HomeScreen extends Component {
             headerConfig: {
                 headerButtons: [
                     {
+                        isProtected: false,
                         text: {
                             color: colors.black,
                             value: "Get Started",
@@ -47,7 +50,9 @@ class HomeScreen extends Component {
     }
 
     render() {
-        const { isAuthenticated } = this.state
+        const {
+            auth
+        } = this.props
 
         console.log("Home Props: ", this.props)
 
@@ -55,7 +60,7 @@ class HomeScreen extends Component {
             <div>
                 <Header {...this.props} headerConfig={this.state.headerConfig} />
 
-                <Route render={() => isAuthenticated ? (
+                <Route render={() => auth.loggedIn ? (
                     <MyGamesScreen {...this.props} />
                 ) : (
                         <LandingScreen {...this.props} />
@@ -67,4 +72,20 @@ class HomeScreen extends Component {
 }
 
 
-export default withRouter(HomeScreen)
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        // register
+    }, dispatch)
+}
+
+const mapStateToProps = state => {
+    const {
+        auth
+    } = state
+    return {
+        auth
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(HomeScreen))

@@ -17,9 +17,9 @@ const styles = {
     container: {
         display: 'flex',
         height: '100%',
-        width: '100%',
+        width: '50%',
         backgroundImage: `url(${require('../../assets/images/bg-2.png')})`,
-        backgroundPosition: 'center',
+        backgroundPosition: 'top center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
     },

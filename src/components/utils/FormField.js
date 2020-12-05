@@ -32,8 +32,6 @@ export default class FormField extends Component {
     };
 
     renderFormField = (field) => {
-        console.log("field: ", field)
-
         let formTemplate
         let fieldConfig = field.config
 
@@ -50,8 +48,31 @@ export default class FormField extends Component {
                             {...fieldConfig.props}
                             value={fieldConfig.value}
                             onChange={(event) => this.changeHandler(event, field.id)}
-                            style={styles.input}
+                            // style={styles.input}
+                            style={fieldConfig.styles ? fieldConfig.styles : styles.input}
                         />
+
+                    </div>
+                );
+                break;
+            case ('select'):
+                formTemplate = (
+
+                    <div style={styles.fieldWrapper}>
+
+                        {this.showLabel(fieldConfig.label, fieldConfig.labelText)}
+
+                        <select
+                            {...fieldConfig.props}
+                            value={fieldConfig.value}
+                            onChange={(event) => this.changeHandler(event, field.id)}
+                            // style={styles.input}
+                            style={fieldConfig.styles ? fieldConfig.styles : styles.input}
+                        >
+                            {fieldConfig.data.map((option, index) => {
+                                return <option key={index} value={option.value}>{option.display}</option>;
+                            })}
+                        </select>
 
                     </div>
                 );
@@ -81,8 +102,6 @@ export default class FormField extends Component {
 
     render() {
         const { field } = this.props
-
-        console.log("FormField props: ", this.props)
         
         return (
             <div>

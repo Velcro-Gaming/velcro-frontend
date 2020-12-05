@@ -1,9 +1,10 @@
 import React from 'react'
 
-export default function BaseOverlay() {
+export default function BaseOverlay(props) {
+    console.log("BaseOverlay", props)
     return (
         <div style={styles.container}>
-            
+            {props.children}
         </div>
     )
 }
@@ -18,5 +19,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+
+        overflow: 'hidden',
     },
 }

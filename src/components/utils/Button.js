@@ -25,33 +25,85 @@ export default class Button extends Component {
             color
         } = buttonState.styles
 
+        const RenderButton = () => {
+            if (buttonState.linkTo) {
+                return (
+                    <Link
+                        className={"btn"}
+                        style={{
+                            color: color,
+                            height: height ? height : '50px',
+                            width: width ? width : '150px',
+                            backgroundColor: backgroundColor,
+                            border: `${border.width} ${border.style} ${border.color}`,
+                            borderRadius: border.radius,
+
+                            ...styles.wrapper,
+                        }}
+                        to={buttonState.linkTo}
+                    >
+                        {buttonState.text.value}
+                    </Link>
+                )
+            } else if (buttonState.onClick) {
+                return (
+                    <div
+                        className={"btn"}
+                        style={{
+                            color: color,
+                            height: height ? height : '50px',
+                            width: width ? width : '150px',
+                            backgroundColor: backgroundColor,
+                            border: `${border.width} ${border.style} ${border.color}`,
+                            borderRadius: border.radius,
+
+                            ...styles.wrapper,
+                        }}
+                        onClick={buttonState.onClick}
+                    >
+                        {buttonState.text.value}
+                    </div>
+                )
+            } else {
+                return (
+                    <div style={{
+                        color: buttonState.text.color,
+                    }} >
+                        {buttonState.text.value}
+                    </div>
+                )
+            }
+        }
+
         return (
             <div style={{ margin: `${margin ? margin : null}` }}>
                 {
-                    !buttonState.onClick && !buttonState.linkTo ? (
-                        <div style={{ 
-                            color: buttonState.text.color,
-                        }} >
-                            {buttonState.text.value}
-                        </div>
-                    ) : (
-                        <Link
-                            className={"btn"}
-                            style={{
-                                color: color,
-                                height: height ? height : '50px',
-                                width: width ? width : '150px',
-                                backgroundColor: backgroundColor,
-                                border: `${border.width} ${border.style} ${border.color}`,
-                                borderRadius: border.radius,
-                                
-                                ...styles.wrapper,
-                            }}
-                            to={buttonState.linkTo}
-                        >
-                            {buttonState.text.value}
-                        </Link>
-                    )
+                    RenderButton()
+
+                    // !buttonState.onClick && !buttonState.linkTo ? (
+                    //     <div style={{ 
+                    //         color: buttonState.text.color,
+                    //     }} >
+                    //         {buttonState.text.value}
+                    //     </div>
+                    // ) : (
+                    //     <Link
+                    //         className={"btn"}
+                    //         style={{
+                    //             color: color,
+                    //             height: height ? height : '50px',
+                    //             width: width ? width : '150px',
+                    //             backgroundColor: backgroundColor,
+                    //             border: `${border.width} ${border.style} ${border.color}`,
+                    //             borderRadius: border.radius,
+
+                    //             ...styles.wrapper,
+                    //         }}
+                    //         to={buttonState.linkTo}
+                    //     >
+                    //         {buttonState.text.value}
+                    //     </Link>
+                    // )
 
                 }
             </div>

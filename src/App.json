@@ -3,6 +3,10 @@
         "primary": "#641E6E",
         "secondary": "#18181B",
         "white": "#FFFFFF",
-        "black": "#000000"
+        "black": "#000000",
+
+        "success": "#52F07F",
+        "error": "#000000",
+        "info": "#F5F5FC"
     }
 }
