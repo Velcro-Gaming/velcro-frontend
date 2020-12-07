@@ -155,13 +155,11 @@ function VerificationScreen(props) {
 
         setComponentState({
             ...ComponentState,
-            redirect: '/'
+            redirect: '/login'
         })
     }
 
     useEffect(() => {
-        console.log("\nComponent Did Mount\n")
-
         if (!routerState) {
             toast.error("Something Went Wrong")
             setTimeout(function() {
@@ -289,7 +287,7 @@ function VerificationScreen(props) {
                     {
                         MainContent({
                             formMinWidth: '200px',
-                            headingSize: '20px',
+                            headingSize: '30px',
                         })
                     }
                 </div>
@@ -330,7 +328,7 @@ const styles = {
         fontStyle: 'normal',
         fontWeight: 800,
         fontSize: '34px',
-        lineHeight: '60px',
+        lineHeight: '40px',
         color: colors.primary,
     },
     comment: {

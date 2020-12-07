@@ -140,7 +140,7 @@ export default class Login extends Component {
         } = this.state
 
         return (
-            <div style={styles.panelRight}>
+            <div style={{...styles.panelRight, padding: `${config.containerPadding}`,}}>
 
                 <div
                     className="d-flex justify-content-center" 
@@ -192,6 +192,7 @@ export default class Login extends Component {
                                 this.mainContent({
                                     formMinWidth: '450px',
                                     headingSize: '34px',
+                                    containerPadding: '200px 50px 0',
                                 })
                             }
                         </div>
@@ -205,6 +206,7 @@ export default class Login extends Component {
                             this.mainContent({
                                 formMinWidth: null,
                                 headingSize: '24px',
+                                containerPadding: '150px 50px 0',
                             })
                         }
                     </div>
@@ -216,6 +218,7 @@ export default class Login extends Component {
                             this.mainContent({
                                 formMinWidth: '200px',
                                 headingSize: '20px',
+                                containerPadding: '100px 50px 0',
                             })
                         }
                     </div>
@@ -245,7 +248,7 @@ const styles = {
         },
     },
     panelRight: {
-        padding: '200px 50px 0',
+        // padding: '200px 50px 0',
         height: '100%',
     },
     heading: {

@@ -235,8 +235,26 @@ class LoginScreen extends Component {
 
     render() {
 
+        const {
+            auth
+        } = this.props
+
         if (this.state.redirect) {
             return <Redirect to={this.state.redirect} />
+        }
+
+        console.log("auth: ", auth)
+
+        if (auth.loggedIn) {            
+            this.setState({
+                redirect: {
+                    pathname: '/logout',
+                    state: {
+                        loggedIn: true,
+                        nextUrl: `/login`,
+                    }
+                }
+            })
         }
 
         return (

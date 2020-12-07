@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+
+/* [data-testid="change-placeholder-color"]::-webkit-input-placeholder { */
+
+.place-holder-white::-webkit-input-placeholder {
+  color: #A7A7A7;
+  opacity: 1;
+}
+
+
+
+/* input:focus, textarea:focus, select:focus{
+    outline: none;
+} */
+
+
+ /* ::-webkit-input-placeholder { 
+    color: red;
+    background: yellow;
+ }
+ :-moz-placeholder { 
+   color: red;
+   background: yellow;
+ }
+ ::-moz-placeholder { 
+    color: red;
+    background: yellow;
+ }
+ :-ms-input-placeholder { 
+    color: red;
+    background: yellow;
+ } */

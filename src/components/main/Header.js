@@ -13,8 +13,13 @@ import {
 } from '../../redux/actions/AuthActions'
 import Notify from '../utils/Notify'
 import Breakpoint from '../utils/breakpoints/Base'
+import IsDesktop from '../utils/breakpoints/IsDesktop'
+
 import { bindActionCreators } from 'redux'
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+
+import { FaChevronDown } from 'react-icons/fa'
+import { AiOutlineSearch } from 'react-icons/ai'
 
 
 function Header(props) {
@@ -31,8 +36,9 @@ function Header(props) {
                     },
                     styles: {
                         height: null,
-                        width: null,
+                        width: '130px',
                         margin: null,
+                        fontSize: '14px',
                         backgroundColor: colors.black,
                         border: {
                             width: null,
@@ -52,8 +58,8 @@ function Header(props) {
                     },
                     styles: {
                         height: null,
-                        width: '75px',
-                        margin: '0 5px',
+                        width: '35px',
+                        margin: '0 15px',
                         backgroundColor: colors.black,
                         border: {
                             width: null,
@@ -74,6 +80,12 @@ function Header(props) {
                 value: '',
                 label: false,
                 labelText: 'Search',
+                prepend: {
+                    content: <AiOutlineSearch />,
+                    styles: {
+                        color: colors.grey
+                    }
+                },
                 props: {
                     name: 'search_input',
                     type: 'text',
@@ -81,16 +93,17 @@ function Header(props) {
                     required: true,
                 },
                 styles: {
-                    background: colors.info,
-                    opacity: 0.2,
+                    backgroundColor: '#313133',
                     borderRadius: '3px',
                     height: '40px',
-                    width: '361px',
-                    color: colors.white,
-                    // '::-webkit-input-placeholder': {
-                    //     color: colors.white
-                    // }
-                }
+                    width: '320px',
+                    color: colors.grey,
+                    padding: '0 45px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    border: 'none',
+                },
+                className: "Placeholder-white"
             },
         }
     }
@@ -139,6 +152,25 @@ function Header(props) {
         return <Redirect to={redirect} />
     }
 
+    const getUserNames = () => {
+        let userFullName = auth.user.name
+        let firstName = userFullName.split(' ')[0]
+        let lastName = userFullName.split(' ')[1]
+        return [firstName,lastName]
+    }
+    const getUserInitials = () => {
+        console.log(auth)
+        // props.logout()
+        if (auth.user.fullName) {
+            let userFullName = auth.user.fullName
+            let firstName = userFullName.split(' ')[0]
+            let lastName = userFullName.split(' ')[1]
+            return `${firstName[0]}${lastName[0]}`.toUpperCase()
+        }
+        return `${auth.user.username[0]}${auth.user.username[0]}`
+        
+    }
+
     return (
         <div style={{ ...styles.container, backgroundColor: headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
             <div className="container" style={styles.navbar}>
@@ -149,64 +181,84 @@ function Header(props) {
                     />
                 </Link>
 
-                {
-                    auth.loggedIn ? (
-                        <div>
-                            <FormField
-                                formData={formData}
-                                change={(newFormData) => setComponentState({
-                                    ...ComponentState,
-                                    formData: newFormData
-                                })}
-                                field={{
-                                    id: 'search',
-                                    config: formData.search
-                                }}
-                            />
-                        </div>
-
-                    ) : null
                 
-                }
+                <IsDesktop>
+                    {
+                        auth.loggedIn ? (
+                            <div>
+                                <FormField
+                                    formData={formData}
+                                    change={(newFormData) => setComponentState({
+                                        ...ComponentState,
+                                        formData: newFormData
+                                    })}
+                                    field={{
+                                        id: 'search',
+                                        config: formData.search
+                                    }}
+                                />
+                            </div>
 
-                <Breakpoint name="notPhone">
+                        ) : null
+
+                    }
+
                     <div style={styles.navigation}>
-
                         {
 
                             GetNavigationTray(headerButtons)
 
                         }
                     </div>
-
-
-                </Breakpoint>
+                </IsDesktop>
 
                 {
                     auth.loggedIn ? (
                         <div style={{ display: 'flex', alignItems: 'center', }}>
                             
-                            <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    backgroundColor: colors.white,
-                                    height: '35px',
-                                    width: '35px',
-                                    borderRadius: '50%',
-                                }}>
-                                    JT
-                                </div>
+                            <IsDesktop>
+                                <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        backgroundColor: colors.white,
+                                        color: colors.primary,
+                                        height: '32px',
+                                        width: '32px',
+                                        borderRadius: '50%',
 
-                                <div style={{ margin: '0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
-                                    JimmyFoxx
-                                </div>
-                            </div>
+                                        fontSize: '15px',
+                                        lineHeight: '20px',
+                                    }}>
+                                        {auth.user && getUserInitials()}
+                                    </div>
 
-                            <div style={{ border: '1px solid #7F3F98', margin: '0 25px', padding: '0 10px', color: colors.success, fontSize: '12px', lineHeight: '16px', }}>
-                                ₦6,000
-                            </div>
+                                    <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
+                                        {auth.user.username}
+                                        {/* {getUserNames()[0]} */}
+                                    </div>
+
+                                        <div style={{ color: colors.white, margin: '0 3px', fontSize: '12px' }}>
+                                            <FaChevronDown />
+                                        </div>
+
+                                    </div>
+
+                                    <div style={{
+                                        border: '1px solid #7F3F98',
+                                        margin: '0 25px',
+                                        padding: '0 10px',
+                                        color: colors.success,
+                                        fontSize: '12px',
+                                        lineHeight: '16px',
+                                        boxSizing: 'border-box',
+                                        borderRadius: '3px'
+                                    }}>
+
+                                        ₦6,000
+                                </div>
+                            </IsDesktop>
 
                             <img
                                 onClick={() => AttemptSignOut()}

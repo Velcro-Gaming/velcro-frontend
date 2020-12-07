@@ -12,12 +12,15 @@ import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
 import IsTablet from '../../components/utils/breakpoints/IsTablet'
 import IsPhone from '../../components/utils/breakpoints/IsPhone'
 
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Redirect } from 'react-router-dom';
 
-export default class Register extends Component {
+class Register extends Component {
     constructor(props) {
         super(props)
 
@@ -251,9 +254,23 @@ export default class Register extends Component {
             headerConfig
         } = this.state
 
+        const {
+            auth
+        } = this.props
+
         // Redirect
         if (redirect) {
             return <Redirect to={redirect} />
+        }
+
+        if (auth.loggedIn) {
+            this.setState({redirect: {
+                pathname: '/logout',
+                state: {
+                    loggedIn: true,
+                    nextUrl: `/login`,
+                }
+            }})
         }
 
         return (
@@ -292,7 +309,7 @@ export default class Register extends Component {
                         {
                             this.mainContent({
                                 formMinWidth: '200px',
-                                headingSize: '20px',
+                                headingSize: '30px',
                             })
                         }
                     </div>
@@ -330,7 +347,7 @@ const styles = {
         fontStyle: 'normal',
         fontWeight: 800,
         fontSize: '34px',
-        lineHeight: '60px',
+        lineHeight: '40px',
         color: colors.primary,
     },
     subHeading: {
@@ -356,3 +373,21 @@ const styles = {
         bottom: '50px',
     },
 }
+
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+        
+    }, dispatch)
+}
+
+const mapStateToProps = state => {
+    const {
+        auth
+    } = state
+    return {
+        auth
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register)

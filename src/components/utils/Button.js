@@ -22,8 +22,11 @@ export default class Button extends Component {
             margin,
             backgroundColor,
             border,
-            color
+            color,
+            fontSize
         } = buttonState.styles
+
+        // console.log("BTN fontSize: ", fontSize)
 
         const RenderButton = () => {
             if (buttonState.linkTo) {
@@ -37,7 +40,8 @@ export default class Button extends Component {
                             backgroundColor: backgroundColor,
                             border: `${border.width} ${border.style} ${border.color}`,
                             borderRadius: border.radius,
-
+                            fontSize: typeof fontSize === 'undefined' ? '16px' : fontSize,
+                            
                             ...styles.wrapper,
                         }}
                         to={buttonState.linkTo}
@@ -56,6 +60,7 @@ export default class Button extends Component {
                             backgroundColor: backgroundColor,
                             border: `${border.width} ${border.style} ${border.color}`,
                             borderRadius: border.radius,
+                            fontSize: typeof fontSize === 'undefined' ? '16px' : fontSize,
 
                             ...styles.wrapper,
                         }}
@@ -68,6 +73,7 @@ export default class Button extends Component {
                 return (
                     <div style={{
                         color: buttonState.text.color,
+                        fontSize: typeof fontSize === 'undefined' ? '16px' : fontSize,
                     }} >
                         {buttonState.text.value}
                     </div>
@@ -121,7 +127,7 @@ const styles = {
         justifyContent: 'center',
 
         fontFamily: 'Nunito Sans',
-        fontSize: '16px',
+        // fontSize: '16px',
         fontStyle: 'normal',
         fontWeight: '400',
         lineHeight: '22px',

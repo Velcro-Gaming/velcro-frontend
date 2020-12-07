@@ -10,6 +10,7 @@ import ContactUs from './main/ContactUs';
 import TermsCondition from './main/TermsCondition';
 
 import LoginScreen from './auth/Login';
+import LogoutScreen from './auth/Logout';
 import RegisterScreen from './auth/Register';
 import VerificationScreen from './auth/VerificationScreen';
 
@@ -35,6 +36,9 @@ export default function RouterBase() {
 
                 <Route exact path="/login">
                     <LoginScreen />
+                </Route>
+                <Route exact path="/logout">
+                    <LogoutScreen />
                 </Route>
                 <Route exact path="/register">
                     <RegisterScreen />

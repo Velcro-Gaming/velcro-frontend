@@ -207,7 +207,7 @@ export default class Login extends Component {
                         {
                             this.mainContent({
                                 formMinWidth: '200px',
-                                headingSize: '30px',
+                                headingSize: '24px',
                             })
                         }
                     </div>
@@ -244,7 +244,7 @@ const styles = {
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
         fontWeight: 800,
-        lineHeight: '60px',
+        lineHeight: '40px',
         color: colors.primary,
     },
     subHeading: {

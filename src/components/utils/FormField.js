@@ -4,6 +4,8 @@ import {
     colors
 } from '../../App.json'
 
+// import { AiOutlineSearch } from 'react-icons/ai'
+
 export default class FormField extends Component {
     constructor(props) {
         super(props)
@@ -44,12 +46,28 @@ export default class FormField extends Component {
 
                         {this.showLabel(fieldConfig.label, fieldConfig.labelText)}
 
+                        {
+                            fieldConfig.prepend ? (
+                                <span
+                                    style={{
+                                        position: 'absolute',
+                                        color: colors.white,
+                                        margin: '7px 15px',
+                                        ...fieldConfig.prepend.styles
+                                    }}
+                                >
+                                    {fieldConfig.prepend.content}
+                                </span>
+                            ) : null
+                        }
+
                         <input
                             {...fieldConfig.props}
                             value={fieldConfig.value}
                             onChange={(event) => this.changeHandler(event, field.id)}
-                            // style={styles.input}
                             style={fieldConfig.styles ? fieldConfig.styles : styles.input}
+                            // className={fieldConfig.className}
+                            className={"place-holder-white"}
                         />
 
                     </div>
@@ -127,7 +145,7 @@ const styles = {
         lineHeight: '24px',
     },
     input: {
-        background: '#FFFFFF',
+        // background: '#FFFFFF',
         border: '1px solid #D0D0D0',
         boxSizing: 'border-box',
         borderRadius: '5px',

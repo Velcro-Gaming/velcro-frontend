@@ -4,6 +4,7 @@
         "secondary": "#18181B",
         "white": "#FFFFFF",
         "black": "#000000",
+        "grey": "#A7A7A7",
 
         "success": "#52F07F",
         "error": "#000000",
