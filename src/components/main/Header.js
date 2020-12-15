@@ -49,7 +49,7 @@ function Header(props) {
                         color: colors.white
                     },
                     isProtected: true,
-                    linkTo: "/register",
+                    onClick: () => { },
                 },
                 {
                     text: {
@@ -108,13 +108,10 @@ function Header(props) {
         }
     }
 
-    
-
     const AttemptSignOut = async () => {
-        await props.logout()
         setComponentState({
             ...ComponentState,
-            redirect: '/'
+            redirect: '/logout'
         })
     }
 
@@ -167,7 +164,7 @@ function Header(props) {
             let lastName = userFullName.split(' ')[1]
             return `${firstName[0]}${lastName[0]}`.toUpperCase()
         }
-        return `${auth.user.username[0]}${auth.user.username[0]}`
+        return `${auth.user.username[0]}${auth.user.username[0]}`.toUpperCase()
         
     }
 
@@ -236,10 +233,9 @@ function Header(props) {
 
                                     <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
                                         {auth.user.username}
-                                        {/* {getUserNames()[0]} */}
                                     </div>
 
-                                        <div style={{ color: colors.white, margin: '0 3px', fontSize: '12px' }}>
+                                        <div style={{ color: colors.white, margin: '3px 3px', fontSize: '12px' }}>
                                             <FaChevronDown />
                                         </div>
 
@@ -263,7 +259,7 @@ function Header(props) {
                             <img
                                 onClick={() => AttemptSignOut()}
                                 src={require('./../../assets/icons/power-button.png')}
-                                style={{ height: '20px', margin: '0 0 0 35px' }}
+                                style={{ height: '20px', margin: '0 0 0 35px', cursor: 'pointer' }}
                             />
 
                         </div>

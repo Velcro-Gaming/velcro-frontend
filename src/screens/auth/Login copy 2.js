@@ -3,39 +3,42 @@ import Header from '../../components/main/Header';
 import {
     colors
 } from '../../App.json'
+import {
+    login
+} from '../../redux/actions/AuthActions'
 import Button from '../../components/utils/Button';
 import LeftPanel from '../../components/auth/LeftPanel';
 import FormFields from '../../components/utils/FormFields';
 
-import Breakpoint from '../../components/utils/breakpoints/Base'
-import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
-import IsTablet from '../../components/utils/breakpoints/IsTablet'
-import IsPhone from '../../components/utils/breakpoints/IsPhone'
+import Breakpoint from '../../components/utils/breakpoints/Base';
+import IsDesktop from '../../components/utils/breakpoints/IsDesktop';
+import IsTablet from '../../components/utils/breakpoints/IsTablet';
+import IsPhone from '../../components/utils/breakpoints/IsPhone';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import { Redirect } from 'react-router-dom';
 
-class Register extends Component {
+
+class LoginScreen extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
             redirect: null,
             buttons: {
-                signUp: {
+                signIn: {
                     text: {
-                        color: colors.white,
-                        value: "Continue",
+                        color: colors.black,
+                        value: "Sign in",
                     },
                     styles: {
                         height: '50px',
                         width: '100%',
-                        margin: '80px 0 60px 0',
+                        margin: '60px 0 60px 0',
                         backgroundColor: colors.primary,
                         border: {
                             width: "1px",
@@ -45,15 +48,38 @@ class Register extends Component {
                         },
                         color: colors.white
                     },
-                    onClick: () => this.AttemptRegister()
+                    onClick: () => this.AttemptSignIn()
+                },
+                forgotPassword: {
+                    text: {
+                        color: colors.white,
+                        value: "Forgot Your Password?",
+                    },
+                    styles: {
+                        height: '50px',
+                        width: '200px',
+                        margin: null,
+                        backgroundColor: null,
+                        border: {
+                            width: null,
+                            style: null,
+                            color: null,
+                            radius: null,
+                        },
+                        color: colors.primary
+                    },
+                    linkTo: '/password-reset/request'
                 },
             },
             headerConfig: {
+                headerStyles: {
+                    backgroundColor: null
+                },
                 headerButtons: [
                     {
                         text: {
                             color: colors.black,
-                            value: "Already have an account?",
+                            value: "Need an account?",
                         },
                         styles: {
                             height: null,
@@ -73,7 +99,7 @@ class Register extends Component {
                     {
                         text: {
                             color: colors.white,
-                            value: "Sign In",
+                            value: "Sign Up",
                         },
                         styles: {
                             height: null,
@@ -89,47 +115,20 @@ class Register extends Component {
                             color: colors.white
                         },
                         isProtected: false,
-                        linkTo: "/login",
+                        linkTo: "/register",
                     },
                 ],
-                headerStyles: {
-                    backgroundColor: null
-                }
             },
             formData: {
-                username: {
+                usernameEmail: {
                     element: 'input',
-                    value: 'anon01',
+                    value: '',
                     label: true,
-                    labelText: 'Username',
+                    labelText: 'Username or email',
                     props: {
                         name: 'username_input',
                         type: 'text',
-                        placeholder: 'Enter username',
-                        required: true,
-                    }
-                },
-                email: {
-                    element: 'input',
-                    value: 'anon@email.com',
-                    label: true,
-                    labelText: 'Email',
-                    props: {
-                        name: 'email_input',
-                        type: 'email',
-                        placeholder: 'Enter email address',
-                        required: true,
-                    }
-                },
-                phoneNumber: {
-                    element: 'input',
-                    value: '2347081234567',
-                    label: true,
-                    labelText: 'Phone number',
-                    props: {
-                        name: 'phone_number_input',
-                        type: 'tel',
-                        placeholder: 'Enter phone number',
+                        placeholder: 'Enter username or email',
                         required: true,
                     }
                 },
@@ -147,68 +146,53 @@ class Register extends Component {
                 },
             }
         }
-
     }
 
-    notify = (status, title, message) => {
-        let config_ = {
-            showDuration: 300,
-            hideDuration: 1000,
-            showEasing: "linear",
-            hideEasing: "swing",
-            showMethod: "fadeIn",
-            hideMethod: "fadeOut"
-        }
-
-        let config = {
-            showAnimation: "animated slideInRight",
-            hideAnimation: "animated slideOutRight"
-        }
-
-        switch (status) {
-            case 'success':
-                this.container.success(message, title, config);
-                break;
-            case 'error':
-                this.container.success(message, title, config);
-                break;
-            default:
-                this.container.info(message, title, config);
-                break;
-        }
-    };
-
-
-    AttemptRegister = () => {
+    AttemptSignIn = async() => {
         let payload = {}
+        
         const {
             formData
         } = this.state
 
-        // Validate Fields
+        const {
+            auth,
+            login: reduxLogin
+        } = this.props
+        
         for (let formField in formData) {
             let fieldName = formField
             let fieldData = formData[formField]
             if (fieldData.props.required) {
-                if (!fieldData.value || fieldData.value == ' ') {
+                if (!fieldData.value || fieldData.value == ' ' || fieldData.value == 0) {
                     // Toast Error Message
                     toast.error(`${fieldName} field is required!`)
                     return
                 }
             }
-            // Set in Payload
             payload[fieldName] = fieldData.value
         }
 
-        this.setState({
-            ...this.state,
-            redirect: {
-                pathname: '/register/verification',
-                state: {
-                    payload: payload
+        // Attempt Authentication
+        let usernameEmail = payload.usernameEmail
+        let password = payload.password
+        if (auth.user) {
+            if (usernameEmail == auth.user.username || usernameEmail == auth.user.email) {
+                // Check Password
+                if (password == auth.user.password) {
+                    await reduxLogin()
+                    //
+                    this.setState({
+                        ...this.state,
+                        redirect: '/'
+                    })
+                } else {
+                    toast.error(`Invalid credentials`)
                 }
             }
-        })
+        } else {
+            toast.error(`This user doesn't exist`)
+        }
     }
 
     mainContent = (config) => {
@@ -218,11 +202,11 @@ class Register extends Component {
                 <ToastContainer />
 
                 <div style={{ ...styles.heading, fontSize: `${config.headingSize}` }}>
-                    Welcome to Velcro Gaming!
+                    Welcome back!
                 </div>
 
                 <div style={styles.subHeading}>
-                    Register your account
+                    Sign in to  your account
                 </div>
 
                 <div style={{ marginTop: '35px', minWidth: `${config.formMinWidth}` }}>
@@ -232,7 +216,9 @@ class Register extends Component {
                             change={(newState) => this.setState(newState)}
                         />
 
-                        <Button {...this.state.buttons.signUp} />
+                        <Button {...this.state.buttons.forgotPassword} style={{}} />
+
+                        <Button {...this.state.buttons.signIn} />
 
                     </form>
                 </div>
@@ -250,31 +236,30 @@ class Register extends Component {
     render() {
 
         const {
-            redirect,
-            headerConfig
-        } = this.state
-
-        const {
             auth
         } = this.props
 
-        // Redirect
-        if (redirect) {
-            return <Redirect to={redirect} />
+        if (this.state.redirect) {
+            return <Redirect to={this.state.redirect} />
         }
 
-        if (auth.loggedIn) {
-            this.setState({redirect: {
-                pathname: '/logout',
-                state: {
-                    nextUrl: `/login`,
+        console.log("auth: ", auth)
+
+        if (auth.loggedIn) {            
+            this.setState({
+                redirect: {
+                    pathname: '/logout',
+                    state: {
+                        loggedIn: true,
+                        nextUrl: `/login`,
+                    }
                 }
-            }})
+            })
         }
 
         return (
             <div>
-                <Header {...this.props} headerConfig={headerConfig} />
+                <Header {...this.props} headerConfig={this.state.headerConfig} />
 
                 <IsDesktop>
                     <div style={styles.container.desktop}>
@@ -289,7 +274,7 @@ class Register extends Component {
                             }
                         </div>
 
-                    </div>
+                    </div>                    
                 </IsDesktop>
 
                 <IsTablet>
@@ -345,8 +330,7 @@ const styles = {
         fontFamily: 'Nunito Sans',
         fontStyle: 'normal',
         fontWeight: 800,
-        fontSize: '34px',
-        lineHeight: '40px',
+        lineHeight: '60px',
         color: colors.primary,
     },
     subHeading: {
@@ -359,6 +343,7 @@ const styles = {
 
         margin: '10px 0'
     },
+
     formLabel: {
         fontFamily: 'Source Sans Pro',
         fontStyle: 'normal',
@@ -376,7 +361,7 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        
+        login
     }, dispatch)
 }
 
@@ -389,4 +374,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Register)
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

@@ -23,7 +23,7 @@ class LandingScreen extends Component {
             buttons: {
                 signIn: {
                     text: {
-                        color: colors.black,
+                        color: colors.white,
                         value: "Sign in",
                     },
                     styles: {
@@ -43,7 +43,7 @@ class LandingScreen extends Component {
                 },
                 signInMobile: {
                     text: {
-                        color: colors.black,
+                        color: colors.white,
                         value: "Sign in",
                     },
                     styles: {
@@ -63,7 +63,7 @@ class LandingScreen extends Component {
                 },
                 getStartedMobile: {
                     text: {
-                        color: colors.black,
+                        color: colors.white,
                         value: "Get Started",
                     },
                     styles: {

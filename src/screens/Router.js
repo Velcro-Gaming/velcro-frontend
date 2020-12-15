@@ -5,7 +5,7 @@ import {
     Route,
 } from "react-router-dom";
 import AuthScreen from './auth/Base';
-import HomeScreen from './main/HomeScreen';
+import RootScreen from './main/RootScreen';
 import ContactUs from './main/ContactUs';
 import TermsCondition from './main/TermsCondition';
 
@@ -27,13 +27,7 @@ export default function RouterBase() {
             renders the first one that matches the current URL. */}
 
             <Switch>
-                <Route exact path="/" component={HomeScreen} />
-
-                <Route path="/contact-us" component={ContactUs} />
-                <Route path="/terms-and-conditions" component={TermsCondition} />
-
-
-
+                
                 <Route exact path="/login">
                     <LoginScreen />
                 </Route>
@@ -56,7 +50,13 @@ export default function RouterBase() {
                 </Route>                
                 <Route exact path="/password-reset/">
                     <PasswordReset />
-                </Route>                
+                </Route>
+
+                <Route path="/contact-us" component={ContactUs} />
+                <Route path="/terms-and-conditions" component={TermsCondition} />
+
+                <Route path="/" component={RootScreen} />
+                
             </Switch>
 
         </Router>

@@ -34,7 +34,7 @@ function VerificationScreen(props) {
         buttons: {
             signUp: {
                 text: {
-                    color: colors.black,
+                    color: colors.white,
                     value: "Sign up",
                 },
                 styles: {

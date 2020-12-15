@@ -22,7 +22,7 @@ export default class Button extends Component {
             margin,
             backgroundColor,
             border,
-            color,
+            // color,
             fontSize
         } = buttonState.styles
 
@@ -34,7 +34,7 @@ export default class Button extends Component {
                     <Link
                         className={"btn"}
                         style={{
-                            color: color,
+                            color: buttonState.text.color,
                             height: height ? height : '50px',
                             width: width ? width : '150px',
                             backgroundColor: backgroundColor,
@@ -54,7 +54,7 @@ export default class Button extends Component {
                     <div
                         className={"btn"}
                         style={{
-                            color: color,
+                            color: buttonState.text.color,
                             height: height ? height : '50px',
                             width: width ? width : '150px',
                             backgroundColor: backgroundColor,

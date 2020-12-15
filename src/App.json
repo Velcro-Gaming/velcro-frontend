@@ -1,4 +1,5 @@
 {
+    "siteUrl": "l",
     "colors": {
         "primary": "#641E6E",
         "secondary": "#18181B",
@@ -8,6 +9,8 @@
 
         "success": "#52F07F",
         "error": "#000000",
-        "info": "#F5F5FC"
+        "info": "#F5F5FC",
+
+        "background": "#E5E5E5"
     }
 }

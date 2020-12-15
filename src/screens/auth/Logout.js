@@ -21,7 +21,7 @@ function LogoutScreen(props) {
         buttons: {
             goBack: {
                 text: {
-                    color: colors.black,
+                    color: colors.white,
                     value: "Go Back",
                 },
                 styles: {
@@ -41,7 +41,7 @@ function LogoutScreen(props) {
             },
             signOut: {
                 text: {
-                    color: colors.black,
+                    color: colors.white,
                     value: "Sign Out",
                 },
                 styles: {
@@ -72,14 +72,10 @@ function LogoutScreen(props) {
                 window.location = window.location.origin + locationProps.nextUrl
             }
         } else {
-            window.location = window.location.origin + '/login'
+            window.location = window.location.origin
         }
 
     }
-
-    
-    console.log("history: ", history)
-
 
     const {
         redirect
@@ -89,14 +85,33 @@ function LogoutScreen(props) {
         return <Redirect to={redirect} />
     }
 
+    const GetLogoutPrompt = () => {
+        // if (typeof locationProps === 'undefined') {
+        
+        if (typeof locationProps !== 'undefined' && (locationProps.nextUrl === "/login" || locationProps.nextUrl === "/register")) {
+            return (
+                <div style={styles.heading}>
+                    You're already logged in as
+                    <span style={{ fontWeight: 'bolder', fontStyle: 'italic' }}>
+                        {" " + props.auth.user.username}
+                    </span>. Logout?
+                </div>
+            )
+        } else {
+            return (
+                <div style={styles.heading}>
+                    Are you sure you want to logout?
+                </div>
+            )
+        }
+    }
+
     return (
         <div style={styles.container}>
-            <div style={styles.heading}>
-                You're already logged in as 
-                <span style={{ fontWeight: 'bolder', fontStyle: 'italic' }}>
-                    {" " + props.auth.user.username}
-                </span>. Logout?
-            </div>
+            
+            {
+                GetLogoutPrompt()
+            }
 
             <div style={styles.actionButtons}>
                 <Button {...ComponentState.buttons.goBack} />
