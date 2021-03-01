@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { PostMan } from '../../Helpers';
 
 
 
@@ -51,6 +52,11 @@ function VerificationScreen(props) {
                     color: colors.white
                 },
                 onClick: () => AttemptSubmit(),
+                loader: {
+                    isLoading: false,
+                    size: 15,
+                    color: colors.white,
+                },
             },
         },
         headerConfig: {
@@ -61,7 +67,7 @@ function VerificationScreen(props) {
             }
         },
         formData: {
-            console: {
+            consoletype: {
                 element: 'select',
                 data: [
                     {
@@ -69,15 +75,15 @@ function VerificationScreen(props) {
                         display: '---'
                     },
                     {
-                        value: 1,
+                        value: 'PS4',
                         display: 'PS4'
                     },
                     {
-                        value: 2,
+                        value: 'Xbox One',
                         display: 'Xbox One'
                     },
                     {
-                        value: 3,
+                        value: "Nitendo Switch",
                         display: 'Nitendo Switch'
                     },
                 ],
@@ -91,7 +97,7 @@ function VerificationScreen(props) {
                     required: true
                 }
             },
-            referralCode: {
+            referralcode: {
                 element: 'input',
                 value: '',
                 label: true,
@@ -103,7 +109,7 @@ function VerificationScreen(props) {
                     required: false
                 }
             },
-            ninNumber: {
+            nin: {
                 element: 'input',
                 value: '',
                 label: true,
@@ -136,6 +142,13 @@ function VerificationScreen(props) {
             ...routerState.payload
         }
 
+        // let payload = {
+        //     emailaddress: "ujeremiah200@gmail.com",	
+        //     password: "12345678",
+        //     phonenumber: "+2347017525242",
+        //     username: "rotimi"
+        // }
+
         // Validate Fields
         for (let formField in formData) {
             let fieldName = formField
@@ -151,12 +164,45 @@ function VerificationScreen(props) {
             payload[fieldName] = fieldData.value
         }
 
-        await props.register(payload)
+        // let payload = {
+        //     emailaddress: routerState.payload.emailaddress,	
+        //     password: routerState.payload.password,
+        //     phonenumber: routerState.payload.phonenumber,
+        //     username: routerState.payload.username
+        // }
 
-        setComponentState({
-            ...ComponentState,
-            redirect: '/login'
-        })
+        console.log("payload: ", payload)
+
+        // await props.register(payload)
+
+        // setComponentState({
+        //     ...ComponentState,
+        //     redirect: '/login'
+        // })
+
+
+        const responseObject = await PostMan('/register', 'post')
+        console.log('responseObject: ', responseObject)
+
+        if (responseObject.status === 'success') {
+            let bidList = responseObject.data.bids
+            setComponentState({
+                ...ComponentState,
+                bids: bidList
+            })
+        }
+
+        else if (responseObject.status === 'unauthorized') {
+            // Logout
+            props.logout()
+            setComponentState({
+                ...ComponentState,
+                redirect: '/auth/login'
+            })
+        }
+        else {
+            console.log("Error")
+        }
     }
 
     useEffect(() => {
@@ -194,8 +240,8 @@ function VerificationScreen(props) {
                                 formData: newFormData
                             })}
                             field={{
-                                id: 'console',
-                                config: formData.console
+                                id: 'consoletype',
+                                config: formData.consoletype
                             }}
                         />
 
@@ -210,8 +256,8 @@ function VerificationScreen(props) {
                                 formData: newFormData
                             })}
                             field={{
-                                id: 'referralCode',
-                                config: formData.referralCode
+                                id: 'referralcode',
+                                config: formData.referralcode
                             }}
                         />
 
@@ -226,8 +272,8 @@ function VerificationScreen(props) {
                                 formData: newFormData
                             })}
                             field={{
-                                id: 'ninNumber',
-                                config: formData.ninNumber
+                                id: 'nin',
+                                config: formData.nin
                             }}
                         />
 

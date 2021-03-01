@@ -42,7 +42,7 @@ export default class FormField extends Component {
             case ('input'):
                 formTemplate = (
 
-                    <div style={styles.fieldWrapper}>
+                    <div style={fieldConfig.wrapperProps ? fieldConfig.wrapperProps.style : styles.fieldWrapper}>
 
                         {this.showLabel(fieldConfig.label, fieldConfig.labelText)}
 
@@ -76,7 +76,7 @@ export default class FormField extends Component {
             case ('select'):
                 formTemplate = (
 
-                    <div style={styles.fieldWrapper}>
+                    <div style={fieldConfig.wrapperProps ? fieldConfig.wrapperProps.style : styles.fieldWrapper}>
 
                         {this.showLabel(fieldConfig.label, fieldConfig.labelText)}
 
@@ -97,7 +97,7 @@ export default class FormField extends Component {
                 break;
             case ('textarea'):
                 formTemplate = (
-                    <div style={styles.fieldWrapper}>
+                    <div style={fieldConfig.wrapperProps ? fieldConfig.wrapperProps.style : styles.fieldWrapper}>
 
                         {this.showLabel(fieldConfig.label, fieldConfig.labelText)}
 

@@ -17,6 +17,7 @@ import VerificationScreen from './auth/VerificationScreen';
 import PasswordResetRequest from './auth/passwords/PasswordResetRequest';
 import PasswordResetSent from './auth/passwords/PasswordResetSent';
 import PasswordReset from './auth/passwords/PasswordReset';
+import PhoneVerification from "./auth/PhoneVerification";
 
 export default function RouterBase() {
 
@@ -39,6 +40,11 @@ export default function RouterBase() {
                 </Route>
                 <Route path="/register/verification">
                     <VerificationScreen />
+                </Route>
+
+
+                <Route path="/phone-verification">
+                    <PhoneVerification />
                 </Route>
 
 

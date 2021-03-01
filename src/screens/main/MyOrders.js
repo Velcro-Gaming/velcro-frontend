@@ -6,9 +6,11 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
 import IsTablet from '../../components/utils/breakpoints/IsTablet'
 import IsPhone from '../../components/utils/breakpoints/IsPhone'
+import GameCard from '../../components/main/GameCard'
 
 
 function MyOrdersScreen(props) {
+    const [MyOrders, setMyOrders] = useState([])
     const [ComponentState, setComponentState] = useState({
         activeScreen: {
             name: '',
@@ -79,36 +81,52 @@ function MyOrdersScreen(props) {
 
     const MainContent = (config) => {
         // const 
-        return (
-            <div style={{ 
-                margin: config.wrapperMargin,
-                backgroundColor: colors.white,
-                borderRadius: '15px',
-
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
-
-                <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
-                    You have not Ordered any Games
+        if (MyOrders.length > 0) {
+            return (
+                <div className="row">
+                    {
+                        MyOrders.map(order => {
+                            return (
+                                <GameCard
+                                    config={order}
+                                />
+                            )
+                        })
+                    }
                 </div>
-
-                {/* <Button {...buttons.uploadGame} /> */}
-
-                <div style={styles.alertWrapper}>
-                    <BiUser />
-
-                    <div style={styles.alert}>
-                        Your accout is verified.
+            )
+        } else {
+            return (
+                <div style={{ 
+                    margin: config.wrapperMargin,
+                    backgroundColor: colors.white,
+                    borderRadius: '15px',
+    
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
+    
+                    <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
+                        You have not Ordered any Games
                     </div>
-                    
-                    <BiCheck />
+    
+                    <Button {...buttons.uploadGame} />
+    
+                    <div style={styles.alertWrapper}>
+                        <BiUser />
+    
+                        <div style={styles.alert}>
+                            Your accout is verified.
+                        </div>
+                        
+                        <BiCheck />
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 
     useEffect(()=>{

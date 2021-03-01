@@ -143,6 +143,7 @@ function Header(props) {
     const {
         headerButtons,
         headerStyles,
+        isVisible=true,
     } = headerConfig
 
     if (redirect) {
@@ -168,8 +169,10 @@ function Header(props) {
         
     }
 
+    console.log("auth.user: ", auth.user)
+
     return (
-        <div style={{ ...styles.container, backgroundColor: headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
+        <div style={{ ...styles.container, backgroundColor: headerStyles && headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
             <div className="container" style={styles.navbar}>
                 <Link to="/">
                     <img
@@ -181,7 +184,7 @@ function Header(props) {
                 
                 <IsDesktop>
                     {
-                        auth.loggedIn ? (
+                        auth.loggedIn && isVisible ? (
                             <div>
                                 <FormField
                                     formData={formData}
@@ -203,14 +206,17 @@ function Header(props) {
                     <div style={styles.navigation}>
                         {
 
-                            GetNavigationTray(headerButtons)
+                            isVisible ? (
+                                GetNavigationTray(headerButtons)
+                            ) : null
 
                         }
                     </div>
+                    
                 </IsDesktop>
 
                 {
-                    auth.loggedIn ? (
+                    auth.loggedIn && isVisible ? (
                         <div style={{ display: 'flex', alignItems: 'center', }}>
                             
                             <IsDesktop>

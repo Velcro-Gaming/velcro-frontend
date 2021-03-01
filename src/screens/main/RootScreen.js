@@ -26,7 +26,7 @@ class RootScreen extends Component {
                     {
                         isProtected: false,
                         text: {
-                            color: colors.black,
+                            color: colors.white,
                             value: "Get Started",
                         },
                         styles: {

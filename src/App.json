@@ -1,5 +1,5 @@
 {
-    "siteUrl": "l",
+    "apiUrl": "https://server-velcro-gaming.herokuapp.com/api/v1",
     "colors": {
         "primary": "#641E6E",
         "secondary": "#18181B",

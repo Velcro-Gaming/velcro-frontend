@@ -6,8 +6,10 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
 import IsTablet from '../../components/utils/breakpoints/IsTablet'
 import IsPhone from '../../components/utils/breakpoints/IsPhone'
+import GameCard from '../../components/main/GameCard'
 
 function SavedGameScreen(props) {
+    const [SavedGames, setSavedGames] = useState([])
     const [ComponentState, setComponentState] = useState({
         activeScreen: {
             name: '',
@@ -84,34 +86,51 @@ function SavedGameScreen(props) {
     }, [])
 
     const MainContent = (config) => {
-        // const 
-        return (
-            <div style={{ 
-                margin: config.wrapperMargin,
-                backgroundColor: colors.white,
-                borderRadius: '15px',
-
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
-
-                <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
-                    You have not saved any Games
+        if (SavedGames.length > 0) {
+            return (
+                <div className="row">
+                    {
+                        SavedGames.map(game => {
+                            return (
+                                <GameCard
+                                    config={game}
+                                />
+                            )
+                        })
+                    }
                 </div>
-
-
-                <div style={styles.alertWrapper}>
-                    <BiUser />
-                    <div style={styles.alert}>
-                        Your accout is verified.
+            )
+        } else {
+            return (
+                <div style={{ 
+                    margin: config.wrapperMargin,
+                    backgroundColor: colors.white,
+                    borderRadius: '15px',
+    
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
+    
+                    <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
+                        You have not saved any Games
                     </div>
-                    <BiCheck />
+    
+    
+                    <div style={styles.alertWrapper}>
+                        <BiUser />
+                        <div style={styles.alert}>
+                            Your accout is verified.
+                        </div>
+                        <BiCheck />
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
+        // const 
+        
     }
 
     return (

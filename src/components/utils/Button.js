@@ -6,6 +6,8 @@ import {
     Link
 } from 'react-router-dom'
 
+import HashLoader from "react-spinners/HashLoader"
+
 
 export default class Button extends Component {
     constructor(props) {
@@ -67,6 +69,30 @@ export default class Button extends Component {
                         onClick={buttonState.onClick}
                     >
                         {buttonState.text.value}
+
+                        {
+                            buttonState.loader ? (
+                                <span className="ml-4">
+                                    <HashLoader
+                                        color={buttonState.loader.color}
+                                        loading={buttonState.loader.isLoading}
+                                        // css={override}
+                                        size={buttonState.loader.size}
+                                    />
+                                </span>
+                            ) : null
+                        }
+
+                        
+
+                        {/* <span className="ml-4">
+                            <HashLoader
+                                color={buttonState.loader.color}
+                                loading={buttonState.loader.isLoading}
+                                // css={override}
+                                size={buttonState.loader.size}
+                            />
+                        </span> */}
                     </div>
                 )
             } else {

@@ -8,6 +8,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { BrowserRouter } from "react-router-dom";
 
 import Router from './screens/Router'
+import Middleware from './components/utils/Middleware';
 
 function App() {
   return (
@@ -15,7 +16,11 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         
         <BrowserRouter>
-          <Router />
+          
+          <Middleware>
+            <Router />
+          </Middleware>
+
         </BrowserRouter>
 
       </PersistGate>

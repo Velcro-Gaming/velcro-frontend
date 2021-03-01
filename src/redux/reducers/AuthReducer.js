@@ -20,10 +20,17 @@ const AuthReducer = (state = INITIAL_STATE, action) => {
             return { ...state, firstTimeUser: false }
 
         case AuthActionTypes.LOGIN:
-            // accessToken = action.data.access_token
-            // rememberMe = action.payload.rememberMe ? action.payload.rememberMe : null
-            return { ...state, loggedIn: true }
-
+            return {
+                ...state,
+                loggedIn: true,
+                user: action.payload
+            }
+        case AuthActionTypes.PARTIAL_LOGIN:
+            return {
+                ...state,
+                loggedIn: false,
+                user: action.payload
+            }
         case AuthActionTypes.LOGOUT:
             return {
                 ...state,

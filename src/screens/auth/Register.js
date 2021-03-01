@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/main/Header';
 import {
     colors
@@ -20,137 +20,148 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { Redirect } from 'react-router-dom';
 
-class Register extends Component {
-    constructor(props) {
-        super(props)
+import {
+    register,
+    login
+} from '../../redux/actions/AuthActions'
 
-        this.state = {
-            redirect: null,
-            buttons: {
-                signUp: {
-                    text: {
-                        color: colors.white,
-                        value: "Continue",
-                    },
-                    styles: {
-                        height: '50px',
-                        width: '100%',
-                        margin: '80px 0 60px 0',
-                        backgroundColor: colors.primary,
-                        border: {
-                            width: "1px",
-                            style: "solid",
-                            color: colors.white,
-                            radius: "3px",
-                        },
-                        color: colors.white
-                    },
-                    onClick: () => this.AttemptRegister()
+import { PostMan } from '../../Helpers';
+
+function Register(props) {
+
+    // const [] = useState({})
+
+    const [redirect, setRedirect] = useState(null)
+    const [HeaderConfig, setHeaderConfig] = useState({
+        headerButtons: [
+            {
+                text: {
+                    color: colors.black,
+                    value: "Already have an account?",
                 },
+                styles: {
+                    height: null,
+                    width: null,
+                    margin: '0 15px',
+                    backgroundColor: null,
+                    border: {
+                        width: null,
+                        style: null,
+                        color: null,
+                        radius: null,
+                    },
+                    color: colors.black
+                },
+                isProtected: false,
             },
-            headerConfig: {
-                headerButtons: [
-                    {
-                        text: {
-                            color: colors.black,
-                            value: "Already have an account?",
-                        },
-                        styles: {
-                            height: null,
-                            width: null,
-                            margin: '0 15px',
-                            backgroundColor: null,
-                            border: {
-                                width: null,
-                                style: null,
-                                color: null,
-                                radius: null,
-                            },
-                            color: colors.black
-                        },
-                        isProtected: false,
+            {
+                text: {
+                    color: colors.white,
+                    value: "Sign In",
+                },
+                styles: {
+                    height: null,
+                    width: null,
+                    margin: '0 15px',
+                    backgroundColor: colors.primary,
+                    border: {
+                        width: null,
+                        style: null,
+                        color: null,
+                        radius: null,
                     },
-                    {
-                        text: {
-                            color: colors.white,
-                            value: "Sign In",
-                        },
-                        styles: {
-                            height: null,
-                            width: null,
-                            margin: '0 15px',
-                            backgroundColor: colors.primary,
-                            border: {
-                                width: null,
-                                style: null,
-                                color: null,
-                                radius: null,
-                            },
-                            color: colors.white
-                        },
-                        isProtected: false,
-                        linkTo: "/login",
-                    },
-                ],
-                headerStyles: {
-                    backgroundColor: null
-                }
+                    color: colors.white
+                },
+                isProtected: false,
+                linkTo: "/login",
             },
-            formData: {
-                username: {
-                    element: 'input',
-                    value: 'anon01',
-                    label: true,
-                    labelText: 'Username',
-                    props: {
-                        name: 'username_input',
-                        type: 'text',
-                        placeholder: 'Enter username',
-                        required: true,
-                    }
-                },
-                email: {
-                    element: 'input',
-                    value: 'anon@email.com',
-                    label: true,
-                    labelText: 'Email',
-                    props: {
-                        name: 'email_input',
-                        type: 'email',
-                        placeholder: 'Enter email address',
-                        required: true,
-                    }
-                },
-                phoneNumber: {
-                    element: 'input',
-                    value: '2347081234567',
-                    label: true,
-                    labelText: 'Phone number',
-                    props: {
-                        name: 'phone_number_input',
-                        type: 'tel',
-                        placeholder: 'Enter phone number',
-                        required: true,
-                    }
-                },
-                password: {
-                    element: 'input',
-                    value: '',
-                    label: true,
-                    labelText: 'Password',
-                    props: {
-                        name: 'password_input',
-                        type: 'password',
-                        placeholder: 'Password(minimum of 8 characters)',
-                        required: true,
-                    }
-                },
-            }
+        ],
+        headerStyles: {
+            backgroundColor: null
         }
+    })
+    const [PageButtons, setPageButtons] = useState({
+        signUp: {
+            text: {
+                color: colors.white,
+                value: "Continue",
+            },
+            styles: {
+                height: '50px',
+                width: '100%',
+                margin: '80px 0 60px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => AttemptRegister(),
+            loader: {
+                isLoading: false,
+                size: 15,
+                color: colors.white,
+            },
+        },
+    })
 
-    }
+    const [FormData, setFormData] = useState({
+        username: {
+            element: 'input',
+            value: 'anon01',
+            label: true,
+            labelText: 'Username',
+            props: {
+                name: 'username_input',
+                type: 'text',
+                placeholder: 'Enter username',
+                required: true,
+            }
+        },
+        emailaddress: {
+            element: 'input',
+            value: 'itsobaa@gmail.com',
+            label: true,
+            labelText: 'Email',
+            props: {
+                name: 'email_input',
+                type: 'email',
+                placeholder: 'Enter email address',
+                required: true,
+            }
+        },
+        phonenumber: {
+            element: 'input',
+            value: '+2347081032420',
+            label: true,
+            labelText: 'Phone number',
+            props: {
+                name: 'phone_number_input',
+                type: 'tel',
+                placeholder: 'Enter phone number',
+                required: true,
+            }
+        },
+        password: {
+            element: 'input',
+            value: '',
+            label: true,
+            labelText: 'Password',
+            props: {
+                name: 'password_input',
+                type: 'password',
+                placeholder: 'Password(minimum of 8 characters)',
+                required: true,
+            }
+        },
+    })
 
-    notify = (status, title, message) => {
+
+
+    const notify = (status, title, message) => {
         let config_ = {
             showDuration: 300,
             hideDuration: 1000,
@@ -179,16 +190,18 @@ class Register extends Component {
     };
 
 
-    AttemptRegister = () => {
+    const AttemptRegister = async () => {
         let payload = {}
-        const {
-            formData
-        } = this.state
+        let newPageButtons = PageButtons
+        
+        // Start Loader
+        newPageButtons.signUp.loader.isLoading = true
+        await setPageButtons({...newPageButtons})
 
         // Validate Fields
-        for (let formField in formData) {
+        for (let formField in FormData) {
             let fieldName = formField
-            let fieldData = formData[formField]
+            let fieldData = FormData[formField]
             if (fieldData.props.required) {
                 if (!fieldData.value || fieldData.value == ' ') {
                     // Toast Error Message
@@ -200,18 +213,58 @@ class Register extends Component {
             payload[fieldName] = fieldData.value
         }
 
-        this.setState({
-            ...this.state,
-            redirect: {
-                pathname: '/register/verification',
-                state: {
-                    payload: payload
-                }
-            }
-        })
+        console.log("payload: ", payload)
+
+
+        const responseObject = await PostMan('/register', 'post', payload)
+        console.log('responseObject: ', responseObject)
+
+        // Stop Loader
+        newPageButtons.signUp.loader.isLoading = false
+        await setPageButtons({...newPageButtons})
+
+
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            let userData = responseData.data
+
+            // account_status: "active"
+            // email_Address: "agbanabolu@gmail.com"
+            // phone_number: "+2347081032420"
+            // user_id: 16
+            // username: "agbana"
+            // verification: "unverified"
+
+            console.log("userData: ", userData)
+
+            
+            // await this.props.register(user.data)
+
+            await props.login(userData)
+         
+
+            return setRedirect("/")
+        }
+        // else if (responseObject.status === 'unauthorized') {
+        //     // Logout
+        //     this.props.logout()
+        //     setComponentState({
+        //         ...ComponentState,
+        //         redirect: '/auth/login'
+        //     })
+        // }
+        else if (responseObject.status === 'error') {
+            // Toast Error Message
+            toast.error(responseObject.data.message)
+        }
+        else {
+            console.log("Error")
+        }
+
+        
     }
 
-    mainContent = (config) => {
+    const MainContent = (config) => {
 
         return (
             <div style={styles.panelRight}>
@@ -228,11 +281,11 @@ class Register extends Component {
                 <div style={{ marginTop: '35px', minWidth: `${config.formMinWidth}` }}>
                     <form>
                         <FormFields
-                            formData={this.state.formData}
-                            change={(newState) => this.setState(newState)}
+                            formData={FormData}
+                            change={(newFormData) => setFormData({...newFormData})}
                         />
 
-                        <Button {...this.state.buttons.signUp} />
+                        <Button {...PageButtons.signUp} />
 
                     </form>
                 </div>
@@ -247,76 +300,72 @@ class Register extends Component {
     }
 
 
-    render() {
+    const {
+        auth
+    } = props    
 
-        const {
-            redirect,
-            headerConfig
-        } = this.state
-
-        const {
-            auth
-        } = this.props
-
-        // Redirect
-        if (redirect) {
-            return <Redirect to={redirect} />
-        }
-
+    useEffect(() => {
+        //
         if (auth.loggedIn) {
-            this.setState({redirect: {
+            setRedirect({
                 pathname: '/logout',
                 state: {
                     nextUrl: `/login`,
                 }
-            }})
+            })
         }
 
-        return (
-            <div>
-                <Header {...this.props} headerConfig={headerConfig} />
+    }, [])
 
-                <IsDesktop>
-                    <div style={styles.container.desktop}>
-                        <LeftPanel />
+    // Redirect
+    if (redirect) {
+        return <Redirect to={redirect} />
+    }
 
-                        <div style={{ padding: '0 50px', height: '100%' }}>
-                            {
-                                this.mainContent({
-                                    formMinWidth: '450px',
-                                    headingSize: '34px',
-                                })
-                            }
-                        </div>
+    return (
+        <div>
+            <Header {...props} headerConfig={HeaderConfig} />
 
-                    </div>
-                </IsDesktop>
+            <IsDesktop>
+                <div style={styles.container.desktop}>
+                    <LeftPanel />
 
-                <IsTablet>
-                    <div style={styles.container.tablet}>
+                    <div style={{ padding: '0 50px', height: '100%' }}>
                         {
-                            this.mainContent({
-                                formMinWidth: null,
+                            MainContent({
+                                formMinWidth: '450px',
                                 headingSize: '34px',
                             })
                         }
                     </div>
-                </IsTablet>
 
-                <IsPhone>
-                    <div style={styles.container.phone}>
-                        {
-                            this.mainContent({
-                                formMinWidth: '200px',
-                                headingSize: '30px',
-                            })
-                        }
-                    </div>
-                </IsPhone>
+                </div>
+            </IsDesktop>
 
-            </div>
-        )
-    }
+            <IsTablet>
+                <div style={styles.container.tablet}>
+                    {
+                        MainContent({
+                            formMinWidth: null,
+                            headingSize: '34px',
+                        })
+                    }
+                </div>
+            </IsTablet>
+
+            <IsPhone>
+                <div style={styles.container.phone}>
+                    {
+                        MainContent({
+                            formMinWidth: '200px',
+                            headingSize: '30px',
+                        })
+                    }
+                </div>
+            </IsPhone>
+
+        </div>
+    )
 }
 
 
@@ -376,7 +425,8 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        
+        register,
+        login
     }, dispatch)
 }
 

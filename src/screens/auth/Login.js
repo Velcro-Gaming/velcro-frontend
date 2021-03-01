@@ -4,7 +4,8 @@ import {
     colors
 } from '../../App.json'
 import {
-    login
+    login,
+    partialLogin
 } from '../../redux/actions/AuthActions'
 import Button from '../../components/utils/Button';
 import LeftPanel from '../../components/auth/LeftPanel';
@@ -22,40 +23,81 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Redirect } from 'react-router-dom';
 
+import { PostMan } from '../../Helpers';
+
+
 
 function LoginScreen(props) {
-    const [ComponentState, setComponentState] = useState({
-        redirect: null,
-        buttons: {
-            signIn: {
-                text: {
-                    color: colors.white,
-                    value: "Sign in",
-                },
-                styles: {
-                    height: '50px',
-                    width: '100%',
-                    margin: '60px 0 60px 0',
-                    backgroundColor: colors.primary,
-                    border: {
-                        width: "1px",
-                        style: "solid",
-                        color: colors.white,
-                        radius: "3px",
-                    },
-                    color: colors.white
-                },
-                onClick: () => AttemptSignIn()
+    const {
+        auth,
+        login: reduxLogin
+    } = props
+    
+    // const [NonFieldErrors, setNonFieldErrors] = useState([])
+
+    const [redirect, setRedirect] = useState(null)
+    const [PageButtons, setPageButtons] = useState({
+        signIn: {
+            text: {
+                color: colors.white,
+                value: "Sign in",
             },
-            forgotPassword: {
+            styles: {
+                height: '50px',
+                width: '100%',
+                margin: '30px 0 60px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => AttemptSignIn(),
+            loader: {
+                isLoading: false,
+                size: 15,
+                color: colors.white,
+            },
+        },
+        forgotPassword: {
+            text: {
+                color: colors.primary,
+                value: "Forgot Your Password?",
+            },
+            styles: {
+                height: '50px',
+                width: '200px',
+                margin: null,
+                backgroundColor: null,
+                border: {
+                    width: null,
+                    style: null,
+                    color: null,
+                    radius: null,
+                },
+                color: colors.primary
+            },
+            linkTo: '/password-reset/request',
+        },
+    })
+
+    const [HeaderConfig, setHeaderConfig] = useState({
+        headerStyles: {
+            backgroundColor: null
+        },
+        headerButtons: [
+            {
                 text: {
-                    color: colors.primary,
-                    value: "Forgot Your Password?",
+                    color: colors.black,
+                    value: "Need an account?",
                 },
                 styles: {
-                    height: '50px',
-                    width: '200px',
-                    margin: null,
+                    height: null,
+                    width: null,
+                    margin: '0 15px',
                     backgroundColor: null,
                     border: {
                         width: null,
@@ -63,103 +105,85 @@ function LoginScreen(props) {
                         color: null,
                         radius: null,
                     },
-                    color: colors.primary
+                    color: colors.black
                 },
-                linkTo: '/password-reset/request'
+                isProtected: false,
             },
-        },
-        headerConfig: {
-            headerStyles: {
-                backgroundColor: null
-            },
-            headerButtons: [
-                {
-                    text: {
-                        color: colors.black,
-                        value: "Need an account?",
-                    },
-                    styles: {
-                        height: null,
+            {
+                text: {
+                    color: colors.white,
+                    value: "Sign Up",
+                },
+                styles: {
+                    height: null,
+                    width: null,
+                    margin: '0 15px',
+                    backgroundColor: colors.primary,
+                    border: {
                         width: null,
-                        margin: '0 15px',
-                        backgroundColor: null,
-                        border: {
-                            width: null,
-                            style: null,
-                            color: null,
-                            radius: null,
-                        },
-                        color: colors.black
+                        style: null,
+                        color: null,
+                        radius: null,
                     },
-                    isProtected: false,
+                    color: colors.white
                 },
-                {
-                    text: {
-                        color: colors.white,
-                        value: "Sign Up",
-                    },
-                    styles: {
-                        height: null,
-                        width: null,
-                        margin: '0 15px',
-                        backgroundColor: colors.primary,
-                        border: {
-                            width: null,
-                            style: null,
-                            color: null,
-                            radius: null,
-                        },
-                        color: colors.white
-                    },
-                    isProtected: false,
-                    linkTo: "/register",
-                },
-            ],
+                isProtected: false,
+                linkTo: "/register",
+            },
+        ],
+    })
+    
+    const [FormData, setFormData] = useState({
+        // usernameEmail: {
+        //     element: 'input',
+        //     value: '',
+        //     label: true,
+        //     labelText: 'Username or email',
+        //     props: {
+        //         name: 'username_input',
+        //         type: 'text',
+        //         placeholder: 'Enter username or email',
+        //         required: true,
+        //     }
+        // },
+        username: {
+            element: 'input',
+            value: '',
+            label: true,
+            labelText: 'Username',
+            props: {
+                name: 'username_input',
+                type: 'text',
+                placeholder: 'Enter username',
+                required: true,
+            }
         },
-        formData: {
-            usernameEmail: {
-                element: 'input',
-                value: '',
-                label: true,
-                labelText: 'Username or email',
-                props: {
-                    name: 'username_input',
-                    type: 'text',
-                    placeholder: 'Enter username or email',
-                    required: true,
-                }
-            },
-            password: {
-                element: 'input',
-                value: '',
-                label: true,
-                labelText: 'Password',
-                props: {
-                    name: 'password_input',
-                    type: 'password',
-                    placeholder: 'Password(minimum of 8 characters)',
-                    required: true,
-                }
-            },
-        }
+        password: {
+            element: 'input',
+            value: '',
+            label: true,
+            labelText: 'Password',
+            props: {
+                name: 'password_input',
+                type: 'password',
+                placeholder: 'Password(minimum of 8 characters)',
+                required: true,
+            }
+        },
     })
 
-    const {
-        buttons,
-        formData
-    } = ComponentState
 
     const AttemptSignIn = async() => {
         let payload = {}
-
-        const {
-            auth,
-            login: reduxLogin
-        } = props
+        let newPageButtons = PageButtons
         
-        for (let formField in formData) {
+        // Start Loader
+        newPageButtons.signIn.loader.isLoading = true
+        await setPageButtons({...newPageButtons})
+        
+        for (let formField in FormData) {
             let fieldName = formField
-            let fieldData = formData[formField]
+            let fieldData = FormData[formField]
             if (fieldData.props.required) {
                 if (!fieldData.value || fieldData.value == ' ' || fieldData.value == 0) {
                     // Toast Error Message
@@ -170,43 +194,42 @@ function LoginScreen(props) {
             payload[fieldName] = fieldData.value
         }
 
-        // Attempt Authentication
-        let usernameEmail = payload.usernameEmail
-        let password = payload.password
-        if (auth.user) {
-            if (usernameEmail == auth.user.username || usernameEmail == auth.user.email) {
-                // Check Password
-                if (password == auth.user.password) {
-                    await reduxLogin()
-                    //
-                    setComponentState({
-                        ...ComponentState,
-                        redirect: '/'
-                    })
-                } else {
-                    toast.error(`Invalid credentials`)
-                }
+        console.log("payload: ", payload)
+
+        const responseObject = await PostMan('/login', 'post', payload)
+
+        // Stop Loader
+        newPageButtons.signIn.loader.isLoading = false
+        await setPageButtons({...newPageButtons})
+
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            let userData = responseData.data
+            console.log("responseData: ", responseData)
+            if (userData.verification === "unverified") {
+                console.log("unverified")
+                await props.partialLogin(userData)
+                return setRedirect("/phone-verification")
+            } else {
+                await props.login(userData)
+                return setRedirect("/")
             }
-        } else {
-            toast.error(`This user doesn't exist`)
+        } 
+
+        else if (responseObject.status === 'error') {
+            // Toast Error Message
+            toast.error(responseObject.data.message)
         }
+
     }
 
 
-    const {
-        auth
-    } = props
-
-    console.log("auth: ", auth)
-
     const AttemptLogout = () => {
-        //
-        setComponentState({
-            redirect: {
-                pathname: '/logout',
-                state: {
-                    nextUrl: `/login`,
-                }
+        // Go to Logout Screen
+        setRedirect({
+            pathname: '/logout',
+            state: {
+                nextUrl: `/login`,
             }
         })
     }
@@ -219,8 +242,8 @@ function LoginScreen(props) {
     }, [])
 
 
-    if (ComponentState.redirect) {
-        return <Redirect to={ComponentState.redirect} />
+    if (redirect) {
+        return <Redirect to={redirect} />
     }
 
 
@@ -239,17 +262,22 @@ function LoginScreen(props) {
 
                 <div style={{ marginTop: '35px', minWidth: `${config.formMinWidth}` }}>
                     <form>
-                        <FormFields
+                        {/* <FormFields
                             formData={ComponentState.formData}
                             change={(newFormData) => setComponentState({
                                 ...ComponentState,
                                 formData: newFormData
                             })}
+                        /> */}
+
+                        <FormFields
+                            formData={FormData}
+                            change={(newFormData) => setFormData({...newFormData})}
                         />
 
-                        <Button {...buttons.forgotPassword} style={{}} />
+                        <Button {...PageButtons.forgotPassword} style={{}} />
 
-                        <Button {...buttons.signIn} />
+                        <Button {...PageButtons.signIn} />
 
                     </form>
                 </div>
@@ -265,7 +293,7 @@ function LoginScreen(props) {
 
     return (
         <div>
-            <Header {...props} headerConfig={ComponentState.headerConfig} />
+            <Header {...props} headerConfig={HeaderConfig} />
 
             <IsDesktop>
                 <div style={styles.container.desktop}>
@@ -366,7 +394,8 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        login
+        login,
+        partialLogin
     }, dispatch)
 }
 

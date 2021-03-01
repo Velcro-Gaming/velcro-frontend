@@ -6,8 +6,33 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
 import IsTablet from '../../components/utils/breakpoints/IsTablet'
 import IsPhone from '../../components/utils/breakpoints/IsPhone'
+import GameCard from '../../components/main/GameCard'
 
 function MyGamesScreen(props) {
+    // const [MyGames, setMyGames] = useState([])
+    const [MyGames, setMyGames] = useState([
+        {
+            name: "Fifa 20",
+            numberOfOrders: 2,
+            amountEarned: 20000,
+            imageUrl: null,
+            status: "swapped"
+        },
+        {
+            name: "GTA V",
+            numberOfOrders: 2,
+            amountEarned: 20000,
+            imageUrl: null,
+            status: "rented"
+        },
+        {
+            name: "Call of duty Modern Warfare",
+            numberOfOrders: 2,
+            amountEarned: 20000,
+            imageUrl: null,
+            status: "available"
+        },
+    ])
     const [ComponentState, setComponentState] = useState({
         activeScreen: {
             name: '',
@@ -83,36 +108,53 @@ function MyGamesScreen(props) {
         })
     }, [])
 
-    const MainContent = (config) => {
-        return (
-            <div style={{ 
-                margin: config.wrapperMargin,
-                backgroundColor: colors.white,
-                borderRadius: '15px',
-
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
-                <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
-
-                <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
-                    You have not Uploaded any Games
+    const MainContent = (config) => {        
+        if (MyGames.length > 0) {
+            return (
+                <div className="row">
+                    {/* { gameArray } */}
+                    {
+                        MyGames.map(game => {
+                            return (
+                                <GameCard
+                                    config={game}
+                                />
+                            )
+                        })
+                    }
                 </div>
-
-                <Button {...buttons.uploadGame} />
-
-                <div style={styles.alertWrapper}>
-                    <BiUser />
-                    <div style={styles.alert}>
-                        Your accout is verified.
+            )
+        } else {
+            return (
+                <div style={{ 
+                    margin: config.wrapperMargin,
+                    backgroundColor: colors.white,
+                    borderRadius: '15px',
+    
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <img style={{ margin: '100px 0 0 0' }} src={require('../../assets/icons/caution.png')} />
+    
+                    <div style={{ ...styles.prompt, fontSize: config.promptSize }}>
+                        You have not Uploaded any Games
                     </div>
-                    <BiCheck />
+    
+                    <Button {...buttons.uploadGame} />
+    
+                    <div style={styles.alertWrapper}>
+                        <BiUser />
+                        <div style={styles.alert}>
+                            Your accout is verified.
+                        </div>
+                        <BiCheck />
+                    </div>
+    
                 </div>
-
-            </div>
-        )
+            )
+        }
     }
 
     return (
