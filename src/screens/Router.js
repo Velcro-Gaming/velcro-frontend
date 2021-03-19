@@ -3,6 +3,7 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
+    withRouter
 } from "react-router-dom";
 import AuthScreen from './auth/Base';
 import RootScreen from './main/RootScreen';
@@ -19,7 +20,7 @@ import PasswordResetSent from './auth/passwords/PasswordResetSent';
 import PasswordReset from './auth/passwords/PasswordReset';
 import PhoneVerification from "./auth/PhoneVerification";
 
-export default function RouterBase() {
+function RouterBase() {
 
     return (
         <Router>
@@ -68,3 +69,5 @@ export default function RouterBase() {
         </Router>
     );
 }
+
+export default withRouter(RouterBase)

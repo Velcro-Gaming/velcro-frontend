@@ -12,6 +12,7 @@ import {
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ProtectedRoute from '../../components/utils/ProtectedRoute';
 
 class RootScreen extends Component {
     constructor(props) {
@@ -60,8 +61,19 @@ class RootScreen extends Component {
             <div>
                 <Header {...this.props} headerConfig={this.state.headerConfig} />
 
-                <Route render={() => auth.loggedIn ? (
-                    <HomeScreen {...this.props} />
+                {/* <ProtectedRoute>
+                    <Route render={() => auth.loggedIn ? (
+                        <HomeScreen {...this.props} />
+                    ) : (
+                            <LandingScreen {...this.props} />
+                        )
+                    } />
+                </ProtectedRoute> */}
+
+                <Route render={() => auth.user ? (
+                    <ProtectedRoute>
+                        <HomeScreen {...this.props} />
+                    </ProtectedRoute>
                 ) : (
                         <LandingScreen {...this.props} />
                     )

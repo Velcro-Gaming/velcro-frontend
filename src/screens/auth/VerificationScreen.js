@@ -8,7 +8,8 @@ import {
     Redirect
 } from 'react-router-dom'
 import {
-    register
+    register,
+    login
 } from '../../redux/actions/AuthActions'
 
 import Button from '../../components/utils/Button';
@@ -36,7 +37,7 @@ function VerificationScreen(props) {
             signUp: {
                 text: {
                     color: colors.white,
-                    value: "Sign up",
+                    value: "Continue",
                 },
                 styles: {
                     height: '50px',
@@ -64,10 +65,11 @@ function VerificationScreen(props) {
             ],
             headerStyles: {
                 backgroundColor: null
-            }
+            },
+            isVisible: false
         },
         formData: {
-            consoletype: {
+            consoleType: {
                 element: 'select',
                 data: [
                     {
@@ -97,7 +99,7 @@ function VerificationScreen(props) {
                     required: true
                 }
             },
-            referralcode: {
+            referralCode: {
                 element: 'input',
                 value: '',
                 label: true,
@@ -136,11 +138,13 @@ function VerificationScreen(props) {
         headerConfig
     } = ComponentState
 
+    // console.log("props: ", props)
+
 
     const AttemptSubmit = async() => {
-        let payload = {
-            ...routerState.payload
-        }
+        // let payload = {
+        //     ...routerState.payload
+        // }
 
         // let payload = {
         //     emailaddress: "ujeremiah200@gmail.com",	
@@ -148,6 +152,8 @@ function VerificationScreen(props) {
         //     phonenumber: "+2347017525242",
         //     username: "rotimi"
         // }
+
+        let payload = {}
 
         // Validate Fields
         for (let formField in formData) {
@@ -157,69 +163,46 @@ function VerificationScreen(props) {
             if (fieldData.props.required) {
                 if (!fieldData.value || fieldData.value == ' ' || fieldData.value == 0) {
                     // Toast Error Message
-                    toast.error(`${fieldName} field is required!`)
+                    toast.error(`${fieldData.labelText} field is required!`)
                     return
                 }
             }
             payload[fieldName] = fieldData.value
         }
 
-        // let payload = {
-        //     emailaddress: routerState.payload.emailaddress,	
-        //     password: routerState.payload.password,
-        //     phonenumber: routerState.payload.phonenumber,
-        //     username: routerState.payload.username
-        // }
+        console.log("payload: ", payload)      
 
-        console.log("payload: ", payload)
-
-        // await props.register(payload)
-
-        // setComponentState({
-        //     ...ComponentState,
-        //     redirect: '/login'
-        // })
-
-
-        const responseObject = await PostMan('/register', 'post')
+        const responseObject = await PostMan(`/register/${props.auth.user.usersId}`, 'PUT', payload)
         console.log('responseObject: ', responseObject)
-
         if (responseObject.status === 'success') {
-            let bidList = responseObject.data.bids
-            setComponentState({
-                ...ComponentState,
-                bids: bidList
-            })
-        }
+            let responseData = responseObject.data
+            let userData = responseObject.data
+            // Toast Success Message
+            toast.success(responseData.message)
+            //
+            await props.login(userData)
 
-        else if (responseObject.status === 'unauthorized') {
-            // Logout
-            props.logout()
             setComponentState({
                 ...ComponentState,
-                redirect: '/auth/login'
+                redirect: '/'
             })
+
+            // setTimeout(() => {
+            //     setComponentState({
+            //         ...ComponentState,
+            //         redirect: '/'
+            //     })
+            // }, 1500)
         }
-        else {
-            console.log("Error")
+        else if (responseObject.status === 'bad_request') {
+            // Toast Error Message
+            toast.error(responseObject.data.message)
+        }
+        else if (responseObject.status === 'error') {
+            // Toast Error Message
+            toast.error(responseObject.data.message)
         }
     }
-
-    useEffect(() => {
-        if (!routerState) {
-            toast.error("Something Went Wrong")
-            setTimeout(function() {
-                setComponentState({
-                    ...ComponentState,
-                    redirect: '/'
-                })
-            }, 2000)
-        }
-    }, [])
-
-    useEffect(() => {
-        console.log("\nComponent Did Update\n")
-    })
 
     const MainContent = (config) => {
         return (
@@ -240,8 +223,8 @@ function VerificationScreen(props) {
                                 formData: newFormData
                             })}
                             field={{
-                                id: 'consoletype',
-                                config: formData.consoletype
+                                id: 'consoleType',
+                                config: formData.consoleType
                             }}
                         />
 
@@ -256,8 +239,8 @@ function VerificationScreen(props) {
                                 formData: newFormData
                             })}
                             field={{
-                                id: 'referralcode',
-                                config: formData.referralcode
+                                id: 'referralCode',
+                                config: formData.referralCode
                             }}
                         />
 
@@ -402,7 +385,7 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        register
+        login
     }, dispatch)
 }
 

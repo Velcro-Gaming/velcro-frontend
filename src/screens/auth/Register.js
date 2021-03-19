@@ -121,7 +121,7 @@ function Register(props) {
                 required: true,
             }
         },
-        emailaddress: {
+        emailAddress: {
             element: 'input',
             value: 'itsobaa@gmail.com',
             label: true,
@@ -133,7 +133,7 @@ function Register(props) {
                 required: true,
             }
         },
-        phonenumber: {
+        phoneNumber: {
             element: 'input',
             value: '+2347081032420',
             label: true,

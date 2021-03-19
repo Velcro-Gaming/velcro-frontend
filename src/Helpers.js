@@ -14,7 +14,7 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
 
     const setHeaders = () => {
         let headers = {}
-        if (auth.user) { headers['Authorization'] = `JWT ${auth.user.JWT}` }
+        if (auth.user) { headers['Authorization'] = `${auth.user.JWT}` }
         if (stringified) { headers['Content-Type'] = 'application/json' }
         if (stringified) { headers['Accept'] = 'application/json' }
         return headers
@@ -98,7 +98,7 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
         if (responseData.statusCode == 400) {
             responseObject = {
                 data: responseData.data,
-                status: 'Bad request',
+                status: 'bad_request',
             }
         } else if (responseData.statusCode == 401) {
             responseObject = {
@@ -108,7 +108,7 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
         } else if (responseData.statusCode == 404) {
             responseObject = {
                 data: {
-                    message: "Not Found",
+                    message: "not_found",
                     content: responseData.data
                 },
                 status: 'error',

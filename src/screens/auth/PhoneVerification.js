@@ -139,6 +139,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_a',
                 name: 'input_a',
                 type: 'text',
                 placeholder: '',
@@ -164,6 +165,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_b',
                 name: 'input_b',
                 type: 'text',
                 placeholder: '',
@@ -190,6 +192,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_c',
                 name: 'input_c',
                 type: 'text',
                 placeholder: '',
@@ -216,6 +219,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_d',
                 name: 'input_d',
                 type: 'text',
                 placeholder: '',
@@ -242,6 +246,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_e',
                 name: 'input_e',
                 type: 'text',
                 placeholder: '',
@@ -268,6 +273,7 @@ function PhoneVerificationScreen(props) {
             label: false,
             labelText: '',
             props: {
+                id: 'input_f',
                 name: 'input_f',
                 type: 'text',
                 placeholder: '',
@@ -306,12 +312,18 @@ function PhoneVerificationScreen(props) {
     })
 
 
-    const AttemptResendOTP = async() => {
-        console.log("auth: ", auth)
-        let payload = ""
-        
-        const responseObject = await PostMan(`/register/otpresend/${auth.user.users_id}`, 'post', payload)
+    const ClearFields = async () => {
+        let newFormData = FormData
+        for (let formField in FormData) {
+            // CLear fields
+            newFormData[formField].value = ""            
+        }
+        await setFormData({...newFormData})
+    }
 
+
+    const AttemptResendOTP = async() => {        
+        const responseObject = await PostMan(`/register/otpresend/${auth.user.usersId}`, 'post')
         if (responseObject.status === 'success') {
             let responseData = responseObject.data
             // Toast Success Message
@@ -321,7 +333,6 @@ function PhoneVerificationScreen(props) {
             // Toast Error Message
             toast.error(responseObject.data.message)
         }
-
     }
 
 
@@ -341,16 +352,7 @@ function PhoneVerificationScreen(props) {
             console.log(fieldName, fieldData.value)
             if (fieldData.props.required) {
                 if (!fieldData.value || fieldData.value == ' ') {
-                    // Toast Error Message
-                    // toast.error(`${fieldName} field is required!`)
-                    // formValid = false
-                    // return
-
-                    // Toast Error Message
-                    toast.error(`All fields are required!`)
-
                     formValid = false
-        
                     // Stop Loader
                     newPageButtons.submit.loader.isLoading = false
                     await setPageButtons({...newPageButtons})
@@ -360,42 +362,48 @@ function PhoneVerificationScreen(props) {
         }
 
         if (!formValid) {
+            // Toast Error Message
+            toast.error(`All fields are required!`)
             // Stop Loader
             newPageButtons.submit.loader.isLoading = false
             return setPageButtons({...newPageButtons})
         }
 
-        console.log("otp: ", otp)
-
         payload = {
-            userOtp: otp,
-            // userOtp: 155889,
-            userId: auth.user.users_id
+            userOtp: parseInt(otp),
+            userId: auth.user.usersId
         }
 
-        console.log("payload: ", payload)
-        
-        const responseObject = await PostMan('/otp/unverified', 'post', payload, true)
-        console.log('responseObject: ', responseObject)
+        const responseObject = await PostMan('/register/otp', 'post', payload, true)
 
-        // Stop Loader
-        newPageButtons.submit.loader.isLoading = false
-        await setPageButtons({...newPageButtons})
+        // // Stop Loader
+        // newPageButtons.submit.loader.isLoading = false
+        // await setPageButtons({...newPageButtons})
 
         if (responseObject.status === 'success') {
+            // Toast Error Message
+            toast.success(`Your account is now active`)
 
-            let responseData = responseObject.data
+            setTimeout(async()=> {
+                // Stop Loader
+                newPageButtons.submit.loader.isLoading = false
+                await setPageButtons({ ...newPageButtons })
 
-            console.log("responseData: ", responseData)
+                // Logout
+                props.logout()
+                return setRedirect("/login")
+                
+                await props.login(auth.user)
+                return setRedirect("/")
 
+            }, 1500)
+        }
 
-            await props.login(auth.user)
+        if (responseObject.status === 'bad_request') {
+            // Toast Error Message
+            toast.error(responseObject.data.message)
 
-            return setRedirect("/")
-        
-
-
-            setRedirect("/")
+            return ClearFields()
         }
 
         else if (responseObject.status === 'error') {
@@ -459,6 +467,9 @@ function PhoneVerificationScreen(props) {
                                         let oldValue = String(newFormData.inputA.value)[0]
                                         newFormData.inputA.value = oldValue
                                     }
+                                    // Focus on Next field
+                                    document.getElementById('input_b').focus()
+                                    // Update FormData
                                     return setFormData({...newFormData})
                                 }}
                                 field={{
@@ -474,6 +485,9 @@ function PhoneVerificationScreen(props) {
                                         let oldValue = String(newFormData.inputB.value)[0]
                                         newFormData.inputB.value = oldValue
                                     }
+                                    // Focus on Next field
+                                    document.getElementById('input_c').focus()
+                                    // Update FormData
                                     return setFormData({...newFormData})
                                 }}
                                 field={{
@@ -489,6 +503,9 @@ function PhoneVerificationScreen(props) {
                                         let oldValue = String(newFormData.inputC.value)[0]
                                         newFormData.inputC.value = oldValue
                                     }
+                                    // Focus on Next field
+                                    document.getElementById('input_d').focus()
+                                    // Update FormData
                                     return setFormData({...newFormData})
                                 }}
                                 field={{
@@ -504,6 +521,9 @@ function PhoneVerificationScreen(props) {
                                         let oldValue = String(newFormData.inputD.value)[0]
                                         newFormData.inputD.value = oldValue
                                     }
+                                    // Focus on Next field
+                                    document.getElementById('input_e').focus()
+                                    // Update FormData
                                     return setFormData({...newFormData})
                                 }}
                                 field={{
@@ -520,6 +540,9 @@ function PhoneVerificationScreen(props) {
                                         let oldValue = String(newFormData.inputE.value)[0]
                                         newFormData.inputE.value = oldValue
                                     }
+                                    // Focus on Next field
+                                    document.getElementById('input_f').focus()
+                                    // Update FormData
                                     return setFormData({...newFormData})
                                 }}
                                 field={{

@@ -26,6 +26,8 @@ function Middleware(props) {
         auth
     } = props
 
+    console.log("auth: ", auth)
+
     // if (auth.user && auth.user.verification === "unverified") {
     //     return <Redirect to={"/phone-verification"} />
     // }
@@ -52,11 +54,11 @@ function Middleware(props) {
     
     // useEffect(() => {
 
-        // console.log("user: ", auth.user)
-        // console.log("location: ", location)
-        // console.log("props: ", props)
+    //     // console.log("user: ", auth.user)
+    //     // console.log("location: ", location)
+    //     // console.log("props: ", props)
 
-        // OnBoard()
+    //     OnBoard()
         
         
     // })

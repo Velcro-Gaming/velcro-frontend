@@ -61,9 +61,9 @@ export default function GameCard(props) {
         //     imageUrl: null,
         //     status: "swapped"
         // }
-        <div className="col-12 col-md-6 col-lg-3">
+        <div className="col-12 col-md-6 col-lg-3 my-3">
             <div className="card" style={styles.card}>
-                <img src={BlankImage} style={{ borderRadius: "5px" }} />
+                <img src={BlankImage} style={styles.gameCoverImage} />
                 
                 <div style={styles.title}>
                     {config.name}
@@ -146,10 +146,15 @@ const styles = {
         fontWeight: "bold",
         fontSize: "16px",
         lineHeight: "22px",
-
-        margin: "5px 0"
+        margin: "5px 0",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
     },
-
+    gameCoverImage: {
+        objectFit: "cover",
+        borderRadius: "5px",
+    },
     attrib: {
         fontFamily: "Nunito Sans",
         fontStyle: "normal",
