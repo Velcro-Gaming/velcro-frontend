@@ -10,7 +10,320 @@
         "success": "#52F07F",
         "error": "#000000",
         "info": "#F5F5FC",
+        "danger": "#FF0000",
+        "dark": "#2F2F2F",
 
         "background": "#E5E5E5"
+    },
+    "cities": {
+        "Lagos": [
+            {
+                    "value": "Apapa",
+                    "display": "Apapa",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Badagri",
+                    "display": "Badagri",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Epe",
+                    "display": "Epe",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Ibeju",
+                    "display": "Ibeju",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Iganmu",
+                    "display": "Iganmu",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Ikeja",
+                    "display": "Ikeja",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Ikorodu",
+                    "display": "Ikorodu",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Ladipo",
+                    "display": "Ladipo",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Lagos",
+                    "display": "Lagos",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Lagos Island",
+                    "display": "Lagos Island",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Lekki",
+                    "display": "Lekki",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Magodo",
+                    "display": "Magodo",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Mainland",
+                    "display": "Mainland",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Mushin",
+                    "display": "Mushin",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Ojo",
+                    "display": "Ojo",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Oyingbo",
+                    "display": "Oyingbo",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Surulere",
+                    "display": "Surulere",
+                    "state": "Lagos"
+            },
+            {
+                    "value": "Victoria Island",
+                    "display": "Victoria Island",
+                    "state": "Lagos"
+            }
+        ],
+        "Abuja": [
+            {
+                    "value": "Asokoro",
+                    "display": "Asokoro",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Central",
+                    "display": "Central",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Chika",
+                    "display": "Chika",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Dakibiyu",
+                    "display": "Dakibiyu",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Dakwo",
+                    "display": "Dakwo",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Dape",
+                    "display": "Dape",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Duboyi",
+                    "display": "Duboyi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Durumi",
+                    "display": "Durumi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Dutse",
+                    "display": "Dutse",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Gaduwa",
+                    "display": "Gaduwa",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Galadimawa",
+                    "display": "Galadimawa",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Garki I",
+                    "display": "Garki I",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Garki II",
+                    "display": "Garki II",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Gudu",
+                    "display": "Gudu",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Guzape",
+                    "display": "Guzape",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Gwagwalada",
+                    "display": "Gwagwalada",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Gwarimpa",
+                    "display": "Gwarimpa",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Idu Industrial",
+                    "display": "Idu Industrial",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Institution and Research",
+                    "display": "Institution and Research",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Jabi",
+                    "display": "Jabi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Jahi",
+                    "display": "Jahi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Jukwoyi",
+                    "display": "Jukwoyi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kado",
+                    "display": "Kado",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kafe",
+                    "display": "Kafe",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Karmo",
+                    "display": "Karmo",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Karu",
+                    "display": "Karu",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Katampe",
+                    "display": "Katampe",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kaura",
+                    "display": "Kaura",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kubwa",
+                    "display": "Kubwa",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kuchigworo",
+                    "display": "Kuchigworo",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Kukwuaba",
+                    "display": "Kukwuaba",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Lokogoma",
+                    "display": "Lokogoma",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Lugbe",
+                    "display": "Lugbe",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Mabuchi",
+                    "display": "Mabuchi",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Maitama",
+                    "display": "Maitama",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Nbora",
+                    "display": "Nbora",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Nyanya",
+                    "display": "Nyanya",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Pyakassa",
+                    "display": "Pyakassa",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Utako",
+                    "display": "Utako",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Wumba",
+                    "display": "Wumba",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Wuse 1",
+                    "display": "Wuse 1",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Wuse II",
+                    "display": "Wuse II",
+                    "state": "Abuja"
+            },
+            {
+                    "value": "Wuye",
+                    "display": "Wuye",
+                    "state": "Abuja"
+            }
+        ]
     }
 }

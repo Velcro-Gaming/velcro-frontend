@@ -21,8 +21,10 @@ import { connect } from 'react-redux';
 import { FaChevronDown } from 'react-icons/fa'
 import { AiOutlineSearch } from 'react-icons/ai'
 
+import UploadGameModal from '../../components/main/UploadGameModal'
 
 function Header(props) {
+    const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
 
     const initialState = {
         redirect: null,
@@ -49,7 +51,7 @@ function Header(props) {
                         color: colors.white
                     },
                     isProtected: true,
-                    onClick: () => { },
+                    onClick: () => setShowUploadGameModal(true),
                 },
                 {
                     text: {
@@ -157,7 +159,6 @@ function Header(props) {
         return [firstName,lastName]
     }
     const getUserInitials = () => {
-        console.log(auth)
         // props.logout()
         if (auth.user.fullName) {
             let userFullName = auth.user.fullName
@@ -169,10 +170,16 @@ function Header(props) {
         
     }
 
-    console.log("auth.user: ", auth.user)
-
     return (
         <div style={{ ...styles.container, backgroundColor: headerStyles && headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
+
+            {
+                ShowUploadGameModal ? (
+                    <UploadGameModal hideModal={() => setShowUploadGameModal(false)} />
+                ) : null
+            }
+
+
             <div className="container" style={styles.navbar}>
                 <Link to="/">
                     <img

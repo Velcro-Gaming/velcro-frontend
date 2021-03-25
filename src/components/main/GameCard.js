@@ -63,23 +63,29 @@ export default function GameCard(props) {
         // }
         <div className="col-12 col-md-6 col-lg-3 my-3">
             <div className="card" style={styles.card}>
-                <img src={BlankImage} style={styles.gameCoverImage} />
+                {/* <img src={BlankImage} style={styles.gameCoverImage} /> */}
+                {
+                    config.adminGames.coverImage ? (
+                        <img src={config.adminGames.coverImage} style={styles.gameCoverImage} />
+                    ) : <img src={BlankImage} style={styles.gameCoverImage} />
+                }
+                
                 
                 <div style={styles.title}>
-                    {config.name}
+                    {config.adminGames.name}
                 </div>
 
                 <div style={styles.attrib}>
                     Number of Orders:
                     <span style={{ color: colors.grey, margin: "0 5px" }}>
-                        {config.numberOfOrders}
+                        {config.adminGames.numberOfOrders}
                     </span>
                 </div>
 
                 <div style={styles.attrib}>
                     Amount Earned:
                     <span style={{ color: colors.grey, margin: "0 5px" }}>
-                        ₦{config.amountEarned}
+                        ₦{config.adminGames.amountEarned}
                     </span>
                 </div>
 
@@ -152,6 +158,7 @@ const styles = {
         textOverflow: "ellipsis",
     },
     gameCoverImage: {
+        height: "200px",
         objectFit: "cover",
         borderRadius: "5px",
     },

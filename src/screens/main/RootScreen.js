@@ -61,15 +61,6 @@ class RootScreen extends Component {
             <div>
                 <Header {...this.props} headerConfig={this.state.headerConfig} />
 
-                {/* <ProtectedRoute>
-                    <Route render={() => auth.loggedIn ? (
-                        <HomeScreen {...this.props} />
-                    ) : (
-                            <LandingScreen {...this.props} />
-                        )
-                    } />
-                </ProtectedRoute> */}
-
                 <Route render={() => auth.user ? (
                     <ProtectedRoute>
                         <HomeScreen {...this.props} />

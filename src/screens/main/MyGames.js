@@ -7,31 +7,33 @@ import IsDesktop from '../../components/utils/breakpoints/IsDesktop'
 import IsTablet from '../../components/utils/breakpoints/IsTablet'
 import IsPhone from '../../components/utils/breakpoints/IsPhone'
 import GameCard from '../../components/main/GameCard'
+import UploadGameModal from '../../components/main/UploadGameModal'
+import { PostMan } from '../../Helpers'
 
 function MyGamesScreen(props) {
-    // const [MyGames, setMyGames] = useState([])
+    const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
     const [MyGames, setMyGames] = useState([
-        {
-            name: "Fifa 20",
-            numberOfOrders: 2,
-            amountEarned: 20000,
-            imageUrl: null,
-            status: "swapped"
-        },
-        {
-            name: "GTA V",
-            numberOfOrders: 2,
-            amountEarned: 20000,
-            imageUrl: null,
-            status: "rented"
-        },
-        {
-            name: "Call of duty Modern Warfare",
-            numberOfOrders: 2,
-            amountEarned: 20000,
-            imageUrl: null,
-            status: "available"
-        },
+        // {
+        //     name: "Fifa 20",
+        //     numberOfOrders: 2,
+        //     amountEarned: 20000,
+        //     imageUrl: null,
+        //     status: "swapped"
+        // },
+        // {
+        //     name: "GTA V",
+        //     numberOfOrders: 2,
+        //     amountEarned: 20000,
+        //     imageUrl: null,
+        //     status: "rented"
+        // },
+        // {
+        //     name: "Call of duty Modern Warfare",
+        //     numberOfOrders: 2,
+        //     amountEarned: 20000,
+        //     imageUrl: null,
+        //     status: "available"
+        // },
     ])
     const [ComponentState, setComponentState] = useState({
         activeScreen: {
@@ -85,13 +87,7 @@ function MyGamesScreen(props) {
                     },
                     color: colors.white
                 },
-                onClick: () => setComponentState({
-                    ...ComponentState,
-                    activeScreen: {
-                        name: 'myGames',
-                        path: '/'
-                    }
-                }),
+                onClick: () => setShowUploadGameModal(true),
             },
             
         }
@@ -101,11 +97,26 @@ function MyGamesScreen(props) {
         buttons
     } = ComponentState
 
+    const FetchMyGames = async () => {
+        const responseObject = await PostMan(`/myGames`, 'GET')
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            let myGames = responseData.data
+            // Save Games to state
+            await setMyGames(myGames)
+        }
+        else { }
+    }
+
     useEffect(()=>{
+        // Set Active screen
         props.setActiveScreen({
             name: 'myGames',
             path: '/'
         })
+
+        // Fetch User Games
+        FetchMyGames()
     }, [])
 
     const MainContent = (config) => {        
@@ -185,13 +196,21 @@ function MyGamesScreen(props) {
                     })
                 }
             </IsPhone>
+
+            {
+                ShowUploadGameModal? (
+                    <UploadGameModal hideModal={() => setShowUploadGameModal(false)} />
+                ) : null
+            }
+            
         </div>
     )
 }
 
 const styles = {
     container: {
-        padding: '0 0 100px 0'
+        padding: '0 0 100px 0',
+        position: "relative",
     },
     prompt: {
         // fontFamily: 'Roboto',

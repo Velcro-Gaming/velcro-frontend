@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import {
     colors
 } from '../../App.json'
+import SearchableInput from './SearchableInput';
 
 // import { AiOutlineSearch } from 'react-icons/ai'
 
@@ -12,6 +13,7 @@ export default class FormField extends Component {
     }
 
     changeHandler = (event, id) => {
+        // console.log("event: ", event)
         let {
             change,
             formData,
@@ -19,6 +21,17 @@ export default class FormField extends Component {
         const newFormData = formData;
         newFormData[id].value = event.target.value;
 
+        // Update parent component
+        change(newFormData)
+    };
+
+    checkboxOnClick = (field) => {
+        let {
+            change,
+            formData,
+        } = this.props
+        const newFormData = formData;
+        newFormData[field.id].checked = !newFormData[field.id].checked;
         // Update parent component
         change(newFormData)
     };
@@ -73,6 +86,7 @@ export default class FormField extends Component {
                     </div>
                 );
                 break;
+            
             case ('select'):
                 formTemplate = (
 
@@ -110,6 +124,27 @@ export default class FormField extends Component {
 
                     </div>
                 );
+                break;
+
+            case ('checkbox'):
+                formTemplate = (
+                    <div style={fieldConfig.wrapperProps ? fieldConfig.wrapperProps.style : styles.fieldWrapper}>
+                        <label className="custom-checkbox">
+                            <input 
+                                {...fieldConfig.props}
+                                checked={fieldConfig.checked}
+                                // onChange={(event) => this.changeHandler(event, field.id)}
+                                onClick={() => this.checkboxOnClick(field)}
+                                style={{ marginRight: "15px" }}
+                            />
+                            <span class="checkmark"></span>
+
+                            {fieldConfig.label ? fieldConfig.labelText : null}
+                        </label>
+
+                    </div>
+                )
+            
                 break;
             default:
                 formTemplate = null

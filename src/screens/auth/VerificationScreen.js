@@ -142,17 +142,6 @@ function VerificationScreen(props) {
 
 
     const AttemptSubmit = async() => {
-        // let payload = {
-        //     ...routerState.payload
-        // }
-
-        // let payload = {
-        //     emailaddress: "ujeremiah200@gmail.com",	
-        //     password: "12345678",
-        //     phonenumber: "+2347017525242",
-        //     username: "rotimi"
-        // }
-
         let payload = {}
 
         // Validate Fields
@@ -186,13 +175,6 @@ function VerificationScreen(props) {
                 ...ComponentState,
                 redirect: '/'
             })
-
-            // setTimeout(() => {
-            //     setComponentState({
-            //         ...ComponentState,
-            //         redirect: '/'
-            //     })
-            // }, 1500)
         }
         else if (responseObject.status === 'bad_request') {
             // Toast Error Message
