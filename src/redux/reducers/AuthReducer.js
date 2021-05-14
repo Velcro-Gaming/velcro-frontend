@@ -23,14 +23,16 @@ const AuthReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 loggedIn: true,
-                user: action.payload
+                user: action.payload.user,
+                accessToken: action.payload.token
             }
-        case AuthActionTypes.PARTIAL_LOGIN:
+
+        case AuthActionTypes.UPDATE_USER:
             return {
                 ...state,
-                loggedIn: false,
                 user: action.payload
             }
+
         case AuthActionTypes.LOGOUT:
             return {
                 ...state,

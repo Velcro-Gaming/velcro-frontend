@@ -1,8 +1,8 @@
 export const AuthActionTypes = {
     REGISTER: "REGISTER",
-    SET_FIRST_TIME_USER: "SET_FIRST_TIME_USER",
     LOGIN: "LOGIN",
-    PARTIAL_LOGIN: "PARTIAL_LOGIN",
+    SET_FIRST_TIME_USER: "SET_FIRST_TIME_USER",
+    UPDATE_USER: "UPDATE_USER",
     LOGOUT: "LOGOUT",
 }
 
@@ -13,9 +13,9 @@ export const login = (payload) => {
     }
 }
 
-export const partialLogin = (payload) => {
+export const updateUser = (payload) => {
     return {
-        type: AuthActionTypes.PARTIAL_LOGIN,
+        type: AuthActionTypes.UPDATE_USER,
         payload
     }
 }

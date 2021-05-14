@@ -3,6 +3,9 @@ import {
     apiUrl
 } from './App.json';
 
+import {
+    logout
+} from './redux/actions/AuthActions'
 
 export const PostMan = async(uriPath, method, payload, stringified=true) => {
     let responseObject
@@ -14,15 +17,18 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
 
     const setHeaders = () => {
         let headers = {}
-        if (auth.user) { headers['Authorization'] = `${auth.user.JWT}` }
+        if (auth.user) { headers['Authorization'] = `jwt ${auth.accessToken}` }
         if (stringified) { headers['Content-Type'] = 'application/json' }
         if (stringified) { headers['Accept'] = 'application/json' }
+        headers['Accept'] = 'application/json'
         return headers
     }
 
-    console.log("payload: ", payload)
+    // console.log("payload: ", payload)
 
-    console.log("stringified: ", stringified)
+    // console.log("stringified: ", stringified)
+
+    // console.log("apiUrl + uriPath: ", apiUrl + uriPath)
     
     await fetch(apiUrl + uriPath, {
         method: method,
@@ -67,10 +73,11 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
             }
 
             if (response.status === 401) {
-                return {
-                    statusCode: response.status,
-                    data: await response.json(),
-                }
+                return store.dispatch(logout())
+                // return {
+                //     statusCode: response.status,
+                //     data: await response.json(),
+                // }
             }
 
             if (response.status === 404) {
@@ -139,3 +146,6 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
     })
     return responseObject
 }
+
+
+export const isMobileDevice = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));

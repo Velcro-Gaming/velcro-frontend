@@ -1,11 +1,15 @@
 {
-    "apiUrl": "https://server-velcro-gaming.herokuapp.com/api/v1",
+    "apiUrl": "http://api.velcrogaming.local:8080/v1/",
+    "apiUrl_": "https://server-velcro-gaming.herokuapp.com/api/v1",
     "colors": {
         "primary": "#641E6E",
         "secondary": "#18181B",
+        "tetiary": "#AB92BF",
         "white": "#FFFFFF",
         "black": "#000000",
         "grey": "#A7A7A7",
+        "grey2": "#F1F1F1",
+        "grey3": "#8A8C8E",
 
         "success": "#52F07F",
         "error": "#000000",
