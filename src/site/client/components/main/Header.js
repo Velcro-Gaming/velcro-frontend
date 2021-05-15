@@ -7,7 +7,9 @@ import FormField from '../../../../utils/FormField'
 import {
     Link,
     Redirect,
-    withRouter
+    withRouter,
+    useLocation,
+    useRouteMatch
 } from 'react-router-dom'
 import {
     logout
@@ -164,6 +166,18 @@ function Header(props) {
         isVisible=true,
     } = headerConfig
 
+
+    const match = useRouteMatch();
+    const location = useLocation()
+
+    const { state } = location
+
+    console.log("match: ", match)
+    console.log("match params: ", match.params)
+
+    console.log("location: ", location)
+
+
     
     // function filterGamesList (query) {
 
@@ -212,24 +226,8 @@ function Header(props) {
     }
 
     const GoToSearchResult = (game) => {
-        console.log("game: ", game)
-
-        // {
-        //     pathname: `/commodities/${product.slug}`,
-        //     state: {
-        //         product: product
-        //     }
-        // }
-        // setRedirect({
-        //     pathname: '/search',
-        //     state: {
-        //         game: game,
-        //     }
-        // })
-        // return setRedirect(`/search?game=${game.slug}`)
-
-        return setRedirect(`/search/${game.slug}`)
-        // return <Redirect to={`/search/${game.slug}`} />
+        // return setRedirect(`/search/${game.slug}`)
+        window.location = `/search/${game.slug}`
     }
 
     if (redirect) {
