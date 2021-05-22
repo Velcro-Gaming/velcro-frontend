@@ -1,5 +1,5 @@
 {
-    "apiUrl": "http://api.velcrogaming.com/v1/",
+    "apiUrl": "https://api.velcrogaming.com/v1/",
     "apiUrl_": "http://api.velcrogaming.local:8100/v1/",
     "apiUrlOld": "https://server-velcro-gaming.herokuapp.com/api/v1",
     "colors": {

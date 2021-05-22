@@ -8,9 +8,13 @@ import { bindActionCreators } from 'redux'
 import { colors } from '../../../App.json'
 import Dropdown from '../../../utils/Dropdown'
 
-function Header() {
+function Header(props) {
+    const {
+        auth
+    } = props
+
     const userToggleDropdown = {
-        title: "Riyatola",
+        title: auth.user && auth.user.username,
         data: [
             {
                 name: "Change Password",
@@ -32,10 +36,14 @@ function Header() {
                 />
             </Link>
 
-            <Dropdown
-                title={userToggleDropdown.title}
-                data={userToggleDropdown.data}
-            />
+            {
+                auth.loggedIn ? (
+                    <Dropdown
+                        title={userToggleDropdown.title}
+                        data={userToggleDropdown.data}
+                    />
+                ) : null
+            }
         </div>
     )
 }

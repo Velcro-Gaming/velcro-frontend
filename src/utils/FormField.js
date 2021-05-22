@@ -15,7 +15,7 @@ export default class FormField extends Component {
     }
 
     changeHandler = (event, id) => {
-        console.log("event: ", event)
+        // console.log("event: ", event)
 
         let eventValue
         let {
