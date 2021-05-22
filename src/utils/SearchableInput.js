@@ -26,6 +26,17 @@ export default function SearchableInput(props) {
         change(newFormData)
     };
 
+    const handleKeyUp = (event) => {
+        const {
+            keyUpHandler,
+        } = props
+
+        if (event.keyCode === 13 && typeof keyUpHandler !== "undefined") {
+            // Update parent component
+            keyUpHandler()
+        }
+    }
+
     const showLabel = (show, label) => {
         return show ? (
             <div style={styles.label}>
@@ -88,6 +99,7 @@ export default function SearchableInput(props) {
                         onChange={(event) => changeHandler(event, field.id)}
                         style={fieldConfig.styles ? fieldConfig.styles : styles.input}
                         className={"place-holder-white"}
+                        onKeyUp={(event) => handleKeyUp(event)}
                     />
                 )
             }

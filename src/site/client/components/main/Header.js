@@ -32,10 +32,9 @@ function Header(props) {
     const [redirect, setRedirect] = useState(false)
     const [Searching, setSearching] = useState(false)
     const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
-    const [FilteredGameListings, setFilteredGameListings] = useState([])
+    const [GameSearchResult, setGameSearchResult] = useState([])
     const [SelectedGameListing, setSelectedGameListing] = useState(null)
-    const AllGameListings = []
-    const [Notification, setNotification] = useState(null)
+    const [Notification, setNotification] = useState(false)
     const [HeaderConfig, setHeaderConfig] = useState({
         authHeaderButtons: [
             {
@@ -172,25 +171,23 @@ function Header(props) {
 
     const { state } = location
 
-    console.log("match: ", match)
-    console.log("match params: ", match.params)
+    // console.log("match: ", match)
+    // console.log("match params: ", match.params)
 
-    console.log("location: ", location)
+    // console.log("location: ", location)
 
 
-    
-    // function filterGamesList (query) {
-
-    const filterGamesList = async (query) => {
+    const AttemptGameSearch = (query, timer = null) => {
         let queryFormattedToLowerCase = String(query).toLocaleLowerCase()
-        if (queryFormattedToLowerCase.length === 0) {
-            return setFilteredGameListings([])
-        }
 
-        let searching =  setTimeout(async() => {
+        console.log("queryFormattedToLowerCase: ", queryFormattedToLowerCase)
+
+        //
+        const _doGameSearch = async (query) => {
+            
             // Search: Do Game Query
-            const responseObject = await PostMan(`listing/games/?q=${query}`, 'GET')
-            // const responseObject = await PostMan(`listing/games/`, 'GET')
+            const responseObject = await PostMan(`listing/games/?q=${queryFormattedToLowerCase}`, 'GET')
+
             if (responseObject.status === 'success') {
                 let responseData = responseObject.data
                 let listingsGameList = responseData.games
@@ -198,14 +195,69 @@ function Header(props) {
                     let gameNameFormattedToLowerCase = String(game.name).toLowerCase()
                     return gameNameFormattedToLowerCase.startsWith(queryFormattedToLowerCase)
                 })
-                return setFilteredGameListings(queryset)
+
+                // Stop Searching
+                setSearching(false)
+
+                return setGameSearchResult(queryset)
             }
             else { }
+        }
 
-        }, 1500);
-        setSearching(searching)
+        if (timer) {
+            console.log(1)
+            if (queryFormattedToLowerCase.length === 0) {
+                return
+            } else {
+                let searching = setTimeout(async () => {
+                    _doGameSearch(query)
+                }, timer);
+                setSearching(searching)
+            }
+        } else {
+            if (queryFormattedToLowerCase.length === 0) {
+                return window.location = "/search"
+            } else {
+                return window.location = `/search/${queryFormattedToLowerCase}`
+            }
+        }
 
     }
+
+    
+    // const AttemptGameSearch = (query, timer=null) => {
+    //     //
+    //     const _doGameSearch = async (query) => {
+    //         let queryFormattedToLowerCase = String(query).toLocaleLowerCase()
+    //         if (queryFormattedToLowerCase.length === 0) {
+    //             return window.location = "/search"
+    //         }
+
+    //         // Search: Do Game Query
+    //         const responseObject = await PostMan(`listing/games/?q=${queryFormattedToLowerCase}`, 'GET')
+
+    //         if (responseObject.status === 'success') {
+    //             let responseData = responseObject.data
+    //             let listingsGameList = responseData.games
+    //             let queryset = listingsGameList.filter(game => {
+    //                 let gameNameFormattedToLowerCase = String(game.name).toLowerCase()
+    //                 return gameNameFormattedToLowerCase.startsWith(queryFormattedToLowerCase)
+    //             })
+    //             return setGameSearchResult(queryset)
+    //         }
+    //         else { }
+    //     }
+
+    //     if (timer) {
+    //         let searching = setTimeout(async () => {
+    //             _doGameSearch(query)
+    //         }, timer);
+    //         setSearching(searching)
+    //     } else {
+    //         _doGameSearch(query)
+    //     }      
+
+    // }
 
     const getUserNames = () => {
         let userFullName = auth.user.name
@@ -226,7 +278,7 @@ function Header(props) {
     }
 
     const GoToSearchResult = (game) => {
-        // return setRedirect(`/search/${game.slug}`)
+        // 
         window.location = `/search/${game.slug}`
     }
 
@@ -267,15 +319,24 @@ function Header(props) {
                                             setSearching(false)
                                         }
                                         // Filter Game List
-                                        filterGamesList(newFormData.search.value)
+                                        AttemptGameSearch(newFormData.search.value, 1200)
+                                    }}
+                                    keyUpHandler={() => {
+                                        console.log(Searching)
+                                        console.log(GameSearchResult)
+                                        if (Searching || GameSearchResult.length > 0) {
+                                            return
+                                        } else {
+                                            AttemptGameSearch(formData.search.value)
+                                        }
                                     }}
                                     field={{
                                         id: 'search',
                                         config: formData.search
                                     }}
 
-                                    filteredList={FilteredGameListings}
-                                    setFilteredList={setFilteredGameListings}
+                                    filteredList={GameSearchResult}
+                                    setFilteredList={setGameSearchResult}
                                     selected={SelectedGameListing}
                                     setSelectedObject={(game) => GoToSearchResult(game)}
                                 />

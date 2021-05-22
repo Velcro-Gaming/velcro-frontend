@@ -21,6 +21,7 @@ import PasswordResetSent from './screens/auth/passwords/PasswordResetSent';
 import PasswordReset from './screens/auth/passwords/PasswordReset';
 import PhoneVerification from "./screens/auth/PhoneVerification";
 import SearchScreen from "./screens/SearchScreen";
+import OrderScreen from "./screens/OrderScreen";
 
 function RouterBase() {
 
@@ -32,6 +33,10 @@ function RouterBase() {
 
             <Switch>
 
+                <Route path="/search" component={SearchScreen} />
+
+                <Route path="/order" component={OrderScreen} />
+                
                 <Route exact path="/login">
                     <LoginScreen />
                 </Route>
@@ -44,7 +49,6 @@ function RouterBase() {
                 <Route path="/register/verification">
                     <VerificationScreen />
                 </Route>
-
 
                 <Route path="/phone-verification">
                     <PhoneVerification />
@@ -63,8 +67,6 @@ function RouterBase() {
 
                 <Route exact path="/contact-us" component={ContactUs} />
                 <Route exact path="/terms-and-conditions" component={TermsCondition} />
-
-                <Route path="/search" component={SearchScreen} />
 
                 <Route path="/" component={RootScreen} />
                 

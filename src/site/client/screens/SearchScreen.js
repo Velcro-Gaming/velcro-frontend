@@ -99,7 +99,6 @@ function SearchScreen(props) {
 
 const styles = {
     wrapper: {
-        // height: '100%',
         padding: "69px 0 0 0",
         backgroundColor: colors.background,
     },

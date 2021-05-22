@@ -73,6 +73,17 @@ export default class FormField extends Component {
         change(newFormData)
     };
 
+    handleKeyUp = (event) => {
+        const {
+            keyUpHandler,
+        } = this.props
+
+        if (event.keyCode === 13 && typeof keyUpHandler !== "undefined") {
+            // Update parent component
+            keyUpHandler()
+        }
+    }
+
     showLabel = (show, label) => {
         return show ? (
             <div style={styles.label}>
@@ -128,6 +139,7 @@ export default class FormField extends Component {
                                     {...fieldConfig.props}
                                     value={fieldConfig.value}
                                     onChange={(event) => this.changeHandler(event, field.id)}
+                                    onKeyUp={(event) => this.handleKeyUp(event)}
                                     style={fieldConfig.styles ? fieldConfig.styles : styles.input}
                                     // className={fieldConfig.className}
                                     className={"place-holder-white"}
