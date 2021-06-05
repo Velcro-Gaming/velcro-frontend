@@ -24,6 +24,7 @@ import PasswordReset from './screens/auth/passwords/PasswordReset';
 import PhoneVerification from "./screens/auth/PhoneVerification";
 import SearchScreen from "./screens/SearchScreen";
 import OrderScreen from "./screens/OrderScreen";
+import ProtectedRoute from "../../utils/ProtectedRoute";
 // import ProtectedRoute from "../../utils/ProtectedRoute";
 
 function RouterBase() {
@@ -39,11 +40,26 @@ function RouterBase() {
                     <Route path="/account" component={AccountProfileScreen} />
                 </ProtectedRoute> */}
 
-                <Route path="/account" component={AccountProfileScreen} />
+                {/* <Route path="/account" component={AccountProfileScreen} /> */}
+                <Route path="/account">
+                    <ProtectedRoute>
+                        <AccountProfileScreen />
+                    </ProtectedRoute>
+                </Route>
 
-                <Route path="/search" component={SearchScreen} />
+                {/* <Route path="/search" component={SearchScreen} /> */}
+                <Route path="/search">
+                    <ProtectedRoute>
+                        <SearchScreen />
+                    </ProtectedRoute>
+                </Route>
 
-                <Route path="/order" component={OrderScreen} />
+                {/* <Route path="/order" component={OrderScreen} /> */}
+                <Route path="/order">
+                    <ProtectedRoute>
+                        <OrderScreen />
+                    </ProtectedRoute>
+                </Route>
                 
                 <Route exact path="/login">
                     <LoginScreen />

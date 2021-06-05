@@ -18,12 +18,15 @@ import { connect } from 'react-redux';
 import {
     updateUser
 } from '../../../redux/actions/AuthActions'
+import { useHistory } from 'react-router';
 
 
 function AccountProfileScreen(props) {
     const {
         auth
     } = props
+
+    const history = useHistory()
 
     console.log("auth.user: ", auth.user)
 
@@ -346,250 +349,252 @@ function AccountProfileScreen(props) {
 
 
     }
+
+    const GoBack = () => {
+        return history.goBack()
+    }
     
 
     return (
-        <ProtectedRoute>
-            <div>
-                <Header headerConfig={HeaderConfig} />
+        <div>
+            <Header headerConfig={HeaderConfig} />
 
-                <div style={styles.container}>
-                    <div style={styles.bannerWrapper}>
-                        <div className="container" style={styles.bannerContent}>
+            <div style={styles.container}>
+                <div style={styles.bannerWrapper}>
+                    <div className="container" style={styles.bannerContent}>
 
-                            <div style={styles.goBack}>
-                                <FaChevronLeft size={10} />
-                                <span style={{ marginLeft: '7px' }}>Back</span>
-                            </div>
+                        <div onClick={() => GoBack()} style={styles.goBack}>
+                            <FaChevronLeft size={10} />
+                            <span style={{ marginLeft: '7px' }}>Back</span>
+                        </div>
 
-                            <div style={styles.profileImage}>
-                                <img style={styles.imageWrapper} src={AviDefault} />
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
+                        <div style={styles.profileImage}>
+                            <img style={styles.imageWrapper} src={AviDefault} />
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
 
-                                    position: 'absolute',
-                                    bottom: '15px',
-                                    right: '-90px',
-                                }}>
-                                    <span style={{ backgroundColor: colors.grey, color: colors.primary, height: '25px', width: '25px', borderRadius: '50%', textAlign: 'center' }}>
-                                        <AiOutlineCamera />
-                                    </span>
+                                position: 'absolute',
+                                bottom: '15px',
+                                right: '-90px',
+                            }}>
+                                <span style={{ backgroundColor: colors.grey, color: colors.primary, height: '25px', width: '25px', borderRadius: '50%', textAlign: 'center' }}>
+                                    <AiOutlineCamera />
+                                </span>
 
-                                    <p style={{ color: colors.grey3, margin: '0 0 0 5px', fontSize: '15px' }}>
-                                        Change Avatar
+                                <p style={{ color: colors.grey3, margin: '0 0 0 5px', fontSize: '15px' }}>
+                                    Change Avatar
                                 </p>
-                                </div>
                             </div>
-
-                            <div style={styles.pageTitle}>
-                                Account
-                        </div>
-                        </div>
-                    </div>
-
-
-                    <div className="container" style={{ backgroundColor: colors.grey2, padding: "50px 35px" }}>
-
-                        <div className={"row"} style={{ padding: "0 30px" }}>
-
-                            <div className="col-12 col-md-6">
-                                <div style={styles.sectionTitle}>
-                                    Referral Code
-                            </div>
-
-                                <div className={"row"}>
-                                    <div className={"col-12"}>
-                                        <div style={styles.referralCode}>
-                                            {auth.user.referral_code}
-                                        </div>
-
-                                        <p style={styles.referralMessage}>
-                                            For 50% off on your next Order if you bring
-                                            a new user to Velcro Gaming using this code
-                                    </p>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className="col-12 col-md-6">
-                                <div style={styles.sectionTitle}>
-                                    Verification
-                            </div>
-
-                                <div className={"row"}>
-                                    <div className="col-12">
-                                        <div>
-                                            <span>status:</span>
-                                            <span style={{ color: colors.danger, margin: "0 0 0 10px" }}>
-                                                not verified
-                                        </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={VerificationFormData}
-                                            change={(newFormData) => setVerificationFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'nin',
-                                                config: VerificationFormData.nin
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={VerificationFormData}
-                                            change={(newFormData) => setVerificationFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'ninConfirm',
-                                                config: VerificationFormData.ninConfirm
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className={"col-12"}>
-                                        <Button {...PageButtons.attemptVerification} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-12 col-md-6">
-
-                                <div style={styles.sectionTitle}>
-                                    Edit account Information
-                                </div>
-
-                                <form className="row">
-                                    <div className="col-12 col-md-6">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'first_name',
-                                                config: FormData.first_name
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12 col-md-6">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'last_name',
-                                                config: FormData.last_name
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'username',
-                                                config: FormData.username
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'email',
-                                                config: FormData.email
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'mobile',
-                                                config: FormData.mobile
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={FormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'console',
-                                                config: FormData.console
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className={"col-12"}>
-                                        <Button {...PageButtons.updateInformation} />
-                                    </div>
-                                </form>
-                            </div>
-
-
-                            <div className="col-12 col-md-6">
-                                <div style={styles.sectionTitle}>
-                                    Change password
-                            </div>
-
-                                <div className={"row"}>
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={PasswordFormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'currentPassword',
-                                                config: PasswordFormData.currentPassword
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={PasswordFormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'newPassword',
-                                                config: PasswordFormData.newPassword
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className="col-12">
-                                        <FormField
-                                            formData={PasswordFormData}
-                                            change={(newFormData) => setFormData({ ...newFormData })}
-                                            field={{
-                                                id: 'newPasswordConfirm',
-                                                config: PasswordFormData.newPasswordConfirm
-                                            }}
-                                        />
-                                    </div>
-
-                                    <div className={"col-12"}>
-                                        <Button {...PageButtons.changePassword} />
-                                    </div>
-                                </div>
-
-                            </div>
-
-
                         </div>
 
+                        <div style={styles.pageTitle}>
+                            Account
+                        </div>
                     </div>
                 </div>
+
+
+                <div className="container" style={{ backgroundColor: colors.grey2, padding: "50px 35px" }}>
+
+                    <div className={"row"} style={{ padding: "0 30px" }}>
+
+                        <div className="col-12 col-md-6">
+                            <div style={styles.sectionTitle}>
+                                Referral Code
+                            </div>
+
+                            <div className={"row"}>
+                                <div className={"col-12"}>
+                                    <div style={styles.referralCode}>
+                                        {auth.user.referral_code}
+                                    </div>
+
+                                    <p style={styles.referralMessage}>
+                                        For 50% off on your next Order if you bring
+                                        a new user to Velcro Gaming using this code
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div className="col-12 col-md-6">
+                            <div style={styles.sectionTitle}>
+                                Verification
+                            </div>
+
+                            <div className={"row"}>
+                                <div className="col-12">
+                                    <div>
+                                        <span>status:</span>
+                                        <span style={{ color: colors.danger, margin: "0 0 0 10px" }}>
+                                            not verified
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={VerificationFormData}
+                                        change={(newFormData) => setVerificationFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'nin',
+                                            config: VerificationFormData.nin
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={VerificationFormData}
+                                        change={(newFormData) => setVerificationFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'ninConfirm',
+                                            config: VerificationFormData.ninConfirm
+                                        }}
+                                    />
+                                </div>
+
+                                <div className={"col-12"}>
+                                    <Button {...PageButtons.attemptVerification} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-12 col-md-6">
+
+                            <div style={styles.sectionTitle}>
+                                Edit account Information
+                                </div>
+
+                            <form className="row">
+                                <div className="col-12 col-md-6">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'first_name',
+                                            config: FormData.first_name
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12 col-md-6">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'last_name',
+                                            config: FormData.last_name
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'username',
+                                            config: FormData.username
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'email',
+                                            config: FormData.email
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'mobile',
+                                            config: FormData.mobile
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={FormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'console',
+                                            config: FormData.console
+                                        }}
+                                    />
+                                </div>
+
+                                <div className={"col-12"}>
+                                    <Button {...PageButtons.updateInformation} />
+                                </div>
+                            </form>
+                        </div>
+
+
+                        <div className="col-12 col-md-6">
+                            <div style={styles.sectionTitle}>
+                                Change password
+                            </div>
+
+                            <div className={"row"}>
+                                <div className="col-12">
+                                    <FormField
+                                        formData={PasswordFormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'currentPassword',
+                                            config: PasswordFormData.currentPassword
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={PasswordFormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'newPassword',
+                                            config: PasswordFormData.newPassword
+                                        }}
+                                    />
+                                </div>
+
+                                <div className="col-12">
+                                    <FormField
+                                        formData={PasswordFormData}
+                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        field={{
+                                            id: 'newPasswordConfirm',
+                                            config: PasswordFormData.newPasswordConfirm
+                                        }}
+                                    />
+                                </div>
+
+                                <div className={"col-12"}>
+                                    <Button {...PageButtons.changePassword} />
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
             </div>
-        </ProtectedRoute>
+        </div>
     )
 }
 
@@ -645,6 +650,7 @@ const styles = {
         fontStyle: 'normal',
         fontWeight: 'normal',
         fontSize: '15px',
+        cursor: 'pointer',
     },
     sectionTitle: {
         fontSize: "18px",

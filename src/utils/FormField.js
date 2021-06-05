@@ -55,7 +55,7 @@ export default class FormField extends Component {
             eventValue = event.target.value
         }
 
-        console.log("eventValue: ", eventValue)
+        // console.log("eventValue: ", eventValue)
         newFormData[id].value = eventValue;
 
         // Update parent component

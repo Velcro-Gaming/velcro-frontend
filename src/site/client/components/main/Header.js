@@ -365,7 +365,7 @@ function Header(props) {
                             {
                                 isVisible ? (
                                     <IsDesktop>
-                                        <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
+                                        <div onClick={() => { return window.location="/account" }} style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
                                             <div style={{
                                                 display: 'flex',
                                                 justifyContent: 'center',
@@ -375,9 +375,10 @@ function Header(props) {
                                                 height: '32px',
                                                 width: '32px',
                                                 borderRadius: '50%',
-
                                                 fontSize: '15px',
                                                 lineHeight: '20px',
+
+                                                cursor: 'pointer'
                                             }}>
                                                 {auth.user && getUserInitials()}
                                             </div>
