@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { colors } from '../../../../App.json'
 
 import {
@@ -7,30 +7,47 @@ import {
     Redirect,
     withRouter
 } from 'react-router-dom';
+import FormField from '../../../../utils/FormField';
 
-export default function GameBuy() {
+export default function GameBuy(props) {
 
     const match = useRouteMatch();
+    const { state } = useLocation()
+    const {
+        game: Game,
+        listing: Listing
+    } = state
+
     const gameSlug = match.params.gameSlug;
     console.log("gameSlug: ", gameSlug)
 
+    const {
+        orderFormData,
+        updateOrderFormData
+    } = props
+    console.log("props: ", props)
+
     const GoBackToScratch = () => {
         return <Redirect to={`/search/${gameSlug}`} />
-    }    
+    }
+
+    useEffect(() => {
+        // Set Game Amount
+        let newOrderFormData = orderFormData
+        newOrderFormData.buy_amount.value = Listing.sell_amount
+        newOrderFormData.buy_amount.props.disabled = true
+    }, [])
 
     // Redirect if missing state
-    const { state } = useLocation()
     if (!state || !state.game || !state.listing) {
         return GoBackToScratch()
     }
 
-    const {
-        game:Game,
-        listing:Listing
-    } = state
+    
 
     console.log("Game: ", Game)
     console.log("Listing: ", Listing)
+
 
     return (
         <div style={styles.container}>
@@ -61,15 +78,25 @@ export default function GameBuy() {
 
                     <div style={styles.orderInfoWrapper}>
                         <div>
-                            <div style={{ display: 'flex' }}>
-                                <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
-                                    Amount:
-                            </div>
-                                <div style={{ flex: 2 }}>
-                                    N5500
-                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div style={{ color: colors.primary, fontSize: '17px' }}>
+                                    {orderFormData.buy_amount.labelText}
+                                </div>
+                                <div style={{ padding: '10px 25px', fontSize: '20px' }}>
+                                    ${orderFormData.buy_amount.value}
+                                </div>
                             </div>
                         </div>
+
+                        {/* <FormField
+                            formData={orderFormData}
+                            change={(newFormData) => updateOrderFormData({...newFormData})}
+                            field={{
+                                id: 'buy_amount',
+                                config: orderFormData.buy_amount
+                            }}
+                        /> */}
+
                         <p style={{ fontFamily: 'Nunito Sans', fontSize: '11px', textAlign: 'center', color: colors.primary }}>
                             Every Order on Velcro Gaming is entitled to a “Grace” Period  (24 Hours) after an order has been completed during which an order can be terminated and after which the order period begins. During this period you are required to use the game to determine its condition. The user is required to test the game initiate a  return if the Item is in poor condition or does not work to satisfaction.
                         </p>

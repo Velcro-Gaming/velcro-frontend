@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { colors } from '../../../../App.json'
 
 import {
@@ -7,16 +7,32 @@ import {
     Redirect,
     withRouter
 } from 'react-router-dom';
+import FormField from '../../../../utils/FormField';
 
-export default function GameRent() {
+
+export default function GameRent(props) {
 
     const match = useRouteMatch();
     const gameSlug = match.params.gameSlug;
     console.log("gameSlug: ", gameSlug)
 
+    const {
+        orderFormData,
+        updateOrderFormData
+    } = props
+    console.log("props: ", props)
+
     const GoBackToScratch = () => {
         return <Redirect to={`/search/${gameSlug}`} />
     }
+
+    useEffect(() => {
+        // Set Rent Amount
+        let newOrderFormData = orderFormData
+        newOrderFormData.rent_amount.value = Listing.rent_amount
+        newOrderFormData.rent_amount.props.disabled = true
+
+    }, [])
 
     // Redirect if missing state
     const { state } = useLocation()
@@ -62,28 +78,36 @@ export default function GameRent() {
                     <div style={styles.orderInfoWrapper}>
                         
                         <div>
-                            <div style={{ display: 'flex', margin: '15px 0' }}>
+                            {/* <div style={{ display: 'flex', margin: '15px 0' }}>
                                 <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
                                     Rental Fee:
                                 </div>
                                 <div style={{ flex: 2 }}>
                                     N2500 <span style={{ fontSize: '12px', color: colors.grey3 }}>per week</span>
                                 </div>
+                            </div> */}
+
+                            <div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <div style={{ color: colors.primary, fontSize: '17px' }}>
+                                        {orderFormData.rent_amount.labelText}
+                                    </div>
+                                    <div style={{ padding: '10px 25px', fontSize: '20px' }}>
+                                        ${orderFormData.rent_amount.value}
+                                        <span style={{ fontSize: '12px', color: colors.grey3, margin: '0 5px' }}>per week</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div style={{ display: 'flex', margin: '15px 0' }}>
-                                <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
-                                    Duration:
-                                </div>
-                                <div style={{ flex: 2 }}>
-                                    <select>
-                                        <option value="0">---</option>
-                                        <option value="1">1 Month</option>
-                                        <option value="2">2 Month</option>
-                                        <option value="3">3 Month</option>
-                                    </select>
-                                </div>
-                            </div>
+
+                            <FormField
+                                formData={orderFormData}
+                                change={(newFormData) => updateOrderFormData({ ...newFormData })}
+                                field={{
+                                    id: 'duration',
+                                    config: orderFormData.duration
+                                }}
+                            />
                         </div>
 
                         <p style={{ fontFamily: 'Nunito Sans', fontSize: '11px', textAlign: 'center', color: colors.primary }}>

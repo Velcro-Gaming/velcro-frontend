@@ -16,7 +16,7 @@ function ProtectedRoute(props) {
         // Check User has default console.
         if (auth.user && auth.user.consoles.length === 0) {
             console.log("No Default Console")
-            return <Redirect to={"/register/verification"} />
+            return <Redirect to={"/register/extra-information"} />
         }
 
         return children

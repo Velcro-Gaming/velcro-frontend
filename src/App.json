@@ -1,9 +1,10 @@
 {
-    "apiUrl": "https://api.velcrogaming.com/v1/",
-    "apiUrl_": "http://api.velcrogaming.local:8100/v1/",
+    "apiUrl_": "https://api.velcrogaming.com/v1/",
+    "apiUrl": "http://api.velcrogaming.local:8100/v1/",
     "apiUrlOld": "https://server-velcro-gaming.herokuapp.com/api/v1",
     "colors": {
         "primary": "#641E6E",
+        "primaryLight": "#D28EDC",
         "secondary": "#18181B",
         "tetiary": "#AB92BF",
         "white": "#FFFFFF",

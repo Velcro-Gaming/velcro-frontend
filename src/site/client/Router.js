@@ -13,8 +13,10 @@ import TermsCondition from './screens/TermsCondition';
 
 import LoginScreen from './screens/auth/LoginScreen';
 import LogoutScreen from './screens/auth/LogoutScreen';
-import RegisterScreen from './screens/auth/RegisterScreen';
-import VerificationScreen from './screens/auth/VerificationScreen';
+import RegisterScreenOne from './screens/auth/RegisterScreenOne';
+import RegisterScreenTwo from './screens/auth/RegisterScreenTwo';
+
+import AccountProfileScreen from './screens/AccountProfileScreen';
 
 import PasswordResetRequest from './screens/auth/passwords/PasswordResetRequest';
 import PasswordResetSent from './screens/auth/passwords/PasswordResetSent';
@@ -22,6 +24,7 @@ import PasswordReset from './screens/auth/passwords/PasswordReset';
 import PhoneVerification from "./screens/auth/PhoneVerification";
 import SearchScreen from "./screens/SearchScreen";
 import OrderScreen from "./screens/OrderScreen";
+// import ProtectedRoute from "../../utils/ProtectedRoute";
 
 function RouterBase() {
 
@@ -32,6 +35,11 @@ function RouterBase() {
             renders the first one that matches the current URL. */}
 
             <Switch>
+                {/* <ProtectedRoute>
+                    <Route path="/account" component={AccountProfileScreen} />
+                </ProtectedRoute> */}
+
+                <Route path="/account" component={AccountProfileScreen} />
 
                 <Route path="/search" component={SearchScreen} />
 
@@ -44,12 +52,11 @@ function RouterBase() {
                     <LogoutScreen />
                 </Route>
                 <Route exact path="/register">
-                    <RegisterScreen />
+                    <RegisterScreenOne />
                 </Route>
-                <Route path="/register/verification">
-                    <VerificationScreen />
+                <Route path="/register/extra-information">
+                    <RegisterScreenTwo />
                 </Route>
-
                 <Route path="/phone-verification">
                     <PhoneVerification />
                 </Route>

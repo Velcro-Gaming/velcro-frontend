@@ -266,9 +266,9 @@ function Header(props) {
         return [firstName,lastName]
     }
     const getUserInitials = () => {
-        // props.logout()
-        if (auth.user.fullName) {
-            let userFullName = auth.user.fullName
+        console.log("auth.user.fullName: ", auth.user.full_name)
+        if (auth.user.full_name) {
+            let userFullName = auth.user.full_name
             let firstName = userFullName.split(' ')[0]
             let lastName = userFullName.split(' ')[1]
             return `${firstName[0]}${lastName[0]}`.toUpperCase()

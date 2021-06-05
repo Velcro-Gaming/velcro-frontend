@@ -7,7 +7,7 @@ import {
 
 import LoginScreen from './LoginScreen';
 import LogoutScreen from './LogoutScreen';
-import RegisterScreen from './RegisterScreen';
+import RegisterScreenOne from './RegisterScreenOne';
 
 
 export default function AuthBase() {
@@ -21,7 +21,7 @@ export default function AuthBase() {
                 <LogoutScreen />
             </Route>
             <Route exact path="/register">
-                <RegisterScreen />
+                <RegisterScreenOne />
             </Route>
         </Switch>
     );

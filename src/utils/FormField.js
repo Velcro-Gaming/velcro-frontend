@@ -306,6 +306,6 @@ const styles = {
         lineHeight: '24px',
 
         margin: '10px 0',
-        padding: '0 10px',
+        padding: '5px 10px',
     }
 }

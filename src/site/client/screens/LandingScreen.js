@@ -274,7 +274,7 @@ class LandingScreen extends Component {
 const styles = {
     container: {
         height: '100vh',
-        backgroundImage: `url(${require('../../../assets/images/bg-1.png')})`,
+        backgroundImage: `url(${require('../../../assets/images/bg-slide1.png')})`,
         backgroundPosition: 'top center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'

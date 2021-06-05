@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { colors } from '../../../../App.json'
 
 import {
@@ -8,15 +8,28 @@ import {
     withRouter
 } from 'react-router-dom';
 
-export default function GameSwap() {
+import FormField from '../../../../utils/FormField';
+
+
+export default function GameSwap(props) {
     const [SwapGames, setSwapGames] = useState([])
     const match = useRouteMatch();
     const gameSlug = match.params.gameSlug;
     console.log("gameSlug: ", gameSlug)
 
+    const {
+        orderFormData,
+        updateOrderFormData
+    } = props
+    console.log("props: ", props)
+
     const GoBackToScratch = () => {
         return <Redirect to={`/search/${gameSlug}`} />
     }
+
+    useEffect(() => {
+        
+    }, [])
 
     // Redirect if missing state
     const { state } = useLocation()
@@ -75,27 +88,24 @@ export default function GameSwap() {
                                 }
                             </div>
 
-                            <div style={{ display: 'flex', margin: '15px 0' }}>
-                                <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
-                                    Duration:
-                                </div>
-                                <div style={{ flex: 2 }}>
-                                    <select>
-                                        <option value="0">---</option>
-                                        <option value="1">1 Month</option>
-                                        <option value="2">2 Month</option>
-                                        <option value="3">3 Month</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <div style={{ margin: '30px 0' }}>
+                                <FormField
+                                    formData={orderFormData}
+                                    change={(newFormData) => updateOrderFormData({ ...newFormData })}
+                                    field={{
+                                        id: 'duration',
+                                        config: orderFormData.duration
+                                    }}
+                                />
 
-                            <div style={{ display: 'flex', margin: '15px 0' }}>
-                                <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
-                                    Additional fees(Optional):
-                                </div>
-                                <div style={{ flex: 2 }}>
-                                    <input />
-                                </div>
+                                <FormField
+                                    formData={orderFormData}
+                                    change={(newFormData) => updateOrderFormData({ ...newFormData })}
+                                    field={{
+                                        id: 'additionalFee',
+                                        config: orderFormData.additionalFee
+                                    }}
+                                />
                             </div>
                         </div>
 
