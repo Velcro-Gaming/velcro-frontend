@@ -5,7 +5,8 @@ import {
 } from '../../../../App.json'
 import { PostMan } from '../../../../Helpers';
 import {
-    login
+    login,
+    logout
 } from '../../../../redux/actions/AuthActions'
 import Button from '../../../../utils/Button';
 import LeftPanel from '../../components/auth/LeftPanel';
@@ -692,7 +693,8 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-        login
+        login,
+        logout
     }, dispatch)
 }
 

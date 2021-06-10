@@ -25,8 +25,10 @@ import { connect } from 'react-redux';
 import { FaChevronDown } from 'react-icons/fa'
 import { AiOutlineSearch } from 'react-icons/ai'
 
-import UploadGameModal from '../../components/main/UploadGameModal'
+import ModalGameUpload from './ModalGameUpload'
 import SearchableInput from '../../../../utils/SearchableInput';
+import Dropdown from '../../../../utils/Dropdown'
+
 
 function Header(props) {
     const [redirect, setRedirect] = useState(false)
@@ -152,12 +154,6 @@ function Header(props) {
         return template
     }
 
-    // const [ComponentState, setComponentState] = useState(initialState)
-    // const {
-    //     redirect,
-    //     formData
-    // } = ComponentState
-
     const { auth, headerConfig } = props
     const {
         headerButtons,
@@ -170,11 +166,6 @@ function Header(props) {
     const location = useLocation()
 
     const { state } = location
-
-    // console.log("match: ", match)
-    // console.log("match params: ", match.params)
-
-    // console.log("location: ", location)
 
 
     const AttemptGameSearch = (query, timer = null) => {
@@ -224,41 +215,6 @@ function Header(props) {
 
     }
 
-    
-    // const AttemptGameSearch = (query, timer=null) => {
-    //     //
-    //     const _doGameSearch = async (query) => {
-    //         let queryFormattedToLowerCase = String(query).toLocaleLowerCase()
-    //         if (queryFormattedToLowerCase.length === 0) {
-    //             return window.location = "/search"
-    //         }
-
-    //         // Search: Do Game Query
-    //         const responseObject = await PostMan(`listing/games/?q=${queryFormattedToLowerCase}`, 'GET')
-
-    //         if (responseObject.status === 'success') {
-    //             let responseData = responseObject.data
-    //             let listingsGameList = responseData.games
-    //             let queryset = listingsGameList.filter(game => {
-    //                 let gameNameFormattedToLowerCase = String(game.name).toLowerCase()
-    //                 return gameNameFormattedToLowerCase.startsWith(queryFormattedToLowerCase)
-    //             })
-    //             return setGameSearchResult(queryset)
-    //         }
-    //         else { }
-    //     }
-
-    //     if (timer) {
-    //         let searching = setTimeout(async () => {
-    //             _doGameSearch(query)
-    //         }, timer);
-    //         setSearching(searching)
-    //     } else {
-    //         _doGameSearch(query)
-    //     }      
-
-    // }
-
     const getUserNames = () => {
         let userFullName = auth.user.name
         let firstName = userFullName.split(' ')[0]
@@ -277,6 +233,62 @@ function Header(props) {
         
     }
 
+    const userToggleDropdown = () => {
+        return {
+            title: (
+                <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
+                    <div style={styles.userInitial}>
+                        {auth.user && getUserInitials()}
+                    </div>
+                    <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
+                        {auth.user.username}
+                    </div>
+
+                    <div style={{ color: colors.white, margin: '3px 10px 5px', fontSize: '12px' }}>
+                        <FaChevronDown />
+                    </div>
+                </div>
+            ),
+            data: [
+                {
+                    name: "Profile",
+                    // action: () => { console.log("/account") }
+                    action: () => setRedirect('/account')
+                },
+                {
+                    name: "Categories",
+                    // action: () => { console.log("/search") }
+                    action: () => setRedirect('/search')
+                },
+                {
+                    name: "Withdraw Funds",
+                    action: () => setRedirect('/withdraw-funds')
+                },
+                {
+                    name: "Contact Us",
+                    // action: () => setRedirect('/contact-us')
+                    action: () => { window.open('/contact-us') }
+                },
+                {
+                    name: "Terms and Conditions",
+                    action: () => { window.open('/terms-and-conditions') }
+                }
+            ],
+            wrapperStyles: {
+                placeholder: {
+                    padding: "15px",
+                },
+                dropdown: {
+                    position: 'absolute',
+                    minWidth: '150px',
+                    backgroundColor: colors.dark,
+                    top: '65px',
+                    marginLeft: '25px'
+                }
+            }
+        }
+    }
+
     const GoToSearchResult = (game) => {
         // 
         window.location = `/search/${game.slug}`
@@ -291,7 +303,7 @@ function Header(props) {
 
             {
                 ShowUploadGameModal ? (
-                    <UploadGameModal hideModal={() => setShowUploadGameModal(false)} />
+                    <ModalGameUpload hideModal={() => setShowUploadGameModal(false)} />
                 ) : null
             }
 
@@ -365,33 +377,7 @@ function Header(props) {
                             {
                                 isVisible ? (
                                     <IsDesktop>
-                                        <div onClick={() => { return window.location="/account" }} style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
-                                            <div style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                backgroundColor: colors.white,
-                                                color: colors.primary,
-                                                height: '32px',
-                                                width: '32px',
-                                                borderRadius: '50%',
-                                                fontSize: '15px',
-                                                lineHeight: '20px',
-
-                                                cursor: 'pointer'
-                                            }}>
-                                                {auth.user && getUserInitials()}
-                                            </div>
-
-                                            <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
-                                                {auth.user.username}
-                                            </div>
-
-                                            <div style={{ color: colors.white, margin: '3px 3px', fontSize: '12px' }}>
-                                                <FaChevronDown />
-                                            </div>
-
-                                        </div>
+                                        <Dropdown {...userToggleDropdown()} />
 
                                         <div style={{
                                             border: '1px solid #7F3F98',
@@ -448,6 +434,20 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
     },
+    userInitial: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.white,
+        color: colors.primary,
+        height: '32px',
+        width: '32px',
+        borderRadius: '50%',
+        fontSize: '15px',
+        lineHeight: '20px',
+
+        cursor: 'pointer'
+    }
 }
 
 

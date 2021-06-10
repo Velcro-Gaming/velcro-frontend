@@ -11,43 +11,56 @@ import FormField from '../../../../utils/FormField';
 
 export default function GameBuy(props) {
 
+    console.log("useLocation(): ", useLocation())
+
     const match = useRouteMatch();
     const { state } = useLocation()
-    const {
-        game: Game,
-        listing: Listing
-    } = state
-
+    
     const gameSlug = match.params.gameSlug;
     console.log("gameSlug: ", gameSlug)
 
     const {
+        setListing,
+        setActiveForm,
         orderFormData,
-        updateOrderFormData
+        updateOrderFormData,
     } = props
     console.log("props: ", props)
+
+    useEffect(() => {
+        // Set Listing in Parent Component State
+        if (state) { setListing(state.listing) }
+        // Set Form Meta in Parent Component State
+        setActiveForm({
+            title: 'buy'
+        })
+        // Set Game Amount
+        if (state) { SetBuyAmount() }
+    }, [])
 
     const GoBackToScratch = () => {
         return <Redirect to={`/search/${gameSlug}`} />
     }
 
-    useEffect(() => {
-        // Set Game Amount
+    const SetBuyAmount = () => {
         let newOrderFormData = orderFormData
         newOrderFormData.buy_amount.value = Listing.sell_amount
         newOrderFormData.buy_amount.props.disabled = true
-    }, [])
+        updateOrderFormData(newOrderFormData)
+    }
 
     // Redirect if missing state
     if (!state || !state.game || !state.listing) {
         return GoBackToScratch()
     }
 
-    
+    const {
+        game: Game,
+        listing: Listing
+    } = state
 
     console.log("Game: ", Game)
     console.log("Listing: ", Listing)
-
 
     return (
         <div style={styles.container}>

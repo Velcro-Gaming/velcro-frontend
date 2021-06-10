@@ -6,7 +6,13 @@ import {
 } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { colors } from '../../../App.json'
+import {
+    // login,
+    logout
+} from '../../../redux/actions/AuthActions'
 import Dropdown from '../../../utils/Dropdown'
+
+import { BiChevronDown } from 'react-icons/bi'
 
 function Header(props) {
     const {
@@ -14,17 +20,21 @@ function Header(props) {
     } = props
 
     const userToggleDropdown = {
-        title: auth.user && auth.user.username,
+        title: <div>{auth.user && auth.user.username} <BiChevronDown /></div>,
         data: [
             {
                 name: "Change Password",
-                linkTo: "/admin/change-password"
+                action: () => {console.log("Change Password")}
             },
             {
-                name: "Change Password",
-                action: () => { }
+                name: "Sign Out",
+                action: () => props.logout()
             }
-        ]
+        ],
+        wrapperStyles: {
+            padding: "5px 15px",
+            backgroundColor: colors.grey,
+        }
     }
 
     return (
@@ -38,10 +48,7 @@ function Header(props) {
 
             {
                 auth.loggedIn ? (
-                    <Dropdown
-                        title={userToggleDropdown.title}
-                        data={userToggleDropdown.data}
-                    />
+                    <Dropdown {...userToggleDropdown} />
                 ) : null
             }
         </div>
@@ -78,7 +85,7 @@ const styles = {
 
 const mapDispatchToProps = dispatch => {
     return bindActionCreators({
-
+        logout
     }, dispatch)
 }
 

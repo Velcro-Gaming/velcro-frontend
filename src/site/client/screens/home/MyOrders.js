@@ -8,76 +8,54 @@ import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
 import GameCard from '../../components/main/GameCard'
 
+import { Redirect } from 'react-router'
+import { PostMan } from '../../../../Helpers'
+import { AiOutlineSearch } from 'react-icons/ai'
 
 function MyOrdersScreen(props) {
     const [MyOrders, setMyOrders] = useState([])
-    const [ComponentState, setComponentState] = useState({
-        activeScreen: {
-            name: '',
-            path: '/'
-        },
-        buttons: {
-            myGames: {
-                text: {
-                    color: colors.black,
-                    value: "My Games",
-                },
-                styles: {
-                    height: '50px',
-                    width: '150px',
-                    margin: null,
-                    backgroundColor: null,
-                    fontSize: '14px',
-                    border: {
-                        width: null,
-                        style: null,
-                        color: null,
-                        radius: null,
-                    },
-                    color: colors.white
-                },
-                onClick: () => setComponentState({
-                    ...ComponentState,
-                    activeScreen: {
-                        name: 'myGames',
-                        path: '/'
-                    }
-                }),
-            },
-            uploadGame: {
-                text: {
-                    color: colors.white,
-                    value: "UPLOAD",
-                },
-                styles: {
-                    height: '25px',
-                    width: '115px',
-                    margin: null,
-                    backgroundColor: 'green',
-                    fontSize: '10px',
-                    border: {
-                        width: null,
-                        style: null,
-                        color: null,
-                        radius: '12.5px',
-                    },
-                    color: colors.white
-                },
-                onClick: () => setComponentState({
-                    ...ComponentState,
-                    activeScreen: {
-                        name: 'myGames',
-                        path: '/'
-                    }
-                }),
-            },
-            
-        }
+    const [redirect, setRedirect] = useState(null)
+    const [ActiveScreen, setActiveScreen] = useState({
+        name: '',
+        path: '/'
     })
+    const [PageButtons, setPageButtons] = useState({
+        searchGames: {
+            text: {
+                color: colors.white,
+                value: <span>Find Your Next Game <AiOutlineSearch /> </span>,
+            },
+            styles: {
+                height: '25px',
+                width: '150px',
+                margin: null,
+                backgroundColor: colors.primary,
+                fontSize: '10px',
+                border: {
+                    width: null,
+                    style: null,
+                    color: null,
+                    radius: '12.5px',
+                },
+                color: colors.white
+            },
+            onClick: () => setRedirect('/search'),
+        },
 
-    const {
-        buttons
-    } = ComponentState
+    })
+    
+    const FetchMyOrders = async () => {
+        const responseObject = await PostMan(`order/all/`, 'GET')
+        if (responseObject.status === 'success') {
+            let orders = responseObject.data
+            console.log("orders: ", orders)
+            // let myGames = responseData.data
+            // Save Games to state
+            await setMyOrders(orders)
+        }
+        else { }
+    }
+    
 
     const MainContent = (config) => {
         // const 
@@ -88,7 +66,7 @@ function MyOrdersScreen(props) {
                         MyOrders.map(order => {
                             return (
                                 <GameCard
-                                    config={order}
+                                    config={order.listing}
                                 />
                             )
                         })
@@ -113,7 +91,7 @@ function MyOrdersScreen(props) {
                         You have not Ordered any Games
                     </div>
     
-                    <Button {...buttons.uploadGame} />
+                    <Button {...PageButtons.searchGames} />
     
                     <div style={styles.alertWrapper}>
                         <BiUser />
@@ -130,12 +108,21 @@ function MyOrdersScreen(props) {
     }
 
     useEffect(()=>{
+        // Set Active Screen
         props.setActiveScreen({
             name: 'myOrders',
             path: '/my-orders'
         })
-    }, [])
 
+        // Fetch User Games
+        FetchMyOrders()
+    }, [])
+    
+    if (redirect) {
+        return <Redirect to={redirect} />
+    }
+
+    
     return (
         <div style={styles.container}>
             <IsDesktop>

@@ -9,37 +9,34 @@ import { colors } from '../App.json'
 export default function Dropdown(props) {
     const {
         title,
-        data
+        data,
+        wrapperStyles
     } = props
 
     const [ShowDropdownMenu, setShowDropdownMenu] = useState(false)
 
     return (
-        <div>
-            <div style={styles.placeholder}>
+        <div style={{ cursor: 'pointer' }} onMouseEnter={() => setShowDropdownMenu(true)} onMouseLeave={() => setShowDropdownMenu(false)}>
+            <div style={wrapperStyles && wrapperStyles.placeholder ? wrapperStyles.placeholder : styles.placeholderWrapper}>
                 {title}
             </div>
             {
                 ShowDropdownMenu ? (
-                    <ul>
+                    <div style={wrapperStyles && wrapperStyles.dropdown ? wrapperStyles.dropdown : styles.dropdownWrapper}>
                         {
                             data.map(item => {
-                                return <li>
-                                    {
-                                        item.linkTo ? (
-                                            <Link to={item.linkTo}>
-                                                {item.name}
-                                            </Link>
-                                        ) : (
-                                            <span onClick={() => item.action}>
-                                                {item.name}
-                                            </span>
-                                        )
-                                    }
-                                </li>
+                                return (
+                                    <div
+                                        className={'hover-bg-primary'} 
+                                        style={{ color: colors.white, fontSize: '12px', padding: '10px 15px' }}
+                                        onClick={() => item.action()}
+                                    >
+                                        {item.name}
+                                    </div>
+                                )
                             })
                         }
-                    </ul>
+                    </div>
                 ) : null
             }
         </div>
@@ -48,8 +45,12 @@ export default function Dropdown(props) {
 
 
 const styles = {
-    placeholder: { 
-        backgroundColor: colors.grey,
+    placeholderWrapper: {
         padding: "5px 15px",
+    },
+    dropdownWrapper: {        
+        position: 'absolute',
+        minWidth: '150px',
+        backgroundColor: colors.dark,
     }
 }

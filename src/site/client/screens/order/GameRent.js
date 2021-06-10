@@ -16,9 +16,13 @@ export default function GameRent(props) {
     const gameSlug = match.params.gameSlug;
     console.log("gameSlug: ", gameSlug)
 
+    const { state } = useLocation()
+
     const {
+        setListing,
+        setActiveForm,
         orderFormData,
-        updateOrderFormData
+        updateOrderFormData,
     } = props
     console.log("props: ", props)
 
@@ -27,22 +31,31 @@ export default function GameRent(props) {
     }
 
     useEffect(() => {
-        // Set Rent Amount
-        let newOrderFormData = orderFormData
-        newOrderFormData.rent_amount.value = Listing.rent_amount
-        newOrderFormData.rent_amount.props.disabled = true
-
+        // Set Listing in Parent Component State
+        if (state) { setListing(state.listing) }
+        // Set Form Meta in Parent Component State
+        setActiveForm({
+            title: 'rent'
+        })
     }, [])
 
+    const SetRentAmount = (newFormData) => {
+        let duration = newFormData.duration.value
+        // Set Rent Amount
+        let newRentAmount = parseInt(duration) * Listing.rent_amount
+        newFormData.rent_amount.value = newRentAmount
+        // Update State
+        updateOrderFormData({ ...newFormData })
+    }
+
     // Redirect if missing state
-    const { state } = useLocation()
     if (!state || !state.game || !state.listing) {
         return GoBackToScratch()
     }
 
     const {
-        game: Game,
-        listing: Listing
+        game:Game,
+        listing:Listing
     } = state
 
     console.log("Game: ", Game)
@@ -78,15 +91,6 @@ export default function GameRent(props) {
                     <div style={styles.orderInfoWrapper}>
                         
                         <div>
-                            {/* <div style={{ display: 'flex', margin: '15px 0' }}>
-                                <div style={{ flex: 1, color: colors.primary, fontSize: '14px' }}>
-                                    Rental Fee:
-                                </div>
-                                <div style={{ flex: 2 }}>
-                                    N2500 <span style={{ fontSize: '12px', color: colors.grey3 }}>per week</span>
-                                </div>
-                            </div> */}
-
                             <div>
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                     <div style={{ color: colors.primary, fontSize: '17px' }}>
@@ -94,7 +98,7 @@ export default function GameRent(props) {
                                     </div>
                                     <div style={{ padding: '10px 25px', fontSize: '20px' }}>
                                         ${orderFormData.rent_amount.value}
-                                        <span style={{ fontSize: '12px', color: colors.grey3, margin: '0 5px' }}>per week</span>
+                                        <span style={{ fontSize: '12px', color: colors.grey3, margin: '0 5px' }}> at ${Listing && Listing.rent_amount} per week</span>
                                     </div>
                                 </div>
                             </div>
@@ -102,7 +106,7 @@ export default function GameRent(props) {
 
                             <FormField
                                 formData={orderFormData}
-                                change={(newFormData) => updateOrderFormData({ ...newFormData })}
+                                change={(newFormData) => SetRentAmount(newFormData)}
                                 field={{
                                     id: 'duration',
                                     config: orderFormData.duration

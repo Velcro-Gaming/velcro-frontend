@@ -115,6 +115,62 @@ a:hover {
   cursor: pointer;
 }
 
+
+
+/* /////////////////////// Scrollbar /////////////////////// */
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px darkgray;
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #641E6E; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #D28EDC; 
+}
+
+
+/* /////////////////////// NoScroll /////////////////////// */
+
+.no-scrollbar {
+  scrollbar-width: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* /////////////////////// Horizontal Slider /////////////////////// */
+
+.horizontal-scrolling-wrapper {
+    /* overflow-x: scroll; */
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scrolling-wrapper .tray {
+    display: inline-block;
+    display: -webkit-inline-box;
+}
+
+
+
 /* /////////////////////// CheckBox /////////////////////// */
 
 .custom-checkbox {

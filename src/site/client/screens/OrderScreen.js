@@ -17,6 +17,9 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import ModalConfirmAddress from '../components/main/ModalConfirmAddress'
+import ModalConfirmOrder from '../components/main/ModalConfirmOrder'
+
 import GameRent from './order/GameRent';
 import GameSwap from './order/GameSwap';
 import GameBuy from './order/GameBuy';
@@ -28,6 +31,9 @@ import FormField from '../../../utils/FormField';
 import Button from '../../../utils/Button';
 import { PostMan } from '../../../Helpers';
 
+import { ToastContainer, toast } from 'react-toastify';
+
+
 function OrderScreen(props) {
     const {
         auth
@@ -35,6 +41,15 @@ function OrderScreen(props) {
 
     const match = useRouteMatch();
     const history = useHistory()
+
+    const [Listing, setListing] = useState(null)
+    const [AddressBook, setAddressBook] = useState([])
+    const [ActivePageForm, setActivePageForm] = useState({})
+    const [OrderPayload, setOrderPayload] = useState({})
+    
+    const [ShowAddressForm, setShowAddressForm] = useState(false)
+    const [ShowAddressConfirmModal, setShowAddressConfirmModal] = useState(false)
+    const [ShowOrderConfirmModal, setShowOrderConfirmModal] = useState(false)
 
     const [HeaderConfig, setHeaderConfig] = useState({
         headerButtons: [
@@ -82,11 +97,70 @@ function OrderScreen(props) {
                 color: colors.white
             },
             onClick: () => { },
-            loader: {
-                isLoading: false,
-                size: 15,
+            loader: null,
+        },
+        addAddress: {
+            text: {
                 color: colors.white,
+                value: "+ Add New Address",
             },
+            styles: {
+                height: '50px',
+                width: '100%',
+                margin: '30px 0 60px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => setShowAddressForm(true),
+            loader: null,
+        },
+        attemptAddAddress: {
+            text: {
+                color: colors.white,
+                value: "Add Address",
+            },
+            styles: {
+                height: '50px',
+                width: '200px',
+                margin: '30px 10px 60px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => AddNewAddress(ActivePageForm),
+            loader: null,
+        },
+        cancelAddAddress: {
+            text: {
+                color: colors.primary,
+                value: "Cancel",
+            },
+            styles: {
+                height: '50px',
+                width: '150px',
+                margin: '30px 0 60px 10px',
+                backgroundColor: colors.grey2,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => setShowAddressForm(false),
+            loader: null,
         },
         sendRequest: {
             text: {
@@ -106,7 +180,7 @@ function OrderScreen(props) {
                 },
                 color: colors.white
             },
-            onClick: () => {},
+            onClick: () => AttemptMakeOffer(ActivePageForm),
             loader: {
                 isLoading: false,
                 size: 15,
@@ -116,13 +190,22 @@ function OrderScreen(props) {
     })
 
     const [OrderFormData, setOrderFormData] = useState({
-        amount: {
+        deliveryAddress: {
+            element: null,
+            value: '',
+            label: false,
+            labelText: 'Delivery Address',
+            props: {
+                required: true
+            }
+        },
+        swap_amount: {
             element: 'input',
             value: '',
             label: true,
-            labelText: 'Amount ($)',
+            labelText: 'Additional Fees (Optional)',
             props: {
-                name: 'amount_input',
+                name: 'additional_fee_input',
                 type: 'number',
                 placeholder: '',
                 required: false
@@ -130,19 +213,19 @@ function OrderScreen(props) {
         },
         buy_amount: {
             element: 'input',
-            value: '',
+            value: 0.00,
             label: true,
             labelText: 'Amount',
             props: {
                 name: 'buy_amount_input',
                 type: 'number',
                 placeholder: '',
-                required: false
+                required: true
             }
         },
         rent_amount: {
             element: 'input',
-            value: '',
+            value: 0.00,
             label: true,
             labelText: 'Rent Fee',
             props: {
@@ -158,14 +241,6 @@ function OrderScreen(props) {
                 {
                     value: 0,
                     display: '---'
-                },
-                {
-                    value: 2,
-                    display: '2 weeks'
-                },
-                {
-                    value: 3,
-                    display: '3 weeks'
                 },
                 {
                     value: 4,
@@ -199,43 +274,39 @@ function OrderScreen(props) {
                 name: 'state_input',
                 type: 'text',
                 placeholder: null,
-                required: false
-            }
-        },
-        additionalFee: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'Additional Fees (Optional)',
-            props: {
-                name: 'additional_fee_input',
-                type: 'number',
-                placeholder: '',
-                required: false
+                required: true
             }
         },
         games: {
             element: 'game',
-            value: [
-
-            ],
-            // label: true,
-            // labelText: 'Additional Fees (Optional)',
+            value: null,
+            label: false,
+            labelText: 'Swap game(s)',
             props: {
                 name: 'games_input',
-                // type: 'number',
-                // placeholder: '',
-                required: false
+                required: true
+            }
+        },
+        additionalInfo: {
+            element: 'textarea',
+            value: '',
+            label: true,
+            labelText: 'Additional info',
+            props: {
+                name: 'address_input',
+                type: 'text',
+                placeholder: 'Type message here',
+                required: true
             }
         },
     })
 
     const [DeliveryFormData, setDeliveryFormData] = useState({
-        address: {
+        address_line: {
             element: 'input',
             value: '',
             label: true,
-            labelText: 'Address',
+            labelText: 'Address Line',
             props: {
                 name: 'address_input',
                 type: 'text',
@@ -297,22 +368,14 @@ function OrderScreen(props) {
                 required: true
             }
         },
-        additionalInfo: {
-            element: 'textarea',
-            value: '',
-            label: true,
-            labelText: 'Additional info',
-            props: {
-                name: 'address_input',
-                type: 'text',
-                placeholder: 'Type message here',
-                required: true
-            }
-        },
     })
 
     const NoRouteMatch = () => {
         return <Redirect to="/search" />
+    }
+
+    const GoBack = () => {
+        history.goBack()
     }
 
     const FetchCountryList = async () => {
@@ -397,11 +460,102 @@ function OrderScreen(props) {
         else { }
     }
 
-    const GoBack = () => {
-        history.goBack()
+    const FetchAddressBook = async () => {
+        const responseObject = await PostMan(`address/`, 'GET')
+        if (responseObject.status === 'success') {
+            let addressBook = responseObject.data
+            console.log("AddressBook: ", addressBook)
+            // Save AddressBook to state
+            await setAddressBook(addressBook)
+
+            // Set Default Address
+            if (addressBook.length > 0) {
+                let newOrderFormData = OrderFormData
+                newOrderFormData.deliveryAddress.value = addressBook[0].id
+                setOrderFormData({ ...newOrderFormData })
+            }
+        }
+        else { }
     }
 
+    const AddNewAddress = () => {
+        let addressPayload = {}
+
+        for (let formField in DeliveryFormData) {
+            let fieldName = formField
+            console.log("fieldName: ", fieldName)
+            let fieldData = DeliveryFormData[formField]
+            if (fieldData.props.required) {
+                if (!fieldData.value || fieldData.value == ' ') {
+                    // Toast Error Message
+                    toast.error(`${fieldData.labelText} field is required!`)
+                    return
+                }
+
+            }
+            // Set in addressPayload
+            addressPayload[fieldName] = fieldData.value
+        }
+        // console.log("addressPayload: ", addressPayload)
+        setShowAddressConfirmModal(true)
+    }
+
+    const AttemptMakeOffer = async (activeForm) => {
+        let orderPayload = {
+            _type: activeForm.title,
+            bill_to: auth.user.id,
+            listing: Listing.id,
+        }
+        let orderFormPayload = {
+            delivery_address: OrderFormData.deliveryAddress
+        }
+        if (activeForm.title === 'rent') {
+            orderFormPayload['fee'] = OrderFormData.rent_amount
+            orderFormPayload['duration'] = OrderFormData.duration
+        }
+        if (activeForm.title === 'swap') {
+            orderFormPayload['fee'] = OrderFormData.swap_amount
+            orderFormPayload['duration'] = OrderFormData.duration
+            orderFormPayload['games'] = OrderFormData.games   
+        }
+        if (activeForm.title === 'buy') {
+            orderFormPayload['fee'] = OrderFormData.buy_amount
+        }
+        // Validate Fields
+        for (let formField in orderFormPayload) {
+            let fieldName = formField
+            let fieldData = orderFormPayload[formField]
+            if (fieldData.props.required) {
+                if (!fieldData.value || fieldData.value == ' ') {
+                    // Toast Error Message
+                    return toast.error(`${fieldData.labelText} field is required!`)
+                }
+            }
+            // Set in formPayload
+            orderPayload[fieldName] = fieldData.value
+        }
+
+        if (Object.keys(orderPayload).length > 3) {
+            let payload = orderPayload
+            console.log("order payload: ", payload)
+
+            // Set Order Payload for ModalOrderConfirm
+            await setOrderPayload({ ...payload })
+
+            // Show Order confirm modal
+            setShowOrderConfirmModal(true)
+        }
+    }
+
+
+    // console.log("ActivePageForm: ", ActivePageForm)
+    // console.log("user: ", auth.user)
+
+
     useEffect(() => {
+
+        // Fetch Address Book
+        FetchAddressBook()
 
         // Fetch Countries
         FetchCountryList()
@@ -413,13 +567,28 @@ function OrderScreen(props) {
         <div>
             <Header {...props} headerConfig={HeaderConfig} />
 
+            <ToastContainer />
+
+            {
+                ShowAddressConfirmModal ? (
+                    <ModalConfirmAddress
+                        deliveryFormData={DeliveryFormData}
+                        hideModal={() => setShowAddressConfirmModal(false)}
+                    />
+                ) : null
+            }
+
+            {
+                ShowOrderConfirmModal ? (
+                    <ModalConfirmOrder
+                        orderPayload={OrderPayload}
+                        hideModal={() => setShowOrderConfirmModal(false)}
+                    />
+                ) : null
+            }
 
             <div style={styles.wrapper}>
                 <div className={"container"} style={styles.container}>
-
-                    {/* <div style={{ margin: "35px 0", fontWeight: 600, fontFamily: 'Nunito Sans' }}>
-                        Back
-                    </div> */}
 
                     <div style={styles.goBack} onClick={() => GoBack()}>
                         <FaChevronLeft size={12} />
@@ -430,18 +599,24 @@ function OrderScreen(props) {
                         <Switch>
                             <Route exact path={`${match.path}/:gameSlug/rent`}>
                                 <GameRent
+                                    setListing={(listing) => setListing(listing)}
+                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
                                     orderFormData={OrderFormData}
                                     updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
                                 />
                             </Route>
                             <Route exact path={`${match.path}/:gameSlug/swap`}>
                                 <GameSwap
+                                    setListing={(listing) => setListing(listing)}
+                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
                                     orderFormData={OrderFormData}
                                     updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
                                 />
                             </Route>
                             <Route exact path={`${match.path}/:gameSlug/buy`}>
                                 <GameBuy
+                                    setListing={(listing) => setListing(listing)}
+                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
                                     orderFormData={OrderFormData}
                                     updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
                                 />
@@ -457,75 +632,193 @@ function OrderScreen(props) {
                     </div>
 
                     <div style={styles.deliverySection}>
-                        <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px'}}>
-                            Enter a valid delivery address
-                        </div>
-                        
-                        <form style={styles.deliveryForm}>
-                            <FormField
-                                formData={DeliveryFormData}
-                                change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
-                                field={{
-                                    id: 'address',
-                                    config: DeliveryFormData.address
-                                }}
-                            />
 
-                            <FormField
-                                formData={DeliveryFormData}
-                                change={(newDeliveryFormData) => {
-                                    let countryId = newDeliveryFormData.country.value
-                                    // Update Form
-                                    setDeliveryFormData({ ...newDeliveryFormData })
-                                    // Fetch States
-                                    FetchStateList(countryId)
-                                }}
-                                field={{
-                                    id: 'country',
-                                    config: DeliveryFormData.country
-                                }}
-                            />
+                        {
+                            ShowAddressForm ? (
+                                <form style={styles.deliveryForm}>
+                                    <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
+                                        Enter a valid delivery address
+                                    </div>
 
-                            <FormField
-                                formData={DeliveryFormData}
-                                change={(newDeliveryFormData) => {
-                                    let stateId = newDeliveryFormData.state.value
-                                    // Update Form
-                                    setDeliveryFormData({ ...newDeliveryFormData })
-                                    // Fetch States
-                                    FetchCityList(stateId)
-                                }}
-                                field={{
-                                    id: 'state',
-                                    config: DeliveryFormData.state
-                                }}
-                            />
+                                    <FormField
+                                        formData={DeliveryFormData}
+                                        change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
+                                        field={{
+                                            id: 'address_line',
+                                            config: DeliveryFormData.address_line
+                                        }}
+                                    />
 
-                            <FormField
-                                formData={DeliveryFormData}
-                                change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
-                                field={{
-                                    id: 'city',
-                                    config: DeliveryFormData.city
-                                }}
-                            />
+                                    <FormField
+                                        formData={DeliveryFormData}
+                                        change={(newDeliveryFormData) => {
+                                            let countryId = newDeliveryFormData.country.value
+                                            // Update Form
+                                            setDeliveryFormData({ ...newDeliveryFormData })
+                                            // Fetch States
+                                            FetchStateList(countryId)
+                                        }}
+                                        field={{
+                                            id: 'country',
+                                            config: DeliveryFormData.country
+                                        }}
+                                    />
 
-                            <FormField
-                                formData={DeliveryFormData}
-                                change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
-                                field={{
-                                    id: 'additionalInfo',
-                                    config: DeliveryFormData.additionalInfo
-                                }}
-                            />
+                                    <FormField
+                                        formData={DeliveryFormData}
+                                        change={(newDeliveryFormData) => {
+                                            let stateId = newDeliveryFormData.state.value
+                                            // Update Form
+                                            setDeliveryFormData({ ...newDeliveryFormData })
+                                            // Fetch States
+                                            FetchCityList(stateId)
+                                        }}
+                                        field={{
+                                            id: 'state',
+                                            config: DeliveryFormData.state
+                                        }}
+                                    />
 
-                            <Button {...PageButtons.sendRequest} />
-                            
+                                    <FormField
+                                        formData={DeliveryFormData}
+                                        change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
+                                        field={{
+                                            id: 'city',
+                                            config: DeliveryFormData.city
+                                        }}
+                                    />
 
-                        </form>
+                                    <div style={{ display: 'flex', }}>
+                                        <Button {...PageButtons.attemptAddAddress} />
+                                        <Button {...PageButtons.cancelAddAddress} />
+                                    </div>
+
+                                </form>
+                            ) : (
+                                <div>
+                                    {
+                                        AddressBook && AddressBook.length > 0 ? (
+                                            <div>
+                                                <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
+                                                    Select a delivery address
+                                                </div>
+
+                                                <div className={'horizontal-scrolling-wrapper'}>
+                                                    <div className={'tray'}>
+                                                        {
+                                                            AddressBook.map((address, i) => {
+                                                                // console.log("address: ", address)
+                                                                return (
+                                                                    <div style={styles.addressBookItem}>
+                                                                        <span style={{ position: 'absolute', bottom: '40px', right: '5px', zIndex: 9}}>
+                                                                            <FormField
+                                                                                formData={{
+                                                                                    checkBox: {
+                                                                                        element: 'checkbox',
+                                                                                        checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
+                                                                                        data: address,
+                                                                                        label: false,
+                                                                                        props: {
+                                                                                            name: `address_${i}_input`,
+                                                                                            type: 'checkbox',
+                                                                                        },
+                                                                                    }
+                                                                                }}
+                                                                                change={(addressFormData) => {
+                                                                                    console.log("Clicking")
+                                                                                    if (OrderFormData.deliveryAddress.value === addressFormData.checkBox.data.id) { return }
+                                                                                    // Set new address
+                                                                                    if (addressFormData.checkBox.checked) {
+                                                                                        let newOrderFormData = OrderFormData
+                                                                                        newOrderFormData.deliveryAddress.value = addressFormData.checkBox.data.id
+                                                                                        setOrderFormData({ ...newOrderFormData })
+                                                                                    }
+                                                                                }}
+                                                                                field={{
+                                                                                    id: 'checkBox',
+                                                                                    config: {
+                                                                                        element: 'checkbox',
+                                                                                        checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
+                                                                                        data: address,
+                                                                                        label: false,
+                                                                                        props: {
+                                                                                            name: `address_${i}_input`,
+                                                                                            type: 'checkbox',
+                                                                                        }
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                        </span>
+                                                                        <div className="row">
+                                                                            <div className="col-4" style={{ color: colors.grey }}>
+                                                                                Address Line
+                                                                            </div>
+                                                                            <div className="col-8">
+                                                                                {address.address_line}
+                                                                            </div>
+
+                                                                            <div className="col-4" style={{ color: colors.grey }}>
+                                                                                City
+                                                                            </div>
+                                                                            <div className="col-8">
+                                                                                {address.location.name},
+                                                                            </div>
+
+                                                                            <div className="col-4" style={{ color: colors.grey }}>
+                                                                                State
+                                                                            </div>
+                                                                            <div className="col-8">
+                                                                                {address.location.state.name}
+                                                                            </div>
+
+                                                                            <div className="col-4" style={{ color: colors.grey }}>
+                                                                                Country
+                                                                            </div>
+                                                                            <div className="col-8">
+                                                                                {address.location.state.country.name}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                                <Button
+                                                    {...PageButtons.addAddress}
+                                                    {...{ styles: { ...PageButtons.addAddress.styles, width: "200px" } }}
+                                                />
+
+
+                                                <FormField
+                                                    formData={OrderFormData}
+                                                    change={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
+                                                    field={{
+                                                        id: 'additionalInfo',
+                                                        config: OrderFormData.additionalInfo
+                                                    }}
+                                                />
+
+                                                <Button {...PageButtons.sendRequest} {...{ onClick: () => AttemptMakeOffer(ActivePageForm) }} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <p>
+                                                    You currently have no previously used address.
+                                                </p>
+
+                                                <Button {...PageButtons.addAddress} />
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            )
+                        }
+                                        
+
                     </div>
-                
-                    
+                                   
 
                 </div>
             </div>
@@ -559,12 +852,25 @@ const styles = {
         backgroundColor: colors.white,
         padding: "70px 100px"
     },
-
     deliveryForm: {
         display: 'flex',
         flexDirection: 'column',
         width: '100%'
         // justifyContent: 'center',
+    },
+
+    addressBook: {
+
+    },
+    addressBookItem: {
+        maxWidth: '350px',
+        borderRadius: '14px',
+        border: `2px solid ${colors.primary}`,
+        padding: '15px 20px 15px 30px',
+        fontSize: '12px',
+        whiteSpace: 'break-spaces',
+        margin: '15px 10px',
+        position: 'relative'
     }
 }
 

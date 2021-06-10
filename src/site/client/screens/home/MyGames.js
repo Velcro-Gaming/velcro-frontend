@@ -7,7 +7,7 @@ import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
 import GameCard from '../../components/main/GameCard'
-import UploadGameModal from '../../components/main/UploadGameModal'
+import ModalGameUpload from '../../components/main/ModalGameUpload'
 import { PostMan } from '../../../../Helpers'
 
 function MyGamesScreen(props) {
@@ -177,7 +177,7 @@ function MyGamesScreen(props) {
 
             {
                 ShowUploadGameModal? (
-                    <UploadGameModal hideModal={() => setShowUploadGameModal(false)} />
+                    <ModalGameUpload hideModal={() => setShowUploadGameModal(false)} />
                 ) : null
             }
             

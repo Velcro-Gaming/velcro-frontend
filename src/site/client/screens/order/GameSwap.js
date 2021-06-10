@@ -15,24 +15,31 @@ export default function GameSwap(props) {
     const [SwapGames, setSwapGames] = useState([])
     const match = useRouteMatch();
     const gameSlug = match.params.gameSlug;
-    console.log("gameSlug: ", gameSlug)
-
+    // console.log("gameSlug: ", gameSlug)
+    const { state } = useLocation()
     const {
+        setListing,
+        setActiveForm,
         orderFormData,
         updateOrderFormData
     } = props
-    console.log("props: ", props)
+    // console.log("props: ", props)
+
+    useEffect(() => {
+        // Set Listing in Parent Component State
+        if (state) { setListing(state.listing) }
+        // Set Form Meta in Parent Component State
+        setActiveForm({
+            title: 'swap'
+        })
+
+    }, [])
 
     const GoBackToScratch = () => {
         return <Redirect to={`/search/${gameSlug}`} />
     }
 
-    useEffect(() => {
-        
-    }, [])
-
     // Redirect if missing state
-    const { state } = useLocation()
     if (!state || !state.game || !state.listing) {
         return GoBackToScratch()
     }
@@ -102,8 +109,8 @@ export default function GameSwap(props) {
                                     formData={orderFormData}
                                     change={(newFormData) => updateOrderFormData({ ...newFormData })}
                                     field={{
-                                        id: 'additionalFee',
-                                        config: orderFormData.additionalFee
+                                        id: 'swap_amount',
+                                        config: orderFormData.swap_amount
                                     }}
                                 />
                             </div>

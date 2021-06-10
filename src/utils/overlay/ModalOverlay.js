@@ -15,7 +15,7 @@ export default function ModalOverlay(props) {
 const styles = {
     container: {
         position: "fixed",
-        zIndex: 1,
+        zIndex: 999,
         left: 0,
         top: 0,
         width: "100%",

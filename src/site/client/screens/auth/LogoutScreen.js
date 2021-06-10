@@ -37,7 +37,7 @@ function LogoutScreen(props) {
                     },
                     color: colors.white
                 },
-                onClick: () => history.goBack()
+                onClick: () => GoBack()
             },
             signOut: {
                 text: {
@@ -61,6 +61,10 @@ function LogoutScreen(props) {
             },
         }
     })
+
+    const GoBack = () => {
+        return history.goBack()
+    }
 
     const AttemptSignOut = () => {
         // Logout
