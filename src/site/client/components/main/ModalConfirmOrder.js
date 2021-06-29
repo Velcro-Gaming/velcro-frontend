@@ -98,6 +98,31 @@ function UploadGameModal(props) {
         }
     }
 
+    const AttemptAcceptOrder = async () => {
+        // Start Loader
+        let newButtons = Buttons
+        newButtons.confirmOrder.loader.isLoading = true
+        await setButtons({ ...newButtons })
+        // Response Object
+        const responseObject = await PostMan(`order/`, 'POST', orderPayload)
+        // Stop Loader
+        newButtons.confirmOrder.loader.isLoading = false
+        await setButtons({ ...newButtons })
+        // Handle Response
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            // Show Success Message before Redirect
+            toast.success("Order has been placed successfully")
+            setTimeout(() => {
+                hideModal()
+                return window.location = "/my-orders"
+            }, 3000)
+        }
+        else {
+            console.log("responseObject: ", responseObject)
+        }
+    }
+
 
     useEffect(() => {
         //

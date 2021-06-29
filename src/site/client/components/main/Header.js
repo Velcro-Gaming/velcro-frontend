@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     colors
 } from '../../../../App.json'
@@ -26,17 +26,129 @@ import { FaChevronDown } from 'react-icons/fa'
 import { AiOutlineSearch } from 'react-icons/ai'
 
 import ModalGameUpload from './ModalGameUpload'
+import ModalConfirmOrder from './ModalConfirmOrder'
 import SearchableInput from '../../../../utils/SearchableInput';
 import Dropdown from '../../../../utils/Dropdown'
 
+import { RenderNotifications } from '../main/NotifierScripts'
+
 
 function Header(props) {
+    const { auth, headerConfig } = props
+    
+    const match = useRouteMatch();
+    const location = useLocation()
+    const { state } = location
+
     const [redirect, setRedirect] = useState(false)
+
     const [Searching, setSearching] = useState(false)
-    const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
     const [GameSearchResult, setGameSearchResult] = useState([])
     const [SelectedGameListing, setSelectedGameListing] = useState(null)
-    const [Notification, setNotification] = useState(false)
+    // const [Notifications, setNotifications] = useState(false)
+
+    const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
+    const [ShowModalConfirmOrder, setShowModalConfirmOrder] = useState(false)
+
+    const getUserInitials = () => {
+        console.log("auth.user.fullName: ", auth.user.full_name)
+        if (auth.user.full_name) {
+            let userFullName = auth.user.full_name
+            let firstName = userFullName.split(' ')[0]
+            let lastName = userFullName.split(' ')[1]
+            return `${firstName[0]}${lastName[0]}`.toUpperCase()
+        }
+        return `${auth.user.username[0]}${auth.user.username[0]}`.toUpperCase()
+
+    }
+
+    const [Notifications, setNotifications] = useState({
+        title: <Notify notification={true} />,
+        data: [],
+        wrapperStyles: {
+            placeholder: {
+                padding: "5px 0",
+            },
+            dropdown: {
+                position: 'absolute',
+                width: '275px',
+                backgroundColor: colors.grey2,
+                top: '50px',
+                marginLeft: '-180px',
+                borderRadius: '5px',
+                border: '1px solid #D0D0D0',
+            },
+            dropdownItem: {
+                color: colors.dark,
+                fontSize: '12px',
+                padding: '10px 15px',
+                borderTop: `1px solid ${colors.grey}`
+            },
+            toolTip: {
+                borderBottom: `8px solid ${colors.grey2}`,
+                left: '65%'
+            }
+        }
+    })
+
+    const [UserToggle, setUserToggle] = useState({
+        title: (
+            <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
+                <div style={styles.userInitial}>
+                    {auth.user && getUserInitials()}
+                </div>
+                <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
+                    {auth.user && auth.user.username}
+                </div>
+
+                <div style={{ color: colors.white, margin: '3px 10px 5px', fontSize: '12px' }}>
+                    <FaChevronDown />
+                </div>
+            </div>
+        ),
+        data: [
+            {
+                name: "Profile",
+                // action: () => { console.log("/account") }
+                action: () => setRedirect('/account')
+            },
+            {
+                name: "Categories",
+                // action: () => { console.log("/search") }
+                action: () => setRedirect('/search')
+            },
+            {
+                name: "Withdraw Funds",
+                action: () => setRedirect('/withdraw-funds')
+            },
+            {
+                name: "Contact Us",
+                // action: () => setRedirect('/contact-us')
+                action: () => { window.open('/contact-us') }
+            },
+            {
+                name: "Terms and Conditions",
+                action: () => { window.open('/terms-and-conditions') }
+            }
+        ],
+        wrapperStyles: {
+            placeholder: {
+                cursor: 'pointer',
+                padding: "15px 0",
+                marginLeft: "25px",
+            },
+            dropdown: {
+                position: 'absolute',
+                minWidth: '150px',
+                backgroundColor: colors.dark,
+                top: '65px',
+                marginLeft: '8px'
+            },
+            dropdownItem: null,
+            toolTip: null
+        }
+    })
+
     const [HeaderConfig, setHeaderConfig] = useState({
         authHeaderButtons: [
             {
@@ -60,27 +172,6 @@ function Header(props) {
                 },
                 isProtected: true,
                 onClick: () => setShowUploadGameModal(true),
-            },
-            {
-                text: {
-                    color: colors.white,
-                    value: <Notify />,
-                },
-                styles: {
-                    height: null,
-                    width: '35px',
-                    margin: '0 15px',
-                    backgroundColor: colors.black,
-                    border: {
-                        width: null,
-                        style: null,
-                        color: null,
-                        radius: null,
-                    },
-                    color: colors.white
-                },
-                isProtected: true,
-                onClick: () => { },
             },
         ],
     })
@@ -131,6 +222,13 @@ function Header(props) {
         },
     })
 
+    const {
+        headerButtons,
+        headerStyles,
+        isVisible = true,
+    } = headerConfig
+
+
     const AttemptSignOut = async () => {
         setRedirect('/logout')
     }
@@ -153,20 +251,6 @@ function Header(props) {
         }
         return template
     }
-
-    const { auth, headerConfig } = props
-    const {
-        headerButtons,
-        headerStyles,
-        isVisible=true,
-    } = headerConfig
-
-
-    const match = useRouteMatch();
-    const location = useLocation()
-
-    const { state } = location
-
 
     const AttemptGameSearch = (query, timer = null) => {
         let queryFormattedToLowerCase = String(query).toLocaleLowerCase()
@@ -212,7 +296,24 @@ function Header(props) {
                 return window.location = `/search/${queryFormattedToLowerCase}`
             }
         }
+    }
 
+    const FetchMyNotifications = async () => {
+        const responseObject = await PostMan(`notifications/`, 'GET')
+        if (responseObject.status === 'success') {
+            let notifications = responseObject.data
+            // Sort Notifications
+            let notificationsArray = RenderNotifications(notifications)
+            console.log("notificationsArray: ", notificationsArray)
+            // Set Notifications in state
+            let notificationsBuffer = Notifications
+            notificationsBuffer.data = notificationsArray
+            await setNotifications({ ...notificationsBuffer })
+        }
+        else {
+            //
+            console.log("Notifications error: ", responseObject.data)
+        }
     }
 
     const getUserNames = () => {
@@ -221,82 +322,23 @@ function Header(props) {
         let lastName = userFullName.split(' ')[1]
         return [firstName,lastName]
     }
-    const getUserInitials = () => {
-        console.log("auth.user.fullName: ", auth.user.full_name)
-        if (auth.user.full_name) {
-            let userFullName = auth.user.full_name
-            let firstName = userFullName.split(' ')[0]
-            let lastName = userFullName.split(' ')[1]
-            return `${firstName[0]}${lastName[0]}`.toUpperCase()
-        }
-        return `${auth.user.username[0]}${auth.user.username[0]}`.toUpperCase()
-        
-    }
-
-    const userToggleDropdown = () => {
-        return {
-            title: (
-                <div style={{ display: 'flex', alignItems: 'center', borderLeft: `1px solid ${colors.white}`, borderRight: `1px solid ${colors.white}`, padding: '0 20px' }}>
-                    <div style={styles.userInitial}>
-                        {auth.user && getUserInitials()}
-                    </div>
-                    <div style={{ margin: '0 0 0 10px', fontSize: '12px', lineHeight: '16px', color: colors.white, fontFamily: 'Nunito Sans', fontStyle: 'normal', fontWeight: 'bold', }}>
-                        {auth.user.username}
-                    </div>
-
-                    <div style={{ color: colors.white, margin: '3px 10px 5px', fontSize: '12px' }}>
-                        <FaChevronDown />
-                    </div>
-                </div>
-            ),
-            data: [
-                {
-                    name: "Profile",
-                    // action: () => { console.log("/account") }
-                    action: () => setRedirect('/account')
-                },
-                {
-                    name: "Categories",
-                    // action: () => { console.log("/search") }
-                    action: () => setRedirect('/search')
-                },
-                {
-                    name: "Withdraw Funds",
-                    action: () => setRedirect('/withdraw-funds')
-                },
-                {
-                    name: "Contact Us",
-                    // action: () => setRedirect('/contact-us')
-                    action: () => { window.open('/contact-us') }
-                },
-                {
-                    name: "Terms and Conditions",
-                    action: () => { window.open('/terms-and-conditions') }
-                }
-            ],
-            wrapperStyles: {
-                placeholder: {
-                    padding: "15px",
-                },
-                dropdown: {
-                    position: 'absolute',
-                    minWidth: '150px',
-                    backgroundColor: colors.dark,
-                    top: '65px',
-                    marginLeft: '25px'
-                }
-            }
-        }
-    }
+    
 
     const GoToSearchResult = (game) => {
         // 
         window.location = `/search/${game.slug}`
     }
 
+    useEffect(() => {
+        // Fetch Notifications
+        FetchMyNotifications()
+    }, [])
+
     if (redirect) {
         return <Redirect to={redirect} />
     }
+
+    console.log("HeaderConfig.authHeaderButtons:====> ", HeaderConfig.authHeaderButtons)
 
     return (
         <div style={{ ...styles.container, backgroundColor: headerStyles && headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
@@ -307,6 +349,14 @@ function Header(props) {
                 ) : null
             }
 
+            {
+                ShowModalConfirmOrder ? (
+                    <ModalConfirmOrder 
+                        orderPayload={[]}
+                        hideModal={() => setShowModalConfirmOrder(false)}
+                    />
+                ) : null
+            }
 
             <div className="container" style={styles.navbar}>
                 <Link to="/">
@@ -370,14 +420,24 @@ function Header(props) {
                     
                 </IsDesktop>
 
+                {/* {
+                    auth.loggedIn ? (
+                        <div style={{ display: 'flex', alignItems: 'center', }}>
+                            <Dropdown {...Notifications} />
+                        </div>
+                    ) : null
+                } */}
+                
                 {
                     auth.loggedIn ? (
                         <div style={{ display: 'flex', alignItems: 'center', }}>
+
+                            <Dropdown {...Notifications} />
                             
                             {
                                 isVisible ? (
                                     <IsDesktop>
-                                        <Dropdown {...userToggleDropdown()} />
+                                        <Dropdown {...UserToggle} />
 
                                         <div style={{
                                             border: '1px solid #7F3F98',

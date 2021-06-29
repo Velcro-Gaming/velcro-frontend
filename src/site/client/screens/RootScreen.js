@@ -28,7 +28,7 @@ class RootScreen extends Component {
                         isProtected: false,
                         text: {
                             color: colors.white,
-                            value: "Get Started",
+                            value: "Sign in",
                         },
                         styles: {
                             backgroundColor: colors.primary,
@@ -40,7 +40,7 @@ class RootScreen extends Component {
                             },
                             color: colors.white
                         },
-                        linkTo: "/register",
+                        linkTo: "/login",
                     },
                 ],
                 headerStyles: {

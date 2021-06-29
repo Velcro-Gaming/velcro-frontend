@@ -292,7 +292,7 @@ const styles = {
     },
     formWrapper: {
         margin: '-30px 0 150px',
-        zIndex: 99,
+        zIndex: 9,
         position: 'relative',
         background: colors.white,
         boxShadow: '0px 20px 40px rgba(239, 241, 243, 0.72)',

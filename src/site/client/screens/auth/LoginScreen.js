@@ -290,14 +290,6 @@ function LoginScreen(props) {
 
                 <div style={{ marginTop: '35px', minWidth: `${config.formMinWidth}` }}>
                     <form>
-                        {/* <FormFields
-                            formData={ComponentState.formData}
-                            change={(newFormData) => setComponentState({
-                                ...ComponentState,
-                                formData: newFormData
-                            })}
-                        /> */}
-
                         <FormFields
                             formData={FormData}
                             change={(newFormData) => setFormData({...newFormData})}

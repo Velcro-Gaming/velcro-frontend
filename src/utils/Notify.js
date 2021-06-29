@@ -24,7 +24,6 @@ export default function Notify(props) {
 
 const styles = {
     wrapper: {
-        height: '20px',
         position: 'relative'
     },
     bell: {

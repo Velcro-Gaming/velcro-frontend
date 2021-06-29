@@ -18,7 +18,7 @@ const styles = {
         display: 'flex',
         height: '100%',
         width: '50%',
-        backgroundImage: `url(${require('../../../../assets/images/bg-2.png')})`,
+        background: `linear-gradient(91.76deg, rgba(0, 0, 0, 0.7) 0.28%, rgba(0, 0, 0, 0.7) 22.79%, rgba(0, 0, 0, 0) 81.83%), url(${require('../../../../assets/images/bg-2.png')})`,
         backgroundPosition: 'top center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',

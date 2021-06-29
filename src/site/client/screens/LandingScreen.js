@@ -15,6 +15,8 @@ import IsDesktop from '../../../utils/breakpoints/IsDesktop';
 import IsTablet from '../../../utils/breakpoints/IsTablet';
 import IsPhone from '../../../utils/breakpoints/IsPhone';
 
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 class LandingScreen extends Component {
     constructor(props) {
@@ -24,7 +26,7 @@ class LandingScreen extends Component {
                 signIn: {
                     text: {
                         color: colors.white,
-                        value: "Sign in",
+                        value: "Get Started",
                     },
                     styles: {
                         height: '50px',
@@ -39,7 +41,7 @@ class LandingScreen extends Component {
                         },
                         color: colors.white
                     },
-                    linkTo: "/login",
+                    linkTo: "/register",
                 },
                 signInMobile: {
                     text: {
@@ -140,23 +142,24 @@ class LandingScreen extends Component {
                             ...styles.showOnTop
                         }}
                     >
-                        <div style={{ ...styles.header, fontSize: `${config.headingSize}`, }}>
-                            Rent, Swap and Earn
-                        </div>
-                        <div style={{ ...styles.subHeader, fontSize: `${config.subHeadingSize}`, }}>
-                            Video Games at your own convience..
-                        </div>
-
-                        <Breakpoint name="notPhone">
-                            <div style={{
-                                width: `${config.callToAction.buttonWidth}`,
-                                height: `${config.callToAction.buttonHeight}`,
-                            }}>
-                                <Button {...this.state.buttons.signIn} />
-                            </div>
-                        </Breakpoint>
                         
-                        <IsPhone>
+                        {
+                            config.content && config.content.heading ? (
+                                <div style={{ ...styles.header, fontSize: `${config.headingSize}`, }}>
+                                    {config.content.heading}
+                                </div>
+                            ) : null
+                        }
+
+                        {
+                            config.content && config.content.subHeading ? (
+                                <div style={{ ...styles.subHeader, fontSize: `${config.subHeadingSize}`, }}>
+                                    {config.content.subHeading}
+                                </div>
+                            ) : null
+                        }
+
+                        <Breakpoint name="notDesktop">
                             <div className="row">
                                 <div style={{
                                     width: `${config.callToAction.buttonWidth}`,
@@ -171,7 +174,17 @@ class LandingScreen extends Component {
                                     <Button {...this.state.buttons.signInMobile} />
                                 </div>
                             </div>
-                        </IsPhone>
+                        </Breakpoint>
+
+                        <IsDesktop>
+                            <div style={{
+                                width: `${config.callToAction.buttonWidth}`,
+                                height: `${config.callToAction.buttonHeight}`,
+                            }}>
+                                <Button {...this.state.buttons.signIn} />
+                            </div>
+                        </IsDesktop>
+
 
                     </div>
 
@@ -179,20 +192,20 @@ class LandingScreen extends Component {
                     <div className={"container"} style={{
                         ...styles.showOnTop
                     }}>
-                        <div className="row">
-                            <div className="col-12 col-lg-6 mb-5">
-                                <img 
-                                    style={{ height: `${config.iconSize}` }}
-                                    src={require('../../../assets/icons/consoles.png')}
-                                />
+                        <div className="row mb-3">
+                            <div className="col-12 col-lg-6 mb-3" style={{ textAlign: 'initial' }}>
+                                <span style={{ display: 'flex', ...config.icon }}>
+                                    <img
+                                        style={{ width: 'initial',  }}
+                                        src={require('../../../assets/icons/consoles.png')}
+                                    />
+                                </span>
                             </div>
 
-                            <div className="col-12 col-lg-6 mb-5">
-                                <div style={{ ...styles.navigation, flexFlow: `${config.navigation.direction}` }}>
-                                    
+                            <div className="col-12 col-lg-6 mb-3">
+                                <div style={{ ...styles.navigation, ...config.navigation }}>
                                     <Button {...this.state.buttons.contactUs} />
                                     <Button {...this.state.buttons.termsAndConditions} />
-
                                 </div>
                             </div>
 
@@ -202,29 +215,28 @@ class LandingScreen extends Component {
             )
         }
 
-        return (
-            <div>
-                <BaseOverlay>
-                    <IsDesktop>
-                        <DottedBoxOverlay />
-                    </IsDesktop>
-                </BaseOverlay>
-
-                <div style={styles.container}>
+        const getCarouselContent = (slideContent) => {
+            return (
+                <div>
                     <IsDesktop>
                         {
                             mainContent({
                                 headingSize: '50px',
                                 subHeadingSize: '22px',
-                                iconSize: '45px',
+                                icon: {
+                                    height: '45px',
+                                    justifyContent: 'flex-start'
+                                },
                                 wrapperPadding: '0 0',
                                 callToAction: {
                                     buttonWidth: '150px',
                                     buttonHeight: '50px',
                                 },
                                 navigation: {
-                                    direction: 'row nowrap'
-                                }
+                                    flexFlow: 'row nowrap',
+                                    justifyContent: 'flex-end',
+                                },
+                                content: slideContent
                             })
                         }
                     </IsDesktop>
@@ -234,15 +246,20 @@ class LandingScreen extends Component {
                             mainContent({
                                 headingSize: '40px',
                                 subHeadingSize: '18px',
-                                iconSize: '35px',
+                                icon: {
+                                    height: '35px',
+                                    justifyContent: 'flex-start'
+                                },
                                 wrapperPadding: '0 0',
                                 callToAction: {
                                     buttonWidth: '120px',
                                     buttonHeight: '50px',
                                 },
                                 navigation: {
-                                    direction: 'row nowrap'
-                                }
+                                    flexFlow: 'row nowrap',
+                                    justifyContent: 'flex-end',
+                                },
+                                content: slideContent
                             })
                         }
                     </IsTablet>
@@ -252,19 +269,91 @@ class LandingScreen extends Component {
                             mainContent({
                                 headingSize: '30px',
                                 subHeadingSize: '14px',
-                                iconSize: '25px',
+                                icon: {
+                                    height: '25px',
+                                    justifyContent: 'flex-end'
+                                },
                                 wrapperPadding: '0 10px',
                                 callToAction: {
                                     buttonWidth: '120px',
                                     buttonHeight: '50px',
                                 },
                                 navigation: {
-                                    direction: 'column'
-                                }
+                                    flexFlow: 'column',
+                                    alignItems: 'flex-end',
+                                },
+                                content: slideContent
                             })
                         }
                     </IsPhone>
                 </div>
+            )
+        }
+
+        return (
+            <div style={{ position: 'relative' }}>
+                
+                <BaseOverlay>
+                    <IsDesktop>
+                        <DottedBoxOverlay />
+                    </IsDesktop>
+                </BaseOverlay>
+
+
+                <div style={styles.container}>
+                    <div>                        
+                        <Carousel
+                            autoPlay={true}
+                            showThumbs={false}
+                            swipeable={true}
+                            stopOnHover={false}
+                            infiniteLoop={true}
+                            interval={4500}
+                        >
+                            <div style={{
+                                background: `linear-gradient(91.76deg, rgba(0, 0, 0, 0.7) 0.28%, rgba(0, 0, 0, 0.7) 22.79%, rgba(0, 0, 0, 0) 81.83%), url(${require('../../../assets/images/bg-slide1.png')})`,
+                                ...styles.background,
+
+                            }}>
+                                {
+                                    getCarouselContent({
+                                        heading: "Start Making Money",
+                                        subHeading: "Off Your Old Video Games"
+                                    })
+                                }
+                            </div>
+
+                            <div style={{
+                                background: `linear-gradient(91.76deg, rgba(0, 0, 0, 0.7) 0.28%, rgba(0, 0, 0, 0.7) 22.79%, rgba(0, 0, 0, 0) 81.83%), url(${require('../../../assets/images/bg-slide2.png')})`,
+                                ...styles.background,
+                            }}>
+                                {
+                                    getCarouselContent({
+                                        heading: "Get The Latest Video Games",
+                                        subHeading: "At the lowest rate possible"
+                                    })
+                                }
+                            </div>
+                            <div style={{
+                                background: `linear-gradient(91.76deg, rgba(0, 0, 0, 0.7) 0.28%, rgba(0, 0, 0, 0.7) 22.79%, rgba(0, 0, 0, 0) 81.83%), url(${require('../../../assets/images/bg-slide3.png')})`,
+                                ...styles.background,
+                            }}>
+                                {
+                                    getCarouselContent({
+                                        heading: "Rent, Swap and Earn",
+                                        subHeading: "Video Games at your own convience.."
+                                    })
+                                }
+                            </div>
+                        </Carousel>
+                    </div>
+                </div>
+
+                {/* <BaseOverlay>
+                    <IsDesktop>
+                        <DottedBoxOverlay />
+                    </IsDesktop>
+                </BaseOverlay> */}
                 
             </div>
         )
@@ -274,19 +363,23 @@ class LandingScreen extends Component {
 const styles = {
     container: {
         height: '100vh',
-        backgroundImage: `url(${require('../../../assets/images/bg-slide1.png')})`,
+        
+    },
+    background: {
+        // boxShadow: 'inset 0 0 0 2000px rgba(0, 0, 0, 0.7)',
         backgroundPosition: 'top center',
         backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
     },
     wrapper: {
-        height: '100%',
+        height: '100vh',
         display: 'flex',
         flexFlow: 'column noWrap',
         justifyContent: 'space-between',
     },
     upperSection: {
         alignSelf: 'end',
+        textAlign: 'initial',
     },
     header: {
         fontFamily: 'Nunito Sans',
@@ -311,11 +404,11 @@ const styles = {
     },
     navigation: {
         display: 'flex',
-        alignItems: 'flex-end',
+        // alignItems: 'flex-end',
     },
     showOnTop: {
-        position: 'relative',
-        zIndex: 1,
+        // position: 'relative',
+        zIndex: 99,
     },
 }
 
