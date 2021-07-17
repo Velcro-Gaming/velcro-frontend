@@ -6,7 +6,10 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
-import GameCard from '../../components/main/GameCard'
+import ListingCard from '../../components/main/ListingCard'
+import ModalGameUpload from '../../components/main/ModalGameUpload'
+import { PostMan } from '../../../../Helpers'
+
 
 function SavedGameScreen(props) {
     const [SavedGames, setSavedGames] = useState([])
@@ -78,22 +81,37 @@ function SavedGameScreen(props) {
         buttons
     } = ComponentState
 
+
+    const FetchMySavedListings = async () => {
+        const responseObject = await PostMan(`listing/saved/`, 'GET')
+        if (responseObject.status === 'success') {
+            let savedListings = responseObject.data
+            // Save Games to state
+            await setSavedGames(savedListings)
+        }
+        else { }
+    }
+    
     useEffect(()=>{
+        // Set Active screen
         props.setActiveScreen({
             name: 'savedGames',
             path: '/saved-games'
         })
+
+        // Fetch Saved Listings
+        FetchMySavedListings()
     }, [])
 
     const MainContent = (config) => {
         if (SavedGames.length > 0) {
             return (
-                <div className="row">
+                <div className="row" style={{ minHeight: '500px' }}>
                     {
                         SavedGames.map(game => {
                             return (
-                                <GameCard
-                                    config={game}
+                                <ListingCard
+                                    self={game}
                                 />
                             )
                         })

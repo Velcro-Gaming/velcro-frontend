@@ -6,7 +6,7 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
-import GameCard from '../../components/main/GameCard'
+import ListingCard from '../../components/main/ListingCard'
 import ModalGameUpload from '../../components/main/ModalGameUpload'
 import { PostMan } from '../../../../Helpers'
 
@@ -78,10 +78,9 @@ function MyGamesScreen(props) {
     const FetchMyGames = async () => {
         const responseObject = await PostMan(`listing/all/`, 'GET')
         if (responseObject.status === 'success') {
-            let game_listings = responseObject.data
-            // let myGames = responseData.data
+            let myGames = responseObject.data
             // Save Games to state
-            await setMyGames(game_listings)
+            await setMyGames(myGames)
         }
         else { }
     }
@@ -100,13 +99,13 @@ function MyGamesScreen(props) {
     const MainContent = (config) => {        
         if (MyGames.length > 0) {
             return (
-                <div className="row">
-                    {/* { gameArray } */}
+                <div className="row" style={{ minHeight: '500px' }}>
                     {
                         MyGames.map(game => {
+                            console.log("Listing: ", game)
                             return (
-                                <GameCard
-                                    config={game}
+                                <ListingCard
+                                    self={game}
                                 />
                             )
                         })

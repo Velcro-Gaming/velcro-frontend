@@ -5,8 +5,10 @@ import {
     useLocation,
     Redirect
 } from 'react-router-dom';
-import { IoIosArrowUp, IoIosArrowDown } from 'react-icons/io'
+
 import { colors } from '../../../../App.json'
+import CategoryTray from '../../components/search/CategoryTray';
+
 
 export default function GameCategoryList() {
     const [CategoryList, setCategoryList] = useState({
@@ -65,17 +67,7 @@ export default function GameCategoryList() {
         for (let categoryName in CategoryList) {
             let category = CategoryList[categoryName]
             categoryList.push(
-                <div style={styles.listItem}>
-                    <div>{category.name}</div>
-
-                    {
-                        category.tray.opened ? (
-                            <IoIosArrowUp />
-                        ) : (
-                            <IoIosArrowDown />
-                        )
-                    }
-                </div>
+                <CategoryTray category={category} />
             )
         }
         return categoryList
@@ -83,20 +75,13 @@ export default function GameCategoryList() {
 
 
     const location = useLocation()
-    // const { state } = useLocation()
 
     console.log("location: ", location)
     
-
-    // if (redirect) {
-    //     return <Redirect to={redirect} />
-    // }
+    
 
     return (
         <div className={"container"} style={styles.container}>
-            <div>
-
-            </div>
 
             <div style={styles.heading}>
                 CATEGORIES
@@ -106,6 +91,8 @@ export default function GameCategoryList() {
                 {
                     // CategoryList.map(category => {
                     RenderCategoryList()
+
+                    
                 }
             </div>
             
@@ -130,18 +117,18 @@ const styles = {
         flexDirection: "column",
         padding: "20px",
     },
-    listItem: {
-        display: "flex",
-        justifyContent: "space-between",
-        borderBottom: "2px solid #7F3F98",
+    // listItem: {
+    //     display: "flex",
+    //     justifyContent: "space-between",
+    //     borderBottom: "2px solid #7F3F98",
 
-        fontFamily: "Nunito Sans",
-        fontSize: '25px',
-        color: colors.black,
-        textTransform: "uppercase",
+    //     fontFamily: "Nunito Sans",
+    //     fontSize: '25px',
+    //     color: colors.black,
+    //     textTransform: "uppercase",
 
-        padding: "20px 35px",
-        margin: "25px"
+    //     padding: "20px 35px",
+    //     margin: "25px"
 
-    }
+    // }
 }

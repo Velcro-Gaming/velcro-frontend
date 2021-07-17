@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 import { PostMan } from '../../../../Helpers';
 
-import GameListingCard from '../../components/search/GameListingCard';
+import ListingCard from '../../components/search/ListingCard';
 
 
 function SearchGameDetail() {
@@ -18,7 +18,17 @@ function SearchGameDetail() {
     const [redirect, setRedirect] = useState(null)
     const [Game, setGame] = useState(null)
     const [GameListings, setGameListings] = useState([])
-
+    const [SavedListings, setSavedListings] = useState([])    
+    
+    const FetchMySavedListings = async () => {
+        const responseObject = await PostMan(`listing/saved/`, 'GET')
+        if (responseObject.status === 'success') {
+            let savedListings = responseObject.data
+            // Save Games to state
+            await setSavedListings(savedListings)
+        }
+        else { }
+    }
 
     const FetchSearchedGame = async () => {
         const responseObject = await PostMan(`game/${searchQuery}/`, 'GET')
@@ -51,13 +61,28 @@ function SearchGameDetail() {
     }
 
     useEffect(() => {
-        // Fetch searched game
+        // Fetch Searched Game
         FetchSearchedGame()
+
+        // Fetch Saved Listings
+        FetchMySavedListings()
 
     }, [])
 
     if (redirect) {
         return <Redirect to={redirect} />
+    }
+
+    console.log("SavedListings: ", SavedListings)
+
+    function IsSavedListing (listing) {
+        let isSaved = false
+        SavedListings.map(savedListing => {
+            if (listing.id === savedListing.id) {
+                isSaved = true
+            }
+        })
+        return isSaved
     }
 
     return (
@@ -85,9 +110,10 @@ function SearchGameDetail() {
                         {
                             GameListings.map(listing => {
                                 return (
-                                    <GameListingCard
+                                    <ListingCard
                                         game={Game}
                                         listing={listing}
+                                        isSavedListing={(listing) => IsSavedListing(listing)}
                                     />
                                 )
                             })

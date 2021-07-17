@@ -1,36 +1,27 @@
 import React, { useState } from 'react'
 import { colors } from '../../../../App.json'
 
-import BlankImage from '../../../../assets/images/game-0.png'
-import Button from '../../../../utils/Button'
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-export default function GameCard(props) {
+import Avatar from '../../../../assets/images/avi.png'
+import Button from '../../../../utils/Button';
+
+function GameCard(props) {
+    const {
+        auth,
+        self,
+        listing,
+        children: GameMeta
+    } = props
+
+    console.log("Self: ", self)
+
     const [Buttons, setButtons] = useState({
-        swapped: {
+        viewOffers: {
             text: {
                 color: colors.white,
-                value: "I Want This Back",
-            },
-            styles: {
-                height: '35px',
-                width: '100%',
-                margin: null,
-                fontSize: "13px",
-                backgroundColor: colors.primary,
-                border: {
-                    width: null,
-                    style: null,
-                    color: null,
-                    radius: null,
-                },
-                color: colors.white
-            },
-            onClick: () => {}
-        },
-        rented: {
-            text: {
-                color: colors.white,
-                value: "Initiate Return",
+                value: "View Offers",
             },
             styles: {
                 height: '35px',
@@ -50,12 +41,7 @@ export default function GameCard(props) {
         },
     })
     
-    const {
-        config
-    } = props
-
-    console.log(config)
-
+    
     // {
     //     name: "Fifa 20",
     //     numberOfOrders: 2,
@@ -82,52 +68,73 @@ export default function GameCard(props) {
     return (
         <div className="col-12 col-md-6 col-lg-3 my-3">
             <div className="card" style={styles.card}>
-                <img src={config.game.image} style={styles.gameCoverImage} />
-                                
-                <div style={styles.title}>
-                    {config.game.name}
-                </div>
+                <img src={self.image} style={styles.gameCoverImage} />
 
-                <div style={styles.attrib}>
-                    Number of Orders:
-                    <span style={{ color: colors.grey, margin: "0 5px" }}>
-                        {config.orders.count}
-                    </span>
-                </div>
+                <div style={styles.wrapper}>
+                    <div style={{ height: "50px" }} className="d-flex justify-content-between align-items-center">
 
-                <div style={styles.attrib}>
-                    Amount Earned:
-                    <span style={{ color: colors.grey, margin: "0 5px" }}>
-                        ₦{config.orders.earned}
-                    </span>
-                </div>
+                        <div className="d-flex flex-column justify-content-between align-items-start">
+                            <div style={styles.title}>
+                                {self.name}
+                            </div>
 
-                <div className="d-flex justify-content-between align-items-center" style={{ height: "50px", margin: "10px 0 0" }}>
-                    <div>
-                        {
-                            config.status === "swapped" ? (
-                                <Button {...Buttons.swapped} />
-                            ) : null
-                        }
+                            <div style={styles.category}>
+                                {self.category}
+                            </div>
+                        </div>
 
                         {
-                            config.status === "rented" ? (
-                                <Button {...Buttons.rented} />
+                            listing ? (
+                                <div>
+                                    {
+                                        auth.user && auth.user.id === listing.owner.id ? (
+                                            <div style={styles.gameStatus.wrapper}>
+                                                <span style={styles.gameStatus.heading}>
+                                                    status
+                                                </span>
+
+                                                <span style={styles.gameStatus.content}>
+                                                    {listing.status}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className={"d-flex flex-column align-items-center"}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    height: '30px', width: '30px',
+                                                    border: `2px solid ${colors.primary}`,
+                                                    borderRadius: '50%', overflow: 'hidden'
+                                                }}>
+                                                    <img src={Avatar} height={25}
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
+                                                </div>
+
+                                                <div style={{ fontSize: '11px', color: colors.primary }}>
+                                                    {listing.owner.username}
+                                                </div>
+                                            </div>
+                                        )
+                                    }
+                                </div>
                             ) : null
                         }
                     </div>
 
-                    <div style={styles.gameStatus.wrapper}
-                    >
-                        <span style={styles.gameStatus.heading}>
-                            status
-                        </span>
+                    {
+                        listing ? null : (
+                            <div>
+                                <Button {...Buttons.viewOffers} />
+                            </div>
+                        )
+                    }
 
-                        <span style={styles.gameStatus.content}>
-                            {config.status}
-                        </span>
-                    </div>
+                    {GameMeta}
+
                 </div>
+
+
             </div>
         </div>
     )
@@ -136,25 +143,38 @@ export default function GameCard(props) {
 
 const styles = {
     card: {
-        backgroundColor: colors.white,
-        padding: '15px',
-
+        height: "300px",
+        position: "relative",
         boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
         borderRadius: "10px",
     },
+    wrapper: {
+        position: 'absolute',
+        padding: '10px 15px',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: colors.white,
+        borderRadius: "10px",
+    },
     title: {
-        fontFamily: "Nunito Sans",
+        fontFamily: "Roboto",
         fontStyle: "normal",
         fontWeight: "bold",
-        fontSize: "16px",
-        lineHeight: "22px",
-        margin: "5px 0",
+        fontSize: "12px",
+        borderBottom: "1px solid black",
+        padding: "0",
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
+        textTransform: "uppercase",
+    },
+    category: {
+        fontSize: '10px',
+        color: colors.grey,
+        textTransform: "capitalize"
     },
     gameCoverImage: {
-        height: "200px",
+        height: "220px",
         objectFit: "cover",
         borderRadius: "5px",
     },
@@ -188,3 +208,21 @@ const styles = {
         }
     }
 }
+
+
+const mapDispatchToProps = dispatch => {
+    return bindActionCreators({
+
+    }, dispatch)
+}
+
+const mapStateToProps = state => {
+    const {
+        auth
+    } = state
+    return {
+        auth
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameCard)

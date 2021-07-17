@@ -6,7 +6,9 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
+
 import GameCard from '../../components/main/GameCard'
+import OrderCard from '../../components/main/OrderCard'
 
 import { Redirect } from 'react-router'
 import { PostMan } from '../../../../Helpers'
@@ -61,12 +63,13 @@ function MyOrdersScreen(props) {
         // const 
         if (MyOrders.length > 0) {
             return (
-                <div className="row">
+                <div className="row" style={{minHeight: '500px'}}>
                     {
                         MyOrders.map(order => {
+                            console.log("Order: ", order)
                             return (
-                                <GameCard
-                                    config={order.listing}
+                                <OrderCard
+                                    self={order}
                                 />
                             )
                         })

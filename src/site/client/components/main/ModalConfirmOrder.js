@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ModalOverlay from '../../../../utils/overlay/ModalOverlay'
 import {
     colors,
-    cities
+    paystack_pub_key
 } from '../../../../App.json'
 
 import FormField from '../../../../utils/FormField';
@@ -13,17 +13,23 @@ import SearchableInput from '../../../../utils/SearchableInput';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { usePaystackPayment } from 'react-paystack';
+
+import mastercard_logo from '../../../../assets/icons/mastercard.png'
 
 
-function UploadGameModal(props) {
+function OrderConfirmationModal(props) {
     const {
         auth,
         hideModal,
         orderPayload
     } = props
 
+
+    
     const [Buttons, setButtons] = useState({
         confirmOrder: {
             text: {
@@ -43,7 +49,7 @@ function UploadGameModal(props) {
                 },
                 color: colors.white
             },
-            onClick: () => AttemptPlaceOrder(),
+            onClick: () => {},
             loader: {
                 isLoading: false,
                 size: 15,
@@ -73,13 +79,92 @@ function UploadGameModal(props) {
         },
     })
 
-    const AttemptPlaceOrder = async () => {
+    const PayButton = () => {
+        const paymentReference = (new Date()).getTime()
+        const config = {
+            reference: paymentReference,
+            email: auth.user.email,
+            amount: orderPayload.fee * 100,
+            publicKey: paystack_pub_key,
+        };
+
+        const onSuccess = () => AttemptPlaceOrder(paymentReference)
+        const onClose = () => { }
+
+        const initializePayment = usePaystackPayment(config);
+        const onClick = () => initializePayment(onSuccess, onClose)
+
+        let btnColor, txtColor
+        if (orderPayload._type === 'swap') {
+            btnColor = colors.primaryLight
+            txtColor = colors.white
+        }
+        else if (orderPayload._type === 'rent') {
+            btnColor = colors.primary
+            txtColor = colors.white
+        }
+        else {
+            btnColor = colors.grey1
+            txtColor = colors.primary
+        }
+
+
+        // return (<Button {...{
+        //     text: {
+        //         color: txtColor,
+        //         value: <span>Confirm and Pay <img src={mastercard_logo} /></span>,
+        //     },
+        //     styles: {
+        //         height: '50px',
+        //         width: '100%',
+        //         margin: '20px 0',
+        //         backgroundColor: btnColor,
+        //         border: {
+        //             width: '1px',
+        //             style: 'solid',
+        //             color: colors.primary,
+        //             radius: '4px',
+        //         },
+        //         color: colors.white
+        //     },
+        //     onClick: () => onClick()
+        // }} {...Buttons.confirmOrder} />)
+
+        return (<Button { ...Buttons.confirmOrder }
+            {...{
+                text: {
+                    color: txtColor,
+                    value: <span>Confirm and Pay <img src={mastercard_logo} /></span>,
+                },
+                styles: {
+                    height: '50px',
+                    width: '100%',
+                    margin: '20px 0',
+                    backgroundColor: btnColor,
+                    border: {
+                        width: '1px',
+                        style: 'solid',
+                        color: colors.primary,
+                        radius: '4px',
+                    },
+                    color: colors.white
+                },
+                onClick: () => onClick()
+            }} 
+             
+        />)
+    };
+
+    const AttemptPlaceOrder = async (paymentReference) => {
         // Start Loader
         let newButtons = Buttons
         newButtons.confirmOrder.loader.isLoading = true
         await setButtons({ ...newButtons })
+        // Update Payload with payment reference
+        let payload = orderPayload
+        payload['payment_reference'] = paymentReference
         // Response Object
-        const responseObject = await PostMan(`order/`, 'POST', orderPayload)
+        const responseObject = await PostMan(`order/`, 'POST', payload)
         // Stop Loader
         newButtons.confirmOrder.loader.isLoading = false
         await setButtons({ ...newButtons })
@@ -122,6 +207,8 @@ function UploadGameModal(props) {
             console.log("responseObject: ", responseObject)
         }
     }
+
+    // console.log("orderPayload: ", orderPayload)
 
 
     useEffect(() => {
@@ -211,7 +298,8 @@ function UploadGameModal(props) {
                                 strike the user will be barred from using the site and their account suspended permanently.
                             </p>
 
-                            <Button {...Buttons.confirmOrder} {...{ onClick: () => AttemptPlaceOrder() }} />
+                            {/* <Button {...Buttons.confirmOrder} {...{ onClick: () => AttemptPlaceOrder() }} /> */}
+                            <PayButton />
 
                             <p style={styles.paragrapgh}>
                                 By clicking ‘’Confirm’’ you confirm that you have read and agreed to our terms of use and privacy policy
@@ -307,4 +395,4 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UploadGameModal)
+export default connect(mapStateToProps, mapDispatchToProps)(OrderConfirmationModal)

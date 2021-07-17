@@ -1,7 +1,8 @@
 {
-    "apiUrl_": "https://api.velcrogaming.com/v1/",
-    "apiUrl": "http://api.velcrogaming.local:8100/v1/",
+    "apiUrl": "https://api.velcrogaming.com/v1/",
+    "apiUrl_": "http://api.velcrogaming.local:8100/v1/",
     "apiUrlOld": "https://server-velcro-gaming.herokuapp.com/api/v1",
+    "paystack_pub_key": "pk_test_7d39ecc58d584f5b4893424ed02948ccb93d6e06",
     "colors": {
         "primary": "#641E6E",
         "primaryLight": "#D28EDC",
@@ -10,6 +11,7 @@
         "white": "#FFFFFF",
         "black": "#000000",
         "grey": "#A7A7A7",
+        "grey1": "#C4C4C4",
         "grey2": "#F1F1F1",
         "grey3": "#8A8C8E",
 
