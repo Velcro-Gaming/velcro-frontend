@@ -17,10 +17,10 @@ import { AiOutlineSearch } from 'react-icons/ai'
 function MyOrdersScreen(props) {
     const [MyOrders, setMyOrders] = useState([])
     const [redirect, setRedirect] = useState(null)
-    const [ActiveScreen, setActiveScreen] = useState({
-        name: '',
-        path: '/'
-    })
+    // const [ActiveScreen, setActiveScreen] = useState({
+    //     name: '',
+    //     path: '/'
+    // })
     const [PageButtons, setPageButtons] = useState({
         searchGames: {
             text: {
@@ -68,9 +68,11 @@ function MyOrdersScreen(props) {
                         MyOrders.map(order => {
                             console.log("Order: ", order)
                             return (
-                                <OrderCard
-                                    self={order}
-                                />
+                                <div className="col-12 col-md-6 col-lg-3 my-3">
+                                    <OrderCard
+                                        self={order}
+                                    />
+                                </div>
                             )
                         })
                     }

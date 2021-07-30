@@ -15,7 +15,6 @@ function GameCard(props) {
         children: GameMeta
     } = props
 
-    console.log("Self: ", self)
 
     const [Buttons, setButtons] = useState({
         viewOffers: {
@@ -37,103 +36,77 @@ function GameCard(props) {
                 },
                 color: colors.white
             },
-            onClick: () => {}
+            linkTo: `search/${self.slug}`
         },
     })
     
-    
-    // {
-    //     name: "Fifa 20",
-    //     numberOfOrders: 2,
-    //     amountEarned: 20000,
-    //     imageUrl: null,
-    //     status: "swapped"
-    // }
-
-    // console: 5
-    // game:
-    //     category: "sport"
-    //     id: 2
-    //     image: "http://api.velcrogaming.local:8080/media/weather_illustration.png"
-    //     name: "Fifa 20"
-    //     slug: "fifa-20"
-    // id: 3
-    // original_case: false
-    // rent: false
-    // rent_amount: "0.00"
-    // sell: false
-    // sell_amount: "0.00"
-    // swap: true
 
     return (
-        <div className="col-12 col-md-6 col-lg-3 my-3">
-            <div className="card" style={styles.card}>
-                <img src={self.image} style={styles.gameCoverImage} />
+        <div className="card" style={styles.card}>
+            <img src={self.image} style={styles.gameCoverImage} />
 
-                <div style={styles.wrapper}>
-                    <div style={{ height: "50px" }} className="d-flex justify-content-between align-items-center">
+            <div style={styles.wrapper}>
+                <div style={{ height: "50px" }} className="d-flex justify-content-between align-items-center">
 
-                        <div className="d-flex flex-column justify-content-between align-items-start">
-                            <div style={styles.title}>
-                                {self.name}
-                            </div>
-
-                            <div style={styles.category}>
-                                {self.category}
-                            </div>
+                    <div className="d-flex flex-column justify-content-between align-items-start">
+                        <div style={styles.title}>
+                            {self.name}
                         </div>
 
-                        {
-                            listing ? (
-                                <div>
-                                    {
-                                        auth.user && auth.user.id === listing.owner.id ? (
-                                            <div style={styles.gameStatus.wrapper}>
-                                                <span style={styles.gameStatus.heading}>
-                                                    status
-                                                </span>
-
-                                                <span style={styles.gameStatus.content}>
-                                                    {listing.status}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <div className={"d-flex flex-column align-items-center"}>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    height: '30px', width: '30px',
-                                                    border: `2px solid ${colors.primary}`,
-                                                    borderRadius: '50%', overflow: 'hidden'
-                                                }}>
-                                                    <img src={Avatar} height={25}
-                                                        style={{ objectFit: 'cover' }}
-                                                    />
-                                                </div>
-
-                                                <div style={{ fontSize: '11px', color: colors.primary }}>
-                                                    {listing.owner.username}
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            ) : null
-                        }
+                        <div style={styles.category}>
+                            {self.category} 
+                            {listing && ` | ${listing.console.short_name}`}
+                        </div>
                     </div>
 
                     {
-                        listing ? null : (
+                        listing ? (
                             <div>
-                                <Button {...Buttons.viewOffers} />
+                                {
+                                    auth.user && auth.user.id === listing.owner.id ? (
+                                        <div style={styles.gameStatus.wrapper}>
+                                            <span style={styles.gameStatus.heading}>
+                                                status
+                                            </span>
+
+                                            <span style={styles.gameStatus.content}>
+                                                {listing.status}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className={"d-flex flex-column align-items-center"}>
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                height: '30px', width: '30px',
+                                                border: `2px solid ${colors.primary}`,
+                                                borderRadius: '50%', overflow: 'hidden'
+                                            }}>
+                                                <img src={Avatar} height={25}
+                                                    style={{ objectFit: 'cover' }}
+                                                />
+                                            </div>
+
+                                            <div style={{ fontSize: '11px', color: colors.primary }}>
+                                                {listing.owner.username}
+                                            </div>
+                                        </div>
+                                    )
+                                }
                             </div>
-                        )
+                        ) : null
                     }
-
-                    {GameMeta}
-
                 </div>
 
+                {
+                    listing ? null : (
+                        <div>
+                            <Button {...Buttons.viewOffers} />
+                        </div>
+                    )
+                }
+
+                {GameMeta}
 
             </div>
         </div>
@@ -167,6 +140,11 @@ const styles = {
         overflow: "hidden",
         textOverflow: "ellipsis",
         textTransform: "uppercase",
+
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        maxWidth: '190px',
     },
     category: {
         fontSize: '10px',

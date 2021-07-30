@@ -94,12 +94,12 @@ a:hover {
 
 
 .hover-primary:hover {
-  color: #7F3F98;
+  color: #7F3F98 !important;
   cursor: pointer;
 }
 
 .hover-danger:hover {
-  color: #FF0000;
+  color: #FF0000 !important;
   cursor: pointer;
 }
 

@@ -26,27 +26,6 @@ function ListingCard(props) {
     let game = self.game
 
     const [Buttons, setButtons] = useState({
-        initiateReturn: {
-            text: {
-                color: colors.white,
-                value: "Initiate Return",
-            },
-            styles: {
-                height: '35px',
-                width: '100%',
-                margin: null,
-                fontSize: "13px",
-                backgroundColor: colors.primary,
-                border: {
-                    width: null,
-                    style: null,
-                    color: null,
-                    radius: null,
-                },
-                color: colors.white
-            },
-            onClick: () => {}
-        },
         rent: {
             text: {
                 color: colors.white,
@@ -121,7 +100,28 @@ function ListingCard(props) {
                 pathname: `/order/${game.slug}/buy`,
                 state: { listing:self, game }
             }
-        }
+        },
+        initiateReturn: {
+            text: {
+                color: colors.white,
+                value: "Initiate Return",
+            },
+            styles: {
+                height: '35px',
+                width: '100%',
+                margin: null,
+                fontSize: "11px",
+                backgroundColor: colors.primary,
+                border: {
+                    width: null,
+                    style: null,
+                    color: null,
+                    radius: null,
+                },
+                color: colors.white
+            },
+            onClick: () => { }
+        },
     })
 
     // {
@@ -147,13 +147,14 @@ function ListingCard(props) {
     // sell_amount: "0.00"
     // swap: true
 
+    // console.log("Listing: ", self)
 
     return (
         <GameCard self={self.game} listing={self}>
             
             {
                 auth.user && auth.user.id == self.owner.id ? (
-                    <div className="d-flex justify-content-between align-items-center" style={{ margin: "5px 0 0" }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: "5px 0 0" }}>
 
                         <div style={{ display: 'flex' }}>
                             <div style={styles.attribWrapper}>
@@ -181,7 +182,7 @@ function ListingCard(props) {
 
                     </div>
                 ) : (
-                    <div className="d-flex justify-content-start align-items-center" style={{ margin: "5px 0 0" }}>
+                        <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center', margin: "5px 0 0" }}>
                         {
                             self.rent ? (
                                 <Button {...Buttons.rent} />

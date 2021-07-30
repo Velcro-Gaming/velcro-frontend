@@ -3,16 +3,25 @@ import { colors } from '../../../../App.json'
 
 import {
     useRouteMatch,
+    useHistory,
     Redirect,
     withRouter
 } from 'react-router-dom';
 import { PostMan } from '../../../../Helpers';
+import { FaChevronLeft } from 'react-icons/fa';
+
+import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
+import IsTablet from '../../../../utils/breakpoints/IsTablet'
+import IsPhone from '../../../../utils/breakpoints/IsPhone'
+
 
 import ListingCard from '../../components/search/ListingCard';
 
 
 function SearchGameDetail() {
     const match = useRouteMatch();
+    const history = useHistory()
+
     const searchQuery = match.params.searchQuery;
     
     const [redirect, setRedirect] = useState(null)
@@ -60,6 +69,20 @@ function SearchGameDetail() {
 
     }
 
+    const GoBack = () => {
+        history.goBack()
+    }
+
+    function IsSavedListing(listing) {
+        let isSaved = false
+        SavedListings.map(savedListing => {
+            if (listing.id === savedListing.id) {
+                isSaved = true
+            }
+        })
+        return isSaved
+    }
+
     useEffect(() => {
         // Fetch Searched Game
         FetchSearchedGame()
@@ -73,65 +96,122 @@ function SearchGameDetail() {
         return <Redirect to={redirect} />
     }
 
-    console.log("SavedListings: ", SavedListings)
+    const MainContent = (config) => {
+        const {
+            container,
+            wrapper
+        } = config
+        return (
+            <div className={"container"} style={{ ...styles.container, padding: container.padding}}>
 
-    function IsSavedListing (listing) {
-        let isSaved = false
-        SavedListings.map(savedListing => {
-            if (listing.id === savedListing.id) {
-                isSaved = true
-            }
-        })
-        return isSaved
-    }
-
-    return (
-        <div className={"container"} style={styles.container}>
-            <div style={styles.wrapper}>
-                <div style={styles.gameWrapper}>
-                    <div style={styles.gameCover}>
-                        <img src={Game && Game.image} style={styles.gameCoverImage} />
-                    </div>
-                    <div style={styles.gameName}>
-                        {Game && Game.name}
-                    </div>
-                    <div style={styles.gameCategory}>
-                        {Game && Game.category}
-                    </div>
+                <div style={styles.goBack} onClick={() => GoBack()}>
+                    <FaChevronLeft size={12} />
+                    <span style={{ marginLeft: '7px' }}>Back</span>
                 </div>
 
-                <div style={styles.gameListingsWrapper}>
-                    <div style={{color: colors.grey3, fontFamily: "Nunito sans", fontWeight: 600, fontSize: "17px"}}>
-                        Search Results
+                <div style={{ ...styles.wrapper, padding: wrapper.padding }}>
+                    <div style={styles.gameWrapper}>
+                        <div style={styles.gameCover}>
+                            <img src={Game && Game.image} style={styles.gameCoverImage} />
+                        </div>
+                        <div style={styles.gameName}>
+                            {Game && Game.name}
+                        </div>
+                        <div style={styles.gameCategory}>
+                            {Game && Game.category}
+                        </div>
                     </div>
 
-                    <div>
+                    <div style={styles.gameListingsWrapper}>
+                        <div style={{
+                            color: colors.grey3,
+                            fontFamily: "Nunito sans",
+                            fontWeight: 600,
+                            fontSize: "17px",
+                            whiteSpace: 'nowrap'
+                        }}>
+                            Search Results
+                        </div>
 
-                        {
-                            GameListings.map(listing => {
-                                return (
-                                    <ListingCard
-                                        game={Game}
-                                        listing={listing}
-                                        isSavedListing={(listing) => IsSavedListing(listing)}
-                                    />
-                                )
-                            })
-                        }
+                        <div>
+
+                            {
+                                GameListings.map(listing => {
+                                    return (
+                                        <ListingCard
+                                            game={Game}
+                                            listing={listing}
+                                            isSavedListing={(listing) => IsSavedListing(listing)}
+                                        />
+                                    )
+                                })
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
+        )
+    }
+
+    return (
+        <div>
+            <IsDesktop>
+                {
+                    MainContent({
+                        container: {
+                            padding: "75px 80px"
+                        },
+                        wrapper: {
+                            padding: "50px 80px"
+                        }
+                    })
+                }
+            </IsDesktop>
+
+            <IsTablet>
+                {
+                    MainContent({
+                        container: {
+                            padding: "0 20px 50px"
+                        },
+                        wrapper: {
+                            padding: "50px 50px"
+                        }
+                    })
+                }
+            </IsTablet>
+
+            <IsPhone>
+                {
+                    MainContent({
+                        container: {
+                            padding: "0 20px 20px"
+                        },
+                        wrapper: {
+                            padding: "50px 20px"
+                        }
+                    })
+                }
+            </IsPhone>
         </div>
     )
 }
 
 const styles = {
     container: {
-        padding: "75px 100px"
+        minHeight: "100vh",
     },
     wrapper: {
         backgroundColor: colors.white,
-        padding: "50px 100px"
+    },
+    goBack: {
+        display: 'flex',
+        alignItems: 'center',
+        margin: "35px 0",
+        fontWeight: 600,
+        fontFamily: 'Nunito Sans',
+        color: colors.primary,
+        cursor: 'pointer',
     },
     gameWrapper: {
         display: "flex",
@@ -157,6 +237,7 @@ const styles = {
         fontSize: "30px",
         lineHeight: "42px",
         margin: "5px",
+        textAlign: 'center',
     },
     gameCategory: {
         backgroundColor: "#3D61DF",

@@ -104,9 +104,11 @@ function MyGamesScreen(props) {
                         MyGames.map(game => {
                             console.log("Listing: ", game)
                             return (
-                                <ListingCard
-                                    self={game}
-                                />
+                                <div className="col-12 col-md-6 col-lg-3 my-3">
+                                    <ListingCard
+                                        self={game}
+                                    />
+                                </div>
                             )
                         })
                     }

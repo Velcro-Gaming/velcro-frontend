@@ -6,6 +6,7 @@ import { BiCheck, BiUser } from 'react-icons/bi'
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
+
 import ListingCard from '../../components/main/ListingCard'
 import ModalGameUpload from '../../components/main/ModalGameUpload'
 import { PostMan } from '../../../../Helpers'
@@ -110,9 +111,11 @@ function SavedGameScreen(props) {
                     {
                         SavedGames.map(game => {
                             return (
-                                <ListingCard
-                                    self={game}
-                                />
+                                <div className="col-12 col-md-6 col-lg-3 my-3">
+                                    <ListingCard
+                                        self={game}
+                                    />
+                                </div>
                             )
                         })
                     }

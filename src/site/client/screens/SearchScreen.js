@@ -77,7 +77,7 @@ function SearchScreen(props) {
     
 
     return (
-        <div>
+        <div style={styles.container}>
             <Header {...props} headerConfig={HeaderConfig} />
 
             
@@ -98,9 +98,11 @@ function SearchScreen(props) {
 }
 
 const styles = {
+    container: {
+        backgroundColor: colors.background,
+    },
     wrapper: {
         padding: "69px 0 0 0",
-        backgroundColor: colors.background,
     },
 }
 

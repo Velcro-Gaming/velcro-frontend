@@ -18,24 +18,16 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
     const setHeaders = () => {
         let headers = {}
         if (auth.user) { headers['Authorization'] = `jwt ${auth.accessToken}` }
-        if (stringified) { headers['Content-Type'] = 'application/json' }
-        if (stringified) { headers['Accept'] = 'application/json' }
-        headers['Accept'] = 'application/json'
+        if (stringified) {
+            headers['Content-Type'] = 'application/json'
+            headers['Accept'] = 'application/json'
+        }
         return headers
     }
-
-    // console.log("payload: ", payload)
-
-    // console.log("stringified: ", stringified)
-
-    // console.log("apiUrl + uriPath: ", apiUrl + uriPath)
     
     await fetch(apiUrl + uriPath, {
         method: method,
         headers: new Headers(setHeaders()),
-        // headers: {
-        //     'Content-Type': 'application/json'
-        // },
         body: stringified ? JSON.stringify(payload) : payload
     })
     .then(async response => {
@@ -45,7 +37,7 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
         const contentType = response.headers.get("content-type");
 
         if (response.ok) {
-            if (response.status === 200 || response.status === 201) {
+            if (response.status === 200 || response.status === 201 || response.status === 202) {
 
                 if (contentType.indexOf("application/json") !== -1) {
                     return {
@@ -74,10 +66,6 @@ export const PostMan = async(uriPath, method, payload, stringified=true) => {
 
             if (response.status === 401) {
                 return store.dispatch(logout())
-                // return {
-                //     statusCode: response.status,
-                //     data: await response.json(),
-                // }
             }
 
             if (response.status === 404) {

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 import {
     Route,
     Switch,
@@ -8,21 +11,9 @@ import {
     withRouter,
     Redirect
 } from 'react-router-dom';
-
-import Header from '../components/main/Header';
 import {
     colors
 } from '../../../App.json'
-
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-import ModalConfirmAddress from '../components/main/ModalConfirmAddress'
-import ModalConfirmOrder from '../components/main/ModalConfirmOrder'
-
-import GameRent from './order/GameRent';
-import GameSwap from './order/GameSwap';
-import GameBuy from './order/GameBuy';
 
 import { FaChevronLeft } from 'react-icons/fa'
 import { RiTruckFill } from 'react-icons/ri'
@@ -32,6 +23,19 @@ import Button from '../../../utils/Button';
 import { PostMan } from '../../../Helpers';
 
 import { ToastContainer, toast } from 'react-toastify';
+
+import Header from '../components/main/Header';
+
+import IsDesktop from '../../../utils/breakpoints/IsDesktop'
+import IsTablet from '../../../utils/breakpoints/IsTablet'
+import IsPhone from '../../../utils/breakpoints/IsPhone'
+
+import ModalConfirmAddress from '../components/main/ModalConfirmAddress'
+import ModalConfirmOrder from '../components/main/ModalConfirmOrder'
+
+import GameRent from './order/GameRent';
+import GameSwap from './order/GameSwap';
+import GameBuy from './order/GameBuy';
 
 
 function OrderScreen(props) {
@@ -406,7 +410,7 @@ function OrderScreen(props) {
         else { }
     }
 
-    const FetchStateList = async (countryId) => {
+    const FetchStateList = async (countryId=293) => {
         const responseObject = await PostMan(`location/states?country_id=${countryId}`, 'GET')
         if (responseObject.status === 'success') {
             let stateList = responseObject.data
@@ -436,7 +440,7 @@ function OrderScreen(props) {
         else { }
     }
 
-    const FetchCityList = async (stateId = 5036) => {
+    const FetchCityList = async (stateId=5036) => {
         const responseObject = await PostMan(`location/cities?state_id=${stateId}`, 'GET')
         if (responseObject.status === 'success') {
             let cityData = responseObject.data
@@ -448,10 +452,10 @@ function OrderScreen(props) {
                     display: '---'
                 },
             ]
-            cityData.map(country => {
+            cityData.map(city => {
                 newDeliveryFormData.city.data.push({
-                    value: country.id,
-                    display: country.name,
+                    value: city.id,
+                    display: city.name,
                 })
             })
             // Update DeliveryFormData in state.
@@ -469,7 +473,7 @@ function OrderScreen(props) {
             await setAddressBook(addressBook)
 
             // Set Default Address
-            if (addressBook.length > 0) {
+            if (addressBook && addressBook.length > 0) {
                 let newOrderFormData = OrderFormData
                 newOrderFormData.deliveryAddress.value = addressBook[0].id
                 setOrderFormData({ ...newOrderFormData })
@@ -496,7 +500,7 @@ function OrderScreen(props) {
             // Set in addressPayload
             addressPayload[fieldName] = fieldData.value
         }
-        // console.log("addressPayload: ", addressPayload)
+        // Proceed to Address Confirmation
         setShowAddressConfirmModal(true)
     }
 
@@ -563,278 +567,371 @@ function OrderScreen(props) {
     }, [])
 
 
-    return (
-        <div>
-            <Header {...props} headerConfig={HeaderConfig} />
+    const MainContent = (config) => {
+        const {
+            button,
+            container,
+            deliverySection
+        } = config
 
-            <ToastContainer />
+        return (
+            <div>
+                <Header {...props} headerConfig={HeaderConfig} />
 
-            {
-                ShowAddressConfirmModal ? (
-                    <ModalConfirmAddress
-                        deliveryFormData={DeliveryFormData}
-                        hideModal={() => setShowAddressConfirmModal(false)}
-                    />
-                ) : null
-            }
+                <ToastContainer />
 
-            {
-                ShowOrderConfirmModal ? (
-                    <ModalConfirmOrder
-                        orderPayload={OrderPayload}
-                        hideModal={() => setShowOrderConfirmModal(false)}
-                    />
-                ) : null
-            }
+                {
+                    ShowAddressConfirmModal ? (
+                        <ModalConfirmAddress
+                            deliveryFormData={DeliveryFormData}
+                            hideModal={() => setShowAddressConfirmModal(false)}
+                        />
+                    ) : null
+                }
 
-            <div style={styles.wrapper}>
-                <div className={"container"} style={styles.container}>
+                {
+                    ShowOrderConfirmModal ? (
+                        <ModalConfirmOrder
+                            orderPayload={OrderPayload}
+                            hideModal={() => setShowOrderConfirmModal(false)}
+                        />
+                    ) : null
+                }
 
-                    <div style={styles.goBack} onClick={() => GoBack()}>
-                        <FaChevronLeft size={12} />
-                        <span style={{ marginLeft: '7px' }}>Back</span>
-                    </div>
+                <div style={{
+                    ...styles.container,
+                    padding: container.padding,
+                }}>
+                    <div className={"container"}>
+                        <div style={styles.goBack} onClick={() => GoBack()}>
+                            <FaChevronLeft size={12} />
+                            <span style={{ marginLeft: '7px' }}>Back</span>
+                        </div>
 
-                    <div style={styles.orderSection}>
-                        <Switch>
-                            <Route exact path={`${match.path}/:gameSlug/rent`}>
-                                <GameRent
-                                    setListing={(listing) => setListing(listing)}
-                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
-                                    orderFormData={OrderFormData}
-                                    updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
-                                />
-                            </Route>
-                            <Route exact path={`${match.path}/:gameSlug/swap`}>
-                                <GameSwap
-                                    setListing={(listing) => setListing(listing)}
-                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
-                                    orderFormData={OrderFormData}
-                                    updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
-                                />
-                            </Route>
-                            <Route exact path={`${match.path}/:gameSlug/buy`}>
-                                <GameBuy
-                                    setListing={(listing) => setListing(listing)}
-                                    setActiveForm={(activeForm) => setActivePageForm(activeForm)}
-                                    orderFormData={OrderFormData}
-                                    updateOrderFormData={(newOrderFormData) => setOrderFormData({...newOrderFormData})}
-                                />
-                            </Route>
-
-                            <Route component={NoRouteMatch} />
-                        </Switch>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', margin: "35px 0", fontWeight: 600, fontFamily: 'Nunito Sans', textTransform: 'uppercase', color: colors.primary }}>
-                        <RiTruckFill size={20} />
-                        <span style={{ marginLeft: '7px' }}>Delivery Information</span>
-                    </div>
-
-                    <div style={styles.deliverySection}>
-
-                        {
-                            ShowAddressForm ? (
-                                <form style={styles.deliveryForm}>
-                                    <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
-                                        Enter a valid delivery address
-                                    </div>
-
-                                    <FormField
-                                        formData={DeliveryFormData}
-                                        change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
-                                        field={{
-                                            id: 'address_line',
-                                            config: DeliveryFormData.address_line
-                                        }}
+                        <div style={styles.orderSection}>
+                            <Switch>
+                                <Route exact path={`${match.path}/:gameSlug/rent`}>
+                                    <GameRent
+                                        setListing={(listing) => setListing(listing)}
+                                        setActiveForm={(activeForm) => setActivePageForm(activeForm)}
+                                        orderFormData={OrderFormData}
+                                        updateOrderFormData={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
                                     />
-
-                                    <FormField
-                                        formData={DeliveryFormData}
-                                        change={(newDeliveryFormData) => {
-                                            let countryId = newDeliveryFormData.country.value
-                                            // Update Form
-                                            setDeliveryFormData({ ...newDeliveryFormData })
-                                            // Fetch States
-                                            FetchStateList(countryId)
-                                        }}
-                                        field={{
-                                            id: 'country',
-                                            config: DeliveryFormData.country
-                                        }}
+                                </Route>
+                                <Route exact path={`${match.path}/:gameSlug/swap`}>
+                                    <GameSwap
+                                        setListing={(listing) => setListing(listing)}
+                                        setActiveForm={(activeForm) => setActivePageForm(activeForm)}
+                                        orderFormData={OrderFormData}
+                                        updateOrderFormData={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
                                     />
-
-                                    <FormField
-                                        formData={DeliveryFormData}
-                                        change={(newDeliveryFormData) => {
-                                            let stateId = newDeliveryFormData.state.value
-                                            // Update Form
-                                            setDeliveryFormData({ ...newDeliveryFormData })
-                                            // Fetch States
-                                            FetchCityList(stateId)
-                                        }}
-                                        field={{
-                                            id: 'state',
-                                            config: DeliveryFormData.state
-                                        }}
+                                </Route>
+                                <Route exact path={`${match.path}/:gameSlug/buy`}>
+                                    <GameBuy
+                                        setListing={(listing) => setListing(listing)}
+                                        setActiveForm={(activeForm) => setActivePageForm(activeForm)}
+                                        orderFormData={OrderFormData}
+                                        updateOrderFormData={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
                                     />
+                                </Route>
 
-                                    <FormField
-                                        formData={DeliveryFormData}
-                                        change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
-                                        field={{
-                                            id: 'city',
-                                            config: DeliveryFormData.city
-                                        }}
-                                    />
+                                <Route component={NoRouteMatch} />
+                            </Switch>
+                        </div>
 
-                                    <div style={{ display: 'flex', }}>
-                                        <Button {...PageButtons.attemptAddAddress} />
-                                        <Button {...PageButtons.cancelAddAddress} />
-                                    </div>
+                        <div style={{ display: 'flex', alignItems: 'center', margin: "35px 0", fontWeight: 600, fontFamily: 'Nunito Sans', textTransform: 'uppercase', color: colors.primary }}>
+                            <RiTruckFill size={20} />
+                            <span style={{ marginLeft: '7px' }}>Delivery Information</span>
+                        </div>
 
-                                </form>
-                            ) : (
-                                <div>
-                                    {
-                                        AddressBook && AddressBook.length > 0 ? (
-                                            <div>
-                                                <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
-                                                    Select a delivery address
-                                                </div>
+                        <div style={{ ...styles.deliverySection, padding: deliverySection.padding }}>
 
-                                                <div className={'horizontal-scrolling-wrapper'}>
-                                                    <div className={'tray'}>
-                                                        {
-                                                            AddressBook.map((address, i) => {
-                                                                // console.log("address: ", address)
-                                                                return (
-                                                                    <div style={styles.addressBookItem}>
-                                                                        <span style={{ position: 'absolute', bottom: '40px', right: '5px', zIndex: 9}}>
-                                                                            <FormField
-                                                                                formData={{
-                                                                                    checkBox: {
-                                                                                        element: 'checkbox',
-                                                                                        checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
-                                                                                        data: address,
-                                                                                        label: false,
-                                                                                        props: {
-                                                                                            name: `address_${i}_input`,
-                                                                                            type: 'checkbox',
-                                                                                        },
-                                                                                    }
-                                                                                }}
-                                                                                change={(addressFormData) => {
-                                                                                    console.log("Clicking")
-                                                                                    if (OrderFormData.deliveryAddress.value === addressFormData.checkBox.data.id) { return }
-                                                                                    // Set new address
-                                                                                    if (addressFormData.checkBox.checked) {
-                                                                                        let newOrderFormData = OrderFormData
-                                                                                        newOrderFormData.deliveryAddress.value = addressFormData.checkBox.data.id
-                                                                                        setOrderFormData({ ...newOrderFormData })
-                                                                                    }
-                                                                                }}
-                                                                                field={{
-                                                                                    id: 'checkBox',
-                                                                                    config: {
-                                                                                        element: 'checkbox',
-                                                                                        checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
-                                                                                        data: address,
-                                                                                        label: false,
-                                                                                        props: {
-                                                                                            name: `address_${i}_input`,
-                                                                                            type: 'checkbox',
+                            {
+                                ShowAddressForm ? (
+                                    <form style={styles.deliveryForm}>
+                                        <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
+                                            Enter a valid delivery address
+                                        </div>
+
+                                        <FormField
+                                            formData={DeliveryFormData}
+                                            change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
+                                            field={{
+                                                id: 'address_line',
+                                                config: DeliveryFormData.address_line
+                                            }}
+                                        />
+
+                                        <FormField
+                                            formData={DeliveryFormData}
+                                            change={(newDeliveryFormData) => {
+                                                let countryId = newDeliveryFormData.country.value
+                                                // Update Form
+                                                setDeliveryFormData({ ...newDeliveryFormData })
+                                                // Fetch States
+                                                FetchStateList(countryId)
+                                            }}
+                                            field={{
+                                                id: 'country',
+                                                config: DeliveryFormData.country
+                                            }}
+                                        />
+
+                                        <FormField
+                                            formData={DeliveryFormData}
+                                            change={(newDeliveryFormData) => {
+                                                let stateId = newDeliveryFormData.state.value
+                                                // Update Form
+                                                setDeliveryFormData({ ...newDeliveryFormData })
+                                                // Fetch States
+                                                FetchCityList(stateId)
+                                            }}
+                                            field={{
+                                                id: 'state',
+                                                config: DeliveryFormData.state
+                                            }}
+                                        />
+
+                                        <FormField
+                                            formData={DeliveryFormData}
+                                            change={(newDeliveryFormData) => setDeliveryFormData({ ...newDeliveryFormData })}
+                                            field={{
+                                                id: 'city',
+                                                config: DeliveryFormData.city
+                                            }}
+                                        />
+
+                                        <div style={{ display: 'flex', }}>
+                                            <Button {...PageButtons.attemptAddAddress} {...{
+                                                styles: {
+                                                    height: button.height,
+                                                    width: button.width,
+                                                    margin: button.margin,
+                                                    fontSize: button.fontSize,
+                                                    backgroundColor: colors.primary,
+                                                    border: {
+                                                        width: "1px",
+                                                        style: "solid",
+                                                        color: colors.white,
+                                                        radius: "3px",
+                                                    },
+                                                    color: colors.white
+                                                },
+                                            }} />
+                                            <Button {...PageButtons.cancelAddAddress} {...{
+                                                styles: {
+                                                    height: button.height,
+                                                    width: button.width,
+                                                    margin: button.margin,
+                                                    fontSize: button.fontSize,
+                                                    backgroundColor: colors.grey2,
+                                                    border: {
+                                                        width: "1px",
+                                                        style: "solid",
+                                                        color: colors.white,
+                                                        radius: "3px",
+                                                    },
+                                                    color: colors.white
+                                                },
+                                            }} />
+                                        </div>
+
+                                    </form>
+                                ) : (
+                                    <div>
+                                        {
+                                            AddressBook && AddressBook.length > 0 ? (
+                                                <div>
+                                                    <div style={{ fontFamily: 'Nunito Sans', fontSize: '17px', fontWeight: 500, margin: '0 0 10px' }}>
+                                                        Select a delivery address
+                                                    </div>
+
+                                                    <div className={'horizontal-scrolling-wrapper'}>
+                                                        <div className={'tray'}>
+                                                            {
+                                                                AddressBook.map((address, i) => {
+                                                                    // console.log("address: ", address)
+                                                                    return (
+                                                                        <div style={styles.addressBookItem}>
+                                                                            <span style={{ position: 'absolute', bottom: '40px', right: '5px', zIndex: 9 }}>
+                                                                                <FormField
+                                                                                    formData={{
+                                                                                        checkBox: {
+                                                                                            element: 'checkbox',
+                                                                                            checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
+                                                                                            data: address,
+                                                                                            label: false,
+                                                                                            props: {
+                                                                                                name: `address_${i}_input`,
+                                                                                                type: 'checkbox',
+                                                                                            },
                                                                                         }
-                                                                                    }
-                                                                                }}
-                                                                            />
-                                                                        </span>
-                                                                        <div className="row">
-                                                                            <div className="col-4" style={{ color: colors.grey }}>
-                                                                                Address Line
-                                                                            </div>
-                                                                            <div className="col-8">
-                                                                                {address.address_line}
-                                                                            </div>
+                                                                                    }}
+                                                                                    change={(addressFormData) => {
+                                                                                        console.log("Clicking")
+                                                                                        if (OrderFormData.deliveryAddress.value === addressFormData.checkBox.data.id) { return }
+                                                                                        // Set new address
+                                                                                        if (addressFormData.checkBox.checked) {
+                                                                                            let newOrderFormData = OrderFormData
+                                                                                            newOrderFormData.deliveryAddress.value = addressFormData.checkBox.data.id
+                                                                                            setOrderFormData({ ...newOrderFormData })
+                                                                                        }
+                                                                                    }}
+                                                                                    field={{
+                                                                                        id: 'checkBox',
+                                                                                        config: {
+                                                                                            element: 'checkbox',
+                                                                                            checked: OrderFormData.deliveryAddress.value === address.id ? true : false,
+                                                                                            data: address,
+                                                                                            label: false,
+                                                                                            props: {
+                                                                                                name: `address_${i}_input`,
+                                                                                                type: 'checkbox',
+                                                                                            }
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                            </span>
+                                                                            <div className="row">
+                                                                                <div className="col-4" style={{ color: colors.grey }}>
+                                                                                    Address Line
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {address.address_line}
+                                                                                </div>
 
-                                                                            <div className="col-4" style={{ color: colors.grey }}>
-                                                                                City
-                                                                            </div>
-                                                                            <div className="col-8">
-                                                                                {address.location.name},
-                                                                            </div>
+                                                                                <div className="col-4" style={{ color: colors.grey }}>
+                                                                                    City
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {address.location.name},
+                                                                                </div>
 
-                                                                            <div className="col-4" style={{ color: colors.grey }}>
-                                                                                State
-                                                                            </div>
-                                                                            <div className="col-8">
-                                                                                {address.location.state.name}
-                                                                            </div>
+                                                                                <div className="col-4" style={{ color: colors.grey }}>
+                                                                                    State
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {address.location.state.name}
+                                                                                </div>
 
-                                                                            <div className="col-4" style={{ color: colors.grey }}>
-                                                                                Country
-                                                                            </div>
-                                                                            <div className="col-8">
-                                                                                {address.location.state.country.name}
+                                                                                <div className="col-4" style={{ color: colors.grey }}>
+                                                                                    Country
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {address.location.state.country.name}
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                )
-                                                            })
-                                                        }
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
                                                     </div>
+
+                                                    <Button
+                                                        {...PageButtons.addAddress}
+                                                        {...{ styles: { ...PageButtons.addAddress.styles, width: "200px" } }}
+                                                    />
+
+
+                                                    <FormField
+                                                        formData={OrderFormData}
+                                                        change={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
+                                                        field={{
+                                                            id: 'additionalInfo',
+                                                            config: OrderFormData.additionalInfo
+                                                        }}
+                                                    />
+
+                                                    <Button {...PageButtons.sendRequest} {...{ onClick: () => AttemptMakeOffer(ActivePageForm) }} />
                                                 </div>
+                                            ) : (
+                                                <div>
+                                                    <p>
+                                                        You currently have no previously used address.
+                                                    </p>
 
-                                                <Button
-                                                    {...PageButtons.addAddress}
-                                                    {...{ styles: { ...PageButtons.addAddress.styles, width: "200px" } }}
-                                                />
+                                                    <Button {...PageButtons.addAddress} />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+                                )
+                            }
 
-
-                                                <FormField
-                                                    formData={OrderFormData}
-                                                    change={(newOrderFormData) => setOrderFormData({ ...newOrderFormData })}
-                                                    field={{
-                                                        id: 'additionalInfo',
-                                                        config: OrderFormData.additionalInfo
-                                                    }}
-                                                />
-
-                                                <Button {...PageButtons.sendRequest} {...{ onClick: () => AttemptMakeOffer(ActivePageForm) }} />
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <p>
-                                                    You currently have no previously used address.
-                                                </p>
-
-                                                <Button {...PageButtons.addAddress} />
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            )
-                        }
-                                        
-
+                        </div>
                     </div>
-                                   
-
                 </div>
             </div>
+        )
+    }
 
+    return (
+        <div>
+            <IsDesktop>
+                {
+                    MainContent({
+                        button: {
+                            height: '50px',
+                            width: '200px',
+                            margin: '30px 10px 60px',
+                            fontSize: '15px',
+                        },
+                        container: {
+                            padding: "75px 100px",
+                        },
+                        deliverySection: {
+                            padding: "75px 100px",
+                        },
+                    })
+                }
+            </IsDesktop>
+
+            <IsTablet>
+                {
+                    MainContent({
+                        button: {
+                            height: '40px',
+                            width: '150px',
+                            margin: '30px 10px 60px',
+                            fontSize: '14px',
+                        },
+                        container: {
+                            padding: "75px 50px",
+                        },
+                        deliverySection: {
+                            padding: "75px 35px",
+                        },
+                    })
+                }
+            </IsTablet>
+
+            <IsPhone>
+                {
+                    MainContent({
+                        button: {
+                            height: '30px',
+                            width: '120px',
+                            margin: '30px 10px 60px',
+                            fontSize: '12px',
+                        },
+                        container: {
+                            padding: "75px 10px",
+                        },
+                        deliverySection: {
+                            padding: "75px 20px",
+                        },
+                    })
+                }
+            </IsPhone>
         </div>
     )
-}
+ }
 
 const styles = {
-    wrapper: {
+    container: {
         padding: "69px 0 0 0",
         backgroundColor: colors.background,
-    },
-    container: {
-        // height: '500px',
-        padding: "75px 100px",
     },
     goBack: {
         display: 'flex',
@@ -850,13 +947,11 @@ const styles = {
     },
     deliverySection: {
         backgroundColor: colors.white,
-        padding: "70px 100px"
     },
     deliveryForm: {
         display: 'flex',
         flexDirection: 'column',
         width: '100%'
-        // justifyContent: 'center',
     },
 
     addressBook: {

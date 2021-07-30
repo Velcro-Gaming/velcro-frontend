@@ -109,21 +109,22 @@ function Header(props) {
         data: [
             {
                 name: "Profile",
-                // action: () => { console.log("/account") }
                 action: () => setRedirect('/account')
             },
             {
                 name: "Categories",
-                // action: () => { console.log("/search") }
                 action: () => setRedirect('/search')
             },
             {
+                name: "My Offers",
+                action: () => setRedirect('/offers')
+            },
+            {
                 name: "Withdraw Funds",
-                action: () => setRedirect('/withdraw-funds')
+                action: () => setRedirect('/wallet')
             },
             {
                 name: "Contact Us",
-                // action: () => setRedirect('/contact-us')
                 action: () => { window.open('/contact-us') }
             },
             {
@@ -160,7 +161,7 @@ function Header(props) {
                     height: null,
                     width: '130px',
                     margin: null,
-                    fontSize: '14px',
+                    fontSize: '12px',
                     backgroundColor: colors.black,
                     border: {
                         width: null,

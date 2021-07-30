@@ -23,7 +23,7 @@ function ProtectedRoute(props) {
     }
 
     // Check User is verified
-    if (auth.user && auth.user.verification === "unverified") {
+    if (auth.user && auth.user.verification.status === "unverified") {
         console.log("unverified")
         return <Redirect to={"/phone-verification"} />
     }

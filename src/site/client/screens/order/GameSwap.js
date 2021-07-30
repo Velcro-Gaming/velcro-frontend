@@ -4,9 +4,12 @@ import { colors } from '../../../../App.json'
 import {
     useRouteMatch,
     useLocation,
-    Redirect,
-    withRouter
+    Redirect
 } from 'react-router-dom';
+
+import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
+import IsTablet from '../../../../utils/breakpoints/IsTablet'
+import IsPhone from '../../../../utils/breakpoints/IsPhone'
 
 import FormField from '../../../../utils/FormField';
 
@@ -49,19 +52,27 @@ export default function GameSwap(props) {
         listing: Listing
     } = state
 
-    console.log("Game: ", Game)
-    console.log("Listing: ", Listing)
+    const MainContent = (config) => {
+        const {
+            container,
+            wrapper,
+            gameWrapper
+        } = config
 
-    return (
-        <div style={styles.container}>
-
-            <div style={styles.wrapper}>
-                <div style={{ color: colors.primary, fontWeight: 800, fontSize: '20px', margin: '0 0 30px', textAlign: 'center' }}>
+        return (
+            <div style={{ ...styles.container, padding: container.padding }}>
+                <div style={{
+                    color: colors.primary,
+                    fontWeight: 800,
+                    fontSize: '20px',
+                    margin: '0 0 30px',
+                    textAlign: 'center'
+                }}>
                     GAME SWAP
                 </div>
 
-                <div style={{ display: "flex" }}>
-                    <div style={styles.gameWrapper}>
+                <div style={{ display: "flex", flexDirection: wrapper.flexDirection }}>
+                    <div style={{ ...styles.gameWrapper, alignItems: gameWrapper.alignItems, }}>
                         <div style={styles.gameCover}>
                             <img src={Game && Game.image} style={styles.gameCoverImage} />
                         </div>
@@ -121,22 +132,75 @@ export default function GameSwap(props) {
                         </p>
                     </div>
                 </div>
-
             </div>
+        )
+    }
+
+    return (
+        <div>
+            <IsDesktop>
+                {
+                    MainContent({
+                        container: {
+                            padding: "50px 100px",
+                        },
+                        wrapper: {
+                            flexDirection: 'row',
+                        },
+                        gameWrapper: {
+                            alignItems: "start"
+                        }
+
+                    })
+                }
+            </IsDesktop>
+
+            <IsTablet>
+                {
+                    MainContent({
+                        container: {
+                            padding: "50px 50px",
+                        },
+                        wrapper: {
+                            flexDirection: 'column',
+                        },
+                        gameWrapper: {
+                            alignItems: "center"
+                        }
+
+                    })
+                }
+            </IsTablet>
+
+            <IsPhone>
+                {
+                    MainContent({
+                        container: {
+                            padding: "50px 10px",
+                        },
+                        wrapper: {
+                            flexDirection: 'column',
+                        },
+                        gameWrapper: {
+                            alignItems: "center"
+                        }
+
+                    })
+                }
+            </IsPhone>
         </div>
     )
 }
 
 const styles = {
-    wrapper: {
+    container: {
         backgroundColor: colors.white,
-        padding: "50px 100px"
     },
     gameWrapper: {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        alignItems: "start",
+        margin: "0 0 50px"
     },
     gameCover: {
         borderRadius: "14px",
@@ -166,14 +230,6 @@ const styles = {
         fontStyle: 'normal',
         fontWeight: 600,
     },
-    // gameCategory: {
-    //     backgroundColor: "#3D61DF",
-    //     color: colors.white,
-    //     padding: "5px 10px",
-    //     fontSize: "14px",
-    //     lineHeight: "19px",
-    // },
-
     orderInfoWrapper: {
         flex: 1,
         display: "flex",

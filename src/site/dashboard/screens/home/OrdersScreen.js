@@ -3,9 +3,13 @@ import React, { useState, useEffect } from 'react'
 import { colors } from '../../../../App.json'
 
 import Breakpoint from '../../../../utils/breakpoints/Base';
+
+import OrderCard from '../../components/OrderCard'
+
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop';
 import IsTablet from '../../../../utils/breakpoints/IsTablet';
 import IsPhone from '../../../../utils/breakpoints/IsPhone';
+
 import FormField from '../../../../utils/FormField';
 import { PostMan } from '../../../../Helpers';
 
@@ -14,14 +18,14 @@ export default function OrdersScreen(props) {
     const {
         setActiveScreen
     } = props
-
+    const [AllOrders, setAllOrders] = useState([])
     const [FormData, setFormData] = useState({
         console: {
             element: 'select',
             data: [
                 {
-                    value: 0,
-                    display: '---'
+                    value: '',
+                    display: 'All'
                 },
             ],
             value: '',
@@ -38,8 +42,8 @@ export default function OrdersScreen(props) {
             element: 'select',
             data: [
                 {
-                    value: 0,
-                    display: '---'
+                    value: '',
+                    display: 'All'
                 },
                 {
                     value: 'rent',
@@ -50,8 +54,8 @@ export default function OrdersScreen(props) {
                     display: 'Swap'
                 },
                 {
-                    value: 'sell',
-                    display: 'Sell'
+                    value: 'buy',
+                    display: 'Buy'
                 },
             ],
             value: '',
@@ -64,13 +68,13 @@ export default function OrdersScreen(props) {
                 required: true
             }
         },
-        
+
         country: {
             element: 'select',
             data: [
                 {
-                    value: 0,
-                    display: '---'
+                    value: '',
+                    display: 'All'
                 },
             ],
             value: '',
@@ -87,8 +91,8 @@ export default function OrdersScreen(props) {
             element: 'select',
             data: [
                 {
-                    value: 0,
-                    display: '---'
+                    value: '',
+                    display: 'All'
                 },
             ],
             value: '',
@@ -105,8 +109,8 @@ export default function OrdersScreen(props) {
             element: 'select',
             data: [
                 {
-                    value: 0,
-                    display: '---'
+                    value: '',
+                    display: 'All'
                 },
             ],
             value: '',
@@ -122,6 +126,16 @@ export default function OrdersScreen(props) {
 
     })
 
+    const FetchAllOrders = async () => {
+        // const responseObject = await PostMan('order/all/?request_from=owner', 'GET')
+        const responseObject = await PostMan('order/all/', 'GET')
+        if (responseObject.status === 'success') {
+            let orders = responseObject.data
+            // Save Games to state
+            await setAllOrders(orders)
+        }
+        else { }
+    }
 
     const FetchCountryList = async () => {
         const responseObject = await PostMan(`location/countries`, 'GET')
@@ -136,21 +150,44 @@ export default function OrdersScreen(props) {
             })
             // Set Nigeria as Default
             newFormData.country.value = 293
+            // Fetch States
+            FetchStateList(293)
+            // Clear City List
+            newFormData.city.data = [
+                {
+                    value: '',
+                    display: 'All'
+                },
+            ]
             // Update FormData in state.
             await setFormData({ ...newFormData })
         }
         else { }
     }
 
-    const FetchStateList = async (countryId) => {
+    const FetchStateList = async (countryId = 293) => {
         const responseObject = await PostMan(`location/states?country_id=${countryId}`, 'GET')
         if (responseObject.status === 'success') {
             let stateList = responseObject.data
             let newFormData = FormData
+            // Clear Old List
+            newFormData.state.data = [
+                {
+                    value: '',
+                    display: 'All'
+                },
+            ]
+            // Clear City List
+            newFormData.city.data = [
+                {
+                    value: '',
+                    display: 'All'
+                },
+            ]
             stateList.map(state => {
                 newFormData.state.data.push({
                     value: state.id,
-                    display: `${state.name})`,
+                    display: `${state.name}`,
                 })
             })
             await setFormData({ ...newFormData })
@@ -161,12 +198,19 @@ export default function OrdersScreen(props) {
     const FetchCityList = async (stateId = 5036) => {
         const responseObject = await PostMan(`location/cities?state_id=${stateId}`, 'GET')
         if (responseObject.status === 'success') {
-            let countryData = responseObject.data
+            let cityData = responseObject.data
             let newFormData = FormData
-            countryData.map(country => {
-                newFormData.callingCode.data.push({
-                    value: country.id,
-                    display: country.name,
+            // Clear Old List
+            newFormData.city.data = [
+                {
+                    value: '',
+                    display: 'All'
+                },
+            ]
+            cityData.map(city => {
+                newFormData.city.data.push({
+                    value: city.id,
+                    display: city.name,
                 })
             })
             // Update FormData in state.
@@ -192,6 +236,61 @@ export default function OrdersScreen(props) {
         else { }
     }
 
+    const RenderOffers = () => {
+        let order_type = FormData && FormData.order_type.value
+        let _console = FormData && FormData.console.value
+        let country = FormData && FormData.country.value
+        let state = FormData && FormData.state.value
+        let city = FormData && FormData.city.value
+
+        let visibleOrders = AllOrders.filter(order => {
+            let isVisible = true
+            console.log("order: ", order)
+
+            // Filter by Order type
+            if (isVisible && order_type) {
+                console.log("order._type: ", order._type)
+                console.log("order_type: ", order_type)
+                if (order._type !== order_type) {
+                    isVisible = false
+                }
+            }
+            // Filter by Console type
+            if (isVisible && _console) {
+                console.log("console: ", _console)
+                if (order.listing.console.id !== parseInt(_console)) {
+                    isVisible = false
+                }
+            }
+            // Filter by Location
+            if (isVisible && city) {
+                console.log("city: ", city)
+                if (order.delivery_address.location.id !== parseInt(city)) {
+                    isVisible = false
+                }
+            } else if (isVisible && state) {
+                console.log("state: ", state)
+                if (order.delivery_address.location.state.id !== parseInt(state)) {
+                    isVisible = false
+                }
+            } else if (isVisible && country) {
+                console.log("country: ", country)
+                if (order.delivery_address.location.state.country.id !== parseInt(country)) {
+                    isVisible = false
+                }
+            }
+            return isVisible
+        })
+        // Return Visible offers
+        return visibleOrders.map(order => {
+            return (
+                <OrderCard
+                    self={order}
+                />
+            )
+        })
+    }
+
     useEffect(()=> {
         setActiveScreen({
             name: 'orders',
@@ -203,6 +302,9 @@ export default function OrdersScreen(props) {
 
         // Fetch Countries
         FetchCountryList()
+
+        // Fetch Orders
+        FetchAllOrders()
 
     }, [])
     
@@ -346,16 +448,15 @@ export default function OrdersScreen(props) {
                                     }}
                                 />
                             </div>
-
                         </div>
+
 
                         <div style={{
                             ...styles.rightSidePanel,
                             flexGrow: `${config.rightSidePanelGrow}`,
                             margin: `${config.rightSidePanelMargin}`,
                         }}>
-
-                            <div style={{ backgroundColor: "white", padding: "20px", margin: "20px 0" }}>
+                            {/* <div style={{ backgroundColor: "white", padding: "20px", margin: "20px 0" }}>
                             
 
                                 <div>
@@ -365,11 +466,11 @@ export default function OrdersScreen(props) {
                                 </div>
 
 
-                            </div>
+                            </div> */}
 
-
-
-
+                            {
+                                RenderOffers()
+                            }
 
                         </div>
 

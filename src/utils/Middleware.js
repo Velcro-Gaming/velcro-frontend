@@ -28,12 +28,12 @@ function Middleware(props) {
 
     console.log("auth: ", auth)
 
-    // if (auth.user && auth.user.verification === "unverified") {
+    // if (auth.user && auth.user.verification.status === "unverified") {
     //     return <Redirect to={"/phone-verification"} />
     // }
 
     // const OnBoard = async() => {
-    //     if (auth.user && auth.user.verification === "unverified") {
+    //     if (auth.user && auth.user.verification.status === "unverified") {
     //         console.log("unverified")
     //         if (location.pathname !== "/phone-verification") {
     //             setRedirect("/phone-verification")
@@ -41,7 +41,7 @@ function Middleware(props) {
     //     }
     // }
 
-    // if (auth.user && auth.user.verification === "unverified" && location.pathname !== "/phone-verification") {
+    // if (auth.user && auth.user.verification.status === "unverified" && location.pathname !== "/phone-verification") {
     //     console.log("unverified")
 
     //     setRedirect("/phone-verification")

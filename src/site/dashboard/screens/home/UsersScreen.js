@@ -248,8 +248,8 @@ export default function UsersScreen(props) {
                                                 <div style={styles.listItemChild}>
                                                     <div>{user.full_name}</div>
                                                     <div>{user.mobile}</div>
-                                                    <div style={{ color: user.verification === "Verified" ? "green" : "red"}}>
-                                                        {user.verification}
+                                                    <div style={{ color: user.verification.status === "verified" ? "green" : "red"}}>
+                                                        {user.verification.display}
                                                     </div>                              
                                                 </div>
 

@@ -1,9 +1,7 @@
 import React, {useState} from 'react'
 
 import {
-    useRouteMatch,
     useLocation,
-    Redirect
 } from 'react-router-dom';
 
 import { colors } from '../../../../App.json'
@@ -67,18 +65,14 @@ export default function GameCategoryList() {
         for (let categoryName in CategoryList) {
             let category = CategoryList[categoryName]
             categoryList.push(
-                <CategoryTray category={category} />
+                <CategoryTray 
+                    category={category}
+                />
             )
         }
         return categoryList
     }
-
-
-    const location = useLocation()
-
-    console.log("location: ", location)
-    
-    
+   
 
     return (
         <div className={"container"} style={styles.container}>
@@ -89,13 +83,9 @@ export default function GameCategoryList() {
 
             <div style={styles.innerWrapper}>
                 {
-                    // CategoryList.map(category => {
-                    RenderCategoryList()
-
-                    
+                    RenderCategoryList()                    
                 }
             </div>
-            
         </div>
     )
 }
@@ -117,18 +107,4 @@ const styles = {
         flexDirection: "column",
         padding: "20px",
     },
-    // listItem: {
-    //     display: "flex",
-    //     justifyContent: "space-between",
-    //     borderBottom: "2px solid #7F3F98",
-
-    //     fontFamily: "Nunito Sans",
-    //     fontSize: '25px',
-    //     color: colors.black,
-    //     textTransform: "uppercase",
-
-    //     padding: "20px 35px",
-    //     margin: "25px"
-
-    // }
 }

@@ -32,24 +32,7 @@ function AccountProfileScreen(props) {
 
     const [HeaderConfig, setHeaderConfig] = useState({
         headerButtons: [
-            {
-                isProtected: false,
-                text: {
-                    color: colors.white,
-                    value: "Get Started",
-                },
-                styles: {
-                    backgroundColor: colors.primary,
-                    border: {
-                        width: null,
-                        style: null,
-                        color: null,
-                        radius: null,
-                    },
-                    color: colors.white
-                },
-                linkTo: "/register",
-            },
+
         ],
         headerStyles: {
             backgroundColor: colors.black

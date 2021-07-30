@@ -15,7 +15,7 @@ import GameCard from './GameCard'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { FaCheck, FaShippingFast } from 'react-icons/fa'
+import { FaCheck, FaShippingFast, FaRegClock } from 'react-icons/fa'
 
 
 function OrderCard(props) {
@@ -104,13 +104,12 @@ function OrderCard(props) {
         />)
     };
 
-
     return (
         <GameCard self={listing.game} listing={listing}>
             <ToastContainer />
 
             {
-                self.status === "pending" ? (
+                self.status.value === "pending" ? (
                     <div style={{
                         backgroundColor: colors.grey1, margin: '10px 0'
                     }}>
@@ -121,18 +120,35 @@ function OrderCard(props) {
                 ) : null
             }
             {
-                self.status === "paid" ? (
+                self.status.value === "paid" ? (
                     <div style={{
                         backgroundColor: colors.grey1, margin: '10px 0'
                     }}>
-                        <div style={{ padding: '5px', fontSize: '11px', color: colors.grey3 }}>
+                        <div style={{ padding: '5px', fontSize: '11px', color: colors.white }}>
+                            <span style={{ margin: '0 5px' }}>
+                                <FaRegClock color={colors.white} size={12} />
+                            </span>
                             Your {self._type} order is being processed.
                         </div>
                     </div>
                 ) : null
             }
             {
-                self.status === "in_transit" ? (
+                self.status.value === "in_progress" ? (
+                    <div style={{
+                        backgroundColor: colors.warning, margin: '10px 0'
+                    }}>
+                        <div style={{ padding: '5px', fontSize: '11px', color: colors.white }}>
+                            <span style={{ margin: '0 5px' }}>
+                                <FaRegClock color={colors.white} size={12} />
+                            </span>
+                            Your {self._type} order is being processed.
+                        </div>
+                    </div>
+                ) : null
+            }
+            {
+                self.status.value === "in_transit" ? (
                     <div style={{
                         backgroundColor: colors.primaryLight, margin: '10px 0'
                     }}>
@@ -146,7 +162,7 @@ function OrderCard(props) {
                 ) : null
             }
             {
-                self.status === "completed" ? (
+                self.status.value === "completed" ? (
                     <div style={{ margin: '10px 0' }}>
                         {
                             self._type === "buy" ? (

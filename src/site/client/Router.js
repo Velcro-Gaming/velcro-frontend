@@ -8,24 +8,29 @@ import {
 
 import RootScreen from './screens/RootScreen';
 
-import ContactUs from './screens/ContactUs';
-import TermsCondition from './screens/TermsCondition';
-
 import LoginScreen from './screens/auth/LoginScreen';
 import LogoutScreen from './screens/auth/LogoutScreen';
 import RegisterScreenOne from './screens/auth/RegisterScreenOne';
 import RegisterScreenTwo from './screens/auth/RegisterScreenTwo';
 
-import AccountProfileScreen from './screens/AccountProfileScreen';
+import ProfileScreen from './screens/account/ProfileScreen';
+import WalletScreen from './screens/account/WalletScreen';
+import PhoneVerification from "./screens/account/PhoneVerification";
 
 import PasswordResetRequest from './screens/auth/passwords/PasswordResetRequest';
 import PasswordResetSent from './screens/auth/passwords/PasswordResetSent';
 import PasswordReset from './screens/auth/passwords/PasswordReset';
-import PhoneVerification from "./screens/auth/PhoneVerification";
-import SearchScreen from "./screens/SearchScreen";
+
 import OrderScreen from "./screens/OrderScreen";
+import OffersScreen from "./screens/OffersScreen";
+
+import SearchScreen from "./screens/SearchScreen";
+
+import ContactUs from './screens/ContactUs';
+import TermsCondition from './screens/TermsCondition';
+
 import ProtectedRoute from "../../utils/ProtectedRoute";
-// import ProtectedRoute from "../../utils/ProtectedRoute";
+
 
 function RouterBase() {
 
@@ -37,27 +42,36 @@ function RouterBase() {
 
             <Switch>
                 {/* <ProtectedRoute>
-                    <Route path="/account" component={AccountProfileScreen} />
+                    <Route path="/account" component={ProfileScreen} />
                 </ProtectedRoute> */}
 
-                {/* <Route path="/account" component={AccountProfileScreen} /> */}
-                <Route path="/account">
-                    <ProtectedRoute>
-                        <AccountProfileScreen />
-                    </ProtectedRoute>
-                </Route>
-
-                {/* <Route path="/search" component={SearchScreen} /> */}
                 <Route path="/search">
                     <ProtectedRoute>
                         <SearchScreen />
                     </ProtectedRoute>
                 </Route>
 
-                {/* <Route path="/order" component={OrderScreen} /> */}
                 <Route path="/order">
                     <ProtectedRoute>
                         <OrderScreen />
+                    </ProtectedRoute>
+                </Route>
+
+                <Route path="/offers">
+                    <ProtectedRoute>
+                        <OffersScreen />
+                    </ProtectedRoute>
+                </Route>
+
+                <Route path="/account">
+                    <ProtectedRoute>
+                        <ProfileScreen />
+                    </ProtectedRoute>
+                </Route>
+
+                <Route path="/wallet">
+                    <ProtectedRoute>
+                        <WalletScreen />
                     </ProtectedRoute>
                 </Route>
                 
@@ -87,6 +101,7 @@ function RouterBase() {
                 <Route exact path="/password-reset/">
                     <PasswordReset />
                 </Route>
+                
 
                 <Route exact path="/contact-us" component={ContactUs} />
                 <Route exact path="/terms-and-conditions" component={TermsCondition} />

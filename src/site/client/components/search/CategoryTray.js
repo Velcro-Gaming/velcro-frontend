@@ -17,7 +17,8 @@ export default function CategoryTray(props) {
         category
     } = props
 
-    const [CategoryGames, setCategoryGames] = useState([])
+    const [IsOpen, setIsOpen] = useState(false)
+    const [CategoryGames, setCategoryGames] = useState(null)
 
     const FetchCategoryGames = async () => {
         const responseObject = await PostMan(`game/all/?category=${category.slug}`, 'GET')
@@ -27,12 +28,13 @@ export default function CategoryTray(props) {
             // Save Games to state
             await setCategoryGames(categoryGames)
         }
+
         else { }
     }
 
     useEffect(() => {
         // Fetch Category Games
-        if (category.tray.opened && typeof CategoryGames === null) {
+        if (IsOpen && CategoryGames === null) {
             FetchCategoryGames()
         }   
     })
@@ -44,22 +46,28 @@ export default function CategoryTray(props) {
                     <div>{category.name}</div>
 
                     {
-                        category.tray.opened ? (
-                            <span className={"hover-primary"}>
+                        IsOpen ? (
+                            <div 
+                                onClick={() => setIsOpen(!IsOpen)}
+                                className={"hover-primary"}
+                            >
                                 <IoIosArrowUp />
-                            </span>
+                            </div>
                         ) : (
-                            <span className={"hover-primary"}>
+                            <div 
+                                onClick={() => setIsOpen(!IsOpen)}
+                                className={"hover-primary"}
+                            >
                                 <IoIosArrowDown />
-                            </span>
+                            </div>
                         )
                     }
                 </div>
 
                 {
-                    category.tray.opened ? (
-                        <div style={styles.tray}>
-                            <Carousel
+                    IsOpen ? (
+                        <div className={"horizontal-scrolling-wrapper"} style={styles.tray}>
+                            {/* <Carousel
                                 autoPlay={true}
                                 showThumbs={false}
                                 swipeable={true}
@@ -68,7 +76,7 @@ export default function CategoryTray(props) {
                                 interval={4500}
                             >
                                 {
-                                    CategoryGames.map(game => {
+                                    CategoryGames && CategoryGames.map(game => {
                                         return (
                                             <GameCard
                                                 self={game}
@@ -76,21 +84,23 @@ export default function CategoryTray(props) {
                                         )
                                     })
                                 }
-                            </Carousel>
+                            </Carousel> */}
 
                             
-                            {/* <div>
+                            <div className={"tray"}>
                                 {
-                                    CategoryGames.map(game => {
+                                    CategoryGames && CategoryGames.map(game => {
                                         return (
-                                            <GameCard
-                                                self={game}
-                                            />
+                                            <div style={{width: '250px', margin: '0 15px'}}>
+                                                <GameCard
+                                                    self={game}
+                                                />
+                                            </div>
                                         )
                                     })
                                 }
                             </div>
-                             */}
+                            
                         </div>
                     ) : null
                 }
