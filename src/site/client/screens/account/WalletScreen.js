@@ -484,7 +484,7 @@ function AccountProfileScreen(props) {
                                     </div>
 
                                     {
-                                        MyBanks && MyBanks.length === 0 ? MyBanks.map((bank, i) => {
+                                        MyBanks && MyBanks.length > 0 ? MyBanks.map((bank, i) => {
                                             return (
                                                 <div style={{
                                                     display: 'flex',
