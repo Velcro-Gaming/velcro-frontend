@@ -40,12 +40,15 @@ function Header(props) {
     const location = useLocation()
     const { state } = location
 
+    console.log("match: ", match)
+
     const [redirect, setRedirect] = useState(false)
 
     const [Searching, setSearching] = useState(false)
     const [GameSearchResult, setGameSearchResult] = useState([])
     const [SelectedGameListing, setSelectedGameListing] = useState(null)
-    // const [Notifications, setNotifications] = useState(false)
+    
+    const [Wallet, setWallet] = useState(null)
 
     const [ShowUploadGameModal, setShowUploadGameModal] = useState(false)
     const [ShowModalConfirmOrder, setShowModalConfirmOrder] = useState(false)
@@ -109,19 +112,19 @@ function Header(props) {
         data: [
             {
                 name: "Profile",
-                action: () => setRedirect('/account')
+                action: () => match.url === '/account' ? window.location.reload() : setRedirect('/account')
             },
             {
                 name: "Categories",
-                action: () => setRedirect('/search')
+                action: () => match.url === '/search' ? window.location.reload() : setRedirect('/search')
             },
             {
                 name: "My Offers",
-                action: () => setRedirect('/offers')
+                action: () => match.url === '/offers' ? window.location.reload() : setRedirect('/offers')
             },
             {
-                name: "Withdraw Funds",
-                action: () => setRedirect('/wallet')
+                name: "My Wallet",
+                action: () => match.url === '/wallet' ? window.location.reload() : setRedirect('/wallet')
             },
             {
                 name: "Contact Us",
@@ -317,12 +320,24 @@ function Header(props) {
         }
     }
 
-    const getUserNames = () => {
-        let userFullName = auth.user.name
-        let firstName = userFullName.split(' ')[0]
-        let lastName = userFullName.split(' ')[1]
-        return [firstName,lastName]
+    const FetchWallet = async () => {
+        const responseObject = await PostMan(`wallet/`, 'GET')
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            console.log("Wallet responseData: ", responseData)
+            let wallet = responseData.wallet
+            // Update Wallet in state.
+            await setWallet({ ...wallet })
+        }
+        else { }
     }
+
+    // const getUserNames = () => {
+    //     let userFullName = auth.user.name
+    //     let firstName = userFullName.split(' ')[0]
+    //     let lastName = userFullName.split(' ')[1]
+    //     return [firstName,lastName]
+    // }
     
 
     const GoToSearchResult = (game) => {
@@ -333,6 +348,9 @@ function Header(props) {
     useEffect(() => {
         // Fetch Notifications
         FetchMyNotifications()
+
+        // Fetch Wallet
+        FetchWallet()
     }, [])
 
     if (redirect) {
@@ -440,18 +458,20 @@ function Header(props) {
                                     <IsDesktop>
                                         <Dropdown {...UserToggle} />
 
-                                        <div style={{
-                                            border: '1px solid #7F3F98',
-                                            margin: '0 25px',
-                                            padding: '0 10px',
-                                            color: colors.success,
-                                            fontSize: '12px',
-                                            lineHeight: '16px',
-                                            boxSizing: 'border-box',
-                                            borderRadius: '3px'
-                                        }}>
-
-                                            ₦6,000
+                                        <div className={"hover-primary"}
+                                            onClick={() => setRedirect('/wallet')}
+                                            style={{
+                                                border: '1px solid #7F3F98',
+                                                margin: '0 25px',
+                                                padding: '0 10px',
+                                                color: colors.success,
+                                                fontSize: '12px',
+                                                lineHeight: '16px',
+                                                boxSizing: 'border-box',
+                                                borderRadius: '3px'
+                                            }}
+                                        >
+                                            ₦{Wallet && Wallet.balance}
                                         </div>
                                     </IsDesktop>
                                 ) : null

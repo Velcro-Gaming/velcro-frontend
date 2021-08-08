@@ -205,14 +205,15 @@ function OrderScreen(props) {
         },
         swap_amount: {
             element: 'input',
-            value: '',
+            value: 0.00,
             label: true,
             labelText: 'Additional Fees (Optional)',
             props: {
                 name: 'additional_fee_input',
                 type: 'number',
                 placeholder: '',
-                required: false
+                required: false,
+                min: 0.00
             }
         },
         buy_amount: {
@@ -281,13 +282,13 @@ function OrderScreen(props) {
                 required: true
             }
         },
-        games: {
+        swap_items: {
             element: 'game',
-            value: null,
+            value: [],
             label: false,
             labelText: 'Swap game(s)',
             props: {
-                name: 'games_input',
+                name: 'swap_items_input',
                 required: true
             }
         },
@@ -507,6 +508,8 @@ function OrderScreen(props) {
     const AttemptMakeOffer = async (activeForm) => {
         let orderPayload = {
             _type: activeForm.title,
+            service_fee: 800,
+            delivery_fee: 1400,
             bill_to: auth.user.id,
             listing: Listing.id,
         }
@@ -519,8 +522,12 @@ function OrderScreen(props) {
         }
         if (activeForm.title === 'swap') {
             orderFormPayload['fee'] = OrderFormData.swap_amount
+            //
+            if (!orderFormPayload.fee.value) {
+                orderFormPayload.fee.value = 0.00
+            }
             orderFormPayload['duration'] = OrderFormData.duration
-            orderFormPayload['games'] = OrderFormData.games   
+            orderFormPayload['swap_items'] = OrderFormData.swap_items
         }
         if (activeForm.title === 'buy') {
             orderFormPayload['fee'] = OrderFormData.buy_amount
@@ -530,13 +537,19 @@ function OrderScreen(props) {
             let fieldName = formField
             let fieldData = orderFormPayload[formField]
             if (fieldData.props.required) {
-                if (!fieldData.value || fieldData.value == ' ') {
+                if (!fieldData.value || fieldData.value == ' ' || fieldData.value.length == 0) {
                     // Toast Error Message
                     return toast.error(`${fieldData.labelText} field is required!`)
                 }
             }
             // Set in formPayload
-            orderPayload[fieldName] = fieldData.value
+            if (fieldName == "swap_items") {
+                orderPayload[fieldName] = fieldData.value.map(swap_item => {
+                    return swap_item.id
+                })
+            } else {
+                orderPayload[fieldName] = fieldData.value
+            }
         }
 
         if (Object.keys(orderPayload).length > 3) {
@@ -592,7 +605,9 @@ function OrderScreen(props) {
                 {
                     ShowOrderConfirmModal ? (
                         <ModalConfirmOrder
+                            listing={Listing}
                             orderPayload={OrderPayload}
+                            orderFormData={OrderFormData}
                             hideModal={() => setShowOrderConfirmModal(false)}
                         />
                     ) : null
@@ -752,7 +767,7 @@ function OrderScreen(props) {
                                                                 AddressBook.map((address, i) => {
                                                                     // console.log("address: ", address)
                                                                     return (
-                                                                        <div style={styles.addressBookItem}>
+                                                                        <div key={i} style={styles.addressBookItem}>
                                                                             <span style={{ position: 'absolute', bottom: '40px', right: '5px', zIndex: 9 }}>
                                                                                 <FormField
                                                                                     formData={{

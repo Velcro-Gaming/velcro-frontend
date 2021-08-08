@@ -102,7 +102,7 @@ function MyGamesScreen(props) {
                 <div className="row" style={{ minHeight: '500px' }}>
                     {
                         MyGames.map(game => {
-                            console.log("Listing: ", game)
+                            // console.log("Listing: ", game)
                             return (
                                 <div className="col-12 col-md-6 col-lg-3 my-3">
                                     <ListingCard

@@ -13,7 +13,7 @@ import { useHistory } from 'react-router';
 import AviDefault from '../../../../assets/images/avi.png'
 
 import { FaChevronLeft } from 'react-icons/fa'
-import { AiOutlineCamera } from 'react-icons/ai'
+import { AiFillCreditCard } from 'react-icons/ai'
 
 import ModalImageUpload from '../../components/main/ModalImageUpload'
 
@@ -26,6 +26,7 @@ import Header from '../../components/main/Header'
 import FormField from '../../../../utils/FormField';
 
 import { ToastContainer, toast } from 'react-toastify';
+import ModalAddBankAccount from '../../components/main/ModalAddBankAccount';
 
 
 function AccountProfileScreen(props) {
@@ -35,14 +36,23 @@ function AccountProfileScreen(props) {
 
     const history = useHistory()
 
-    const [ShowModalImageUpload, setShowModalImageUpload] = useState(false)
+    const [ShowAddAccountModal, setShowAddAccountModal] = useState(false)
 
-
-    const [ProfileImage, setProfileImage] = useState(null)
-    // {
-    //     preview: null,
-    //         raw: null
-    // }
+    const [MyBanks, setMyBanks] = useState([
+        // {
+        //     id: 1,
+        //     bank_name: "Polaris Bank",
+        //     account_number: 208152344
+        // },
+        // {
+        //     id: 2,
+        //     bank_name: "First Bank",
+        //     account_number: 6802223011
+        // },
+    ])
+    const [Transactions, setTransactions] = useState(null)
+    const [Wallet, setWallet] = useState(null)
+    
 
     const [HeaderConfig, setHeaderConfig] = useState({
         headerButtons: [
@@ -53,8 +63,41 @@ function AccountProfileScreen(props) {
         }
     })
 
-    const [FormData, setFormData] = useState({
-        bank_name: {
+    // const [FormData, setFormData] = useState({
+    //     bank_name: {
+    //         element: 'select',
+    //         data: [
+    //             {
+    //                 value: 0,
+    //                 display: '---'
+    //             },
+    //         ],
+    //         value: '',
+    //         label: true,
+    //         labelText: 'Select Bank',
+    //         props: {
+    //             name: 'bank_name_input',
+    //             type: 'text',
+    //             placeholder: null,
+    //             required: true,
+    //         }
+    //     },
+    //     account_number: {
+    //         element: 'input',
+    //         value: "",
+    //         label: true,
+    //         labelText: 'Account Number',
+    //         props: {
+    //             name: 'account_number_input',
+    //             type: 'text',
+    //             placeholder: 'Enter Account number',
+    //             required: true,
+    //         }
+    //     },
+    // })
+
+    const [WithdrawalFormData, setWithdrawalFormData] = useState({
+        withdrawal_bank: {
             element: 'select',
             data: [
                 {
@@ -72,88 +115,88 @@ function AccountProfileScreen(props) {
                 required: true,
             }
         },
-        account_number: {
+        withdrawal_amount: {
             element: 'input',
             value: "",
             label: true,
-            labelText: 'Account Number',
+            labelText: 'Amount to withdraw',
             props: {
-                name: 'account_number_input',
+                name: 'withdrawal_amount_input',
                 type: 'text',
-                placeholder: 'Enter Account number',
-                required: true,
-            }
-        },
-    })
-
-    const [VerificationFormData, setVerificationFormData] = useState({
-        isVisible: false,
-        nin: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'Upload your NIN Number',
-            props: {
-                name: 'nin_input',
-                type: 'text',
-                placeholder: 'Enter NIN number',
-                required: true
-            }
-        },
-        ninConfirm: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'confirm your NIN',
-            props: {
-                name: 'nin_input',
-                type: 'text',
-                placeholder: 'Re-enter NIN number',
-                required: true
-            }
-        },
-    })
-
-    const [PasswordFormData, setPasswordFormData] = useState({
-        old_password: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'Password',
-            props: {
-                name: 'password_input',
-                type: 'password',
-                placeholder: 'Enter current password',
-                required: true,
-            }
-        },
-        new_password: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'Password',
-            props: {
-                name: 'password_input',
-                type: 'password',
-                placeholder: 'Enter a new Password (minimum of 8 characters)',
-                required: true,
-            }
-        },
-        new_password_confirm: {
-            element: 'input',
-            value: '',
-            label: true,
-            labelText: 'Password Confirmation',
-            props: {
-                name: 'password_input',
-                type: 'password',
-                placeholder: 'New Password Confirmation',
+                placeholder: 'Enter Amount',
                 required: true,
             }
         },
     })
 
     const [PageButtons, setPageButtons] = useState({
+        saveBankAccount: {
+            text: {
+                color: colors.white,
+                value: "Save",
+            },
+            styles: {
+                height: '50px',
+                width: '100%',
+                margin: '30px 0 60px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => {},
+            loader: {
+                isLoading: false,
+                size: 15,
+                color: colors.white,
+            },
+        },
+        attemptWithdrawToBank: {
+            text: {
+                color: colors.white,
+                value: "Withdraw To Bank",
+            },
+            styles: {
+                height: '50px',
+                width: '100%',
+                margin: '30px 0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => setShowAddAccountModal(!ShowAddAccountModal),
+            loader: null,
+        },
+        toggleAddBankAccount: {
+            text: {
+                color: colors.white,
+                value: "+ Add Bank Account",
+            },
+            styles: {
+                height: '30px',
+                width: '100%',
+                margin: '0',
+                backgroundColor: colors.primary,
+                border: {
+                    width: "1px",
+                    style: "solid",
+                    color: colors.white,
+                    radius: "3px",
+                },
+                color: colors.white
+            },
+            onClick: () => setShowAddAccountModal(!ShowAddAccountModal),
+            loader: null,
+        },
         updateInformation: {
             text: {
                 color: colors.white,
@@ -172,352 +215,256 @@ function AccountProfileScreen(props) {
                 },
                 color: colors.white
             },
-            onClick: () => AttemptUpdateInformation(),
+            onClick: () => {},
             loader: {
                 isLoading: false,
                 size: 15,
                 color: colors.white,
             },
         },
-        changePassword: {
-            text: {
-                color: colors.white,
-                value: "Change Password",
-            },
-            styles: {
-                height: '50px',
-                width: '100%',
-                margin: '30px 0 60px 0',
-                backgroundColor: colors.primary,
-                border: {
-                    width: "1px",
-                    style: "solid",
-                    color: colors.white,
-                    radius: "3px",
-                },
-                color: colors.white
-            },
-            onClick: () => AttemptChangePassword(),
-            loader: {
-                isLoading: false,
-                size: 15,
-                color: colors.white,
-            },
-        },
-        toggleVerificationForm: {
-            text: {
-                color: colors.white,
-                value: "Verify My Account",
-            },
-            styles: {
-                height: '50px',
-                width: '100%',
-                margin: '30px 0 60px 0',
-                backgroundColor: colors.primary,
-                border: {
-                    width: "1px",
-                    style: "solid",
-                    color: colors.white,
-                    radius: "3px",
-                },
-                color: colors.white
-            },
-            onClick: () => ToggleVerificationForm(),
-            loader: null,
-        },
-        attemptVerification: {
-            text: {
-                color: colors.white,
-                value: "Submit",
-            },
-            styles: {
-                height: '50px',
-                width: '100%',
-                margin: '30px 0 60px 0',
-                backgroundColor: colors.primary,
-                border: {
-                    width: "1px",
-                    style: "solid",
-                    color: colors.white,
-                    radius: "3px",
-                },
-                color: colors.white
-            },
-            onClick: () => AttemptVerification(),
-            loader: {
-                isLoading: false,
-                size: 15,
-                color: colors.white,
-            },
-        },
+        
     })
 
-    const AttemptUpdateInformation = async () => {
-        // Start Loader
-        let newPageButtons = PageButtons
-        newPageButtons.updateInformation.loader.isLoading = true
-        await setPageButtons({ ...newPageButtons })
-        //
-        let payload = {}
-        let formPayload = {
-            first_name: FormData.first_name,
-            last_name: FormData.last_name
-        }
-        // Validate Fields
-        for (let formField in formPayload) {
-            let fieldName = formField
-            let fieldData = FormData[formField]
-            if (fieldData.props.required) {
-                if (!fieldData.value || fieldData.value == ' ') {
-                    // Toast Error Message
-                    toast.error(`${fieldData.labelText} field is required!`)
-                    return
-                }
-            }
-            // Set in formPayload
-            payload[fieldName] = fieldData.value
-        }
-        //
-        const responseObject = await PostMan(`account/${auth.user.id}/`, 'PATCH', payload)
-        // Stop Loader
-        newPageButtons.updateInformation.loader.isLoading = false
-        await setPageButtons({ ...newPageButtons })
-
-        if (responseObject.status === 'success') {
-            let authResponseData = responseObject.data
-            // console.log("authResponseData: ", authResponseData)
-
-            await props.updateUser(authResponseData)
-            // return setRedirect("/")
-            window.location.reload()
-        }
-        else if (responseObject.status === 'bad_request') {
-            let responseData = responseObject.data
-            for (let key in responseData) {
-                let fieldErrors = responseData[key]
-                fieldErrors.map(errorMessage => {
-                    // Toast Error Message
-                    toast.error(`${key}: ${errorMessage}`)
-                })
-            }
-        }
-        else if (responseObject.status === 'error') {
-            // Toast Error Message
-            toast.error(responseObject.data.message)
-        }
-        else {
-            console.log("Error")
-        }
-    }
-
-    const AttemptVerification = async () => {
-        // Start Loader
-        let newPageButtons = PageButtons
-        newPageButtons.attemptVerification.loader.isLoading = true
-        await setPageButtons({ ...newPageButtons })
-        //
-        let payload = {}
-        let formPayload = {
-            nin: VerificationFormData.nin,
-            ninConfirm: VerificationFormData.ninConfirm,
-        }
-        // Validate Fields
-        for (let formField in formPayload) {
-            let fieldName = formField
-            let fieldData = VerificationFormData[formField]
-            if (fieldData.props.required) {
-                if (!fieldData.value || fieldData.value == ' ') {
-                    // Toast Error Message
-                    toast.error(`${fieldData.labelText} field is required!`)
-                    return
-                }
-                // Set in formPayload
-                payload[fieldName] = fieldData.value
-            }
-        }
-        // Ensure NIN match
-        if (payload.nin !== payload.ninConfirm) {
-            // Toast Error Message
-            toast.error("NIN input don't match.")
-            return
-        } else {
-            delete payload['ninConfirm']
-        }
-        //
-        const responseObject = await PostMan(`account/verification/nin/`, 'POST', payload)
-        // Stop Loader
-        newPageButtons.attemptVerification.loader.isLoading = false
-        await setPageButtons({ ...newPageButtons })
-
+    const FetchTransactions = async () => {
+        const responseObject = await PostMan(`transactions/`, 'GET')
         if (responseObject.status === 'success') {
             let responseData = responseObject.data
-            let authResponseData = responseData.user
-            await props.updateUser(authResponseData)
+            console.log("responseData: ", responseData)
+            // Update Transactions in state.
+            await setTransactions(responseData)
         }
-        else if (responseObject.status === 'bad_request') {
-            let responseData = responseObject.data
-            for (let key in responseData) {
-                let fieldErrors = responseData[key]
-                fieldErrors.map(errorMessage => {
-                    // Toast Error Message
-                    toast.error(`${key}: ${errorMessage}`)
-                })
-            }
-        }
-        else if (responseObject.status === 'error') {
-            // Toast Error Message
-            toast.error(responseObject.data.message)
-        }
-        else {
-            console.log("Error")
-        }
+        else { }
     }
 
-    const AttemptChangePassword = async () => {
-        // Start Loader
-        let newPageButtons = PageButtons
-        newPageButtons.attemptVerification.loader.isLoading = true
-        await setPageButtons({ ...newPageButtons })
-        //
-        let payload = {}
-        let formPayload = {
-            old_password: PasswordFormData.currentPassword,
-            new_password: PasswordFormData.newPassword,
-            new_password_confirm: PasswordFormData.newPasswordConfirm,
-        }
-        // Validate Fields
-        for (let formField in formPayload) {
-            let fieldName = formField
-            let fieldData = PasswordFormData[fieldName]
-            if (fieldData.props.required) {
-                if (!fieldData.value || fieldData.value == ' ') {
-                    // Toast Error Message
-                    toast.error(`${fieldData.labelText} field is required!`)
-                    return
-                }
-                // Set in formPayload
-                payload[fieldName] = fieldData.value
-            }
-        }
-        // Ensure NIN match
-        if (payload.new_password !== payload.new_password_confirm) {
-            // Toast Error Message
-            toast.error("Passwords don't match.")
-            return
-        } else {
-            delete payload['new_password_confirm']
-        }
-        //
-        const responseObject = await PostMan(`account/password/change/`, 'POST', payload)
-        // Stop Loader
-        newPageButtons.attemptVerification.loader.isLoading = false
-        await setPageButtons({ ...newPageButtons })
-
+    const FetchWallet = async () => {
+        const responseObject = await PostMan(`wallet/`, 'GET')
         if (responseObject.status === 'success') {
             let responseData = responseObject.data
-            // Toast Success Message
-            toast.success(responseData.message)
-            //
-            let newPasswordFormData = PasswordFormData
-            for (let formField in formPayload) {
-                let fieldName = formField
-                let fieldData = newPasswordFormData[fieldName]
-                fieldData.value = ""
-            }
-            return setPasswordFormData(newPasswordFormData)
+            console.log("Wallet responseData: ", responseData)
+            let wallet = responseData.wallet
+            // Update Wallet in state.
+            await setWallet({ ...wallet })
         }
-        else if (responseObject.status === 'bad_request') {
-            let responseData = responseObject.data
-            if (responseData.message) {
-                // Toast Error Message
-                toast.error(responseData.message)
-            } else {
-                for (let key in responseData) {
-                    let fieldErrors = responseData[key]
-                    fieldErrors.map(errorMessage => {
-                        // Toast Error Message
-                        toast.error(`${key}: ${errorMessage}`)
-                    })
-                }
-            }
-        }
-        else if (responseObject.status === 'error') {
-            // Toast Error Message
-            toast.error(responseObject.data.message)
-        }
-        else {
-            console.log("Error")
-        }
+        else { }
     }
 
-    const FormStateChanged = () => {
-        let first_name = FormData.first_name.value
-        let last_name = FormData.last_name.value
-        if (
-            auth.user && first_name !== auth.user.first_name ||
-            auth.user && last_name !== auth.user.last_name
-        ) { return true }
-        else { return false }
+    const FetchBankAccounts = async () => {
+        const responseObject = await PostMan(`wallet/bank-account/`, 'GET')
+        if (responseObject.status === 'success') {
+            let responseData = responseObject.data
+            // Update banks in state.
+            await setMyBanks(responseData)
+        }
+        else { }
     }
 
     const GoBack = () => {
         return history.goBack()
     }
 
-    const ToggleVerificationForm = () => {
-        return setVerificationFormData({ ...VerificationFormData, isVisible: !VerificationFormData.isVisible })
-    }
-
     useEffect(() => {
-        //
-        if (ProfileImage && !ShowModalImageUpload) {
-            setShowModalImageUpload(true)
-        }
-    })
+        // Fetch all transactions
+        FetchTransactions()
 
-    const VerificationColor = {
-        unverified: colors.danger,
-        pending: colors.warning,
-        verified: colors.success,
-    }
+        // Fetch all bank accounts
+        FetchBankAccounts()
+
+        // Fetch Wallet
+        FetchWallet()
+
+    }, [])
+    
 
     const MainContent = (config) => {
         return (
             <div style={styles.container}>
                 <div className="container"
                     style={{
+                        backgroundColor: colors.grey2,
                         padding: config.containerPadding,
+                        minHeight: '100vh', 
                     }}
-                >
+                >                    
                     <div className={"row"}
                         style={{ padding: "0 20px" }}
                     >
-                        <div className={"col-12"}
-                            onClick={() => GoBack()}
-                            style={styles.goBack}
-                        >
-                            <FaChevronLeft size={10}/>
-                            <span style={{ marginLeft: '7px' }}>Back</span>
+                        <div className={"col-12"}>
+                            <div
+                                onClick={() => GoBack()}
+                                style={styles.goBack}
+                            >
+                                <FaChevronLeft size={10} />
+                                <span style={{ marginLeft: '7px' }}>Back</span>
+                            </div>
+
+
+                            <div style={styles.contentSectionHeader}>Wallet</div>
+
+
+                            <div style={{ ...styles.statsWrapper, ...config.statsWrapper }}>
+                                <div style={styles.statsBox}>
+                                    <div style={styles.statsBoxChild}>
+                                        <p className="m-0">Balance</p>
+                                        <div style={{ ...styles.stat, fontSize: '30px',}}>
+                                            ₦{Wallet && Wallet.balance ? (
+                                                <>
+                                                    {
+                                                        Wallet.balance === 0 ?
+                                                            "0.00"
+                                                            :
+                                                            Wallet.balance
+                                                    }
+                                                </>
+                                            ) : "0.00"}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style={styles.statsBox}>
+                                    {
+                                        Wallet && Wallet.deposits.most_recent ? (
+                                            <>
+                                                <div style={styles.statsBoxChild}>
+                                                    <div style={{
+                                                        ...styles.stat,
+                                                        fontSize: "15px",
+                                                    }}>
+                                                        ₦{Wallet && Wallet.deposits ? (
+                                                            <>
+                                                                {
+                                                                    Wallet.deposits.most_recent === 0 ?
+                                                                        "0.00"
+                                                                        :
+                                                                        Wallet.deposits.most_recent
+                                                                }
+                                                            </>
+                                                        ) : "0.00"}
+                                                    </div>
+                                                    <p className="m-0">Most Recent</p>
+                                                </div>
+
+                                                <span style={styles.divider} />
+                                            </>
+                                        ) : null
+                                    }
+
+                                    <div style={styles.statsBoxChild}>
+                                        <div style={{ ...styles.stat, color: colors.success }}>
+                                            ₦{Wallet && Wallet.deposits ? (
+                                                <>
+                                                    {
+                                                        Wallet.deposits.total_amount === 0 ?
+                                                            "0.00"
+                                                            :
+                                                            Wallet.deposits.total_amount
+                                                    }
+                                                </>
+                                            ) : "0.00"}
+                                        </div>
+                                        <p className="m-0">Deposits</p>
+                                    </div>
+                                </div>
+
+                                <div style={styles.statsBox}>
+                                    {
+                                        Wallet && Wallet.withdrawals.most_recent ? (
+                                            <>
+                                                <div style={styles.statsBoxChild}>
+                                                    <div style={{
+                                                        ...styles.stat,
+                                                        fontSize: "15px",
+                                                    }}>
+                                                        ₦{Wallet && Wallet.withdrawals ? (
+                                                            <>
+                                                                {
+                                                                    Wallet.withdrawals.most_recent === 0 ?
+                                                                        "0.00"
+                                                                        :
+                                                                        Wallet.withdrawals.most_recent
+                                                                }
+                                                            </>
+                                                        ) : "0.00"}
+                                                    </div>
+                                                    <p className="m-0">Most Recent</p>
+                                                </div>
+
+                                                <span style={styles.divider} />
+                                            </>
+                                        ) : null
+                                    }
+
+                                    <div style={styles.statsBoxChild}>
+                                        <div style={{
+                                            ...styles.stat, 
+                                            color: colors.warning 
+                                        }}>
+                                            ₦{Wallet && Wallet.withdrawals ? (
+                                                <>
+                                                    {
+                                                        Wallet.withdrawals.total_amount === 0 ?
+                                                            "0.00"
+                                                            :
+                                                            Wallet.withdrawals.total_amount
+                                                    }
+                                                </>
+                                            ) : "0.00"}
+                                        </div>
+                                        <p className="m-0">Withdrawals</p>
+                                    </div>
+                                </div>
+
+                                <div style={styles.statsBox}>
+                                    {
+                                        Wallet && Wallet.purchases.most_recent ? (
+                                            <>
+                                                <div style={styles.statsBoxChild}>
+                                                    <div style={{
+                                                        ...styles.stat,
+                                                        fontSize: "15px",
+                                                    }}>
+                                                        ₦{Wallet && Wallet.purchases ? (
+                                                            <>
+                                                                {
+                                                                    Wallet.purchases.most_recent === 0 ?
+                                                                        "0.00"
+                                                                        :
+                                                                        Wallet.purchases.most_recent
+                                                                }
+                                                            </>
+                                                        ) : "0.00"}
+                                                    </div>
+                                                    <p className="m-0">Most Recent</p>
+                                                </div>
+
+                                                <span style={styles.divider} />
+                                            </>
+                                        ) : null
+                                    }
+
+                                    <div style={styles.statsBoxChild}>
+                                        <div style={{ 
+                                            ...styles.stat, 
+                                            color: colors.danger 
+                                        }}>
+                                            ₦{Wallet && Wallet.purchases ? (
+                                                <>
+                                                    {
+                                                        Wallet.purchases.total_amount === 0 ?
+                                                            "0.00"
+                                                            :
+                                                            Wallet.purchases.total_amount
+                                                    }
+                                                </>
+                                            ) : "0.00"}
+                                        </div>
+                                        <p className="m-0">Purchases</p>
+                                    </div>  
+                                </div>
+                            </div>
                         </div>
 
                         
-                        <div className="col-12 col-md-6">
-                            <div className={"row"}>
-                                <div className={"col-12"}>
-                                    <div style={styles.sectionTitle}>
-                                        Withdraw
-                                    </div>
-
-                                    <FormField
-                                        formData={FormData}
-                                        change={(newFormData) => setFormData({ ...newFormData })}
-                                        field={{
-                                            id: 'first_name',
-                                            config: FormData.first_name
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                        <div className="col-12 col-md-6">                          
 
                             <div className="row">
                                 <div className="col-12">
@@ -525,14 +472,119 @@ function AccountProfileScreen(props) {
                                         Account Details
                                     </div>
 
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}>
+                                        <div style={{
+                                            color: colors.primary
+                                        }}>Bank Account Details</div>
+
+                                        <Button {...PageButtons.toggleAddBankAccount} />
+                                    </div>
+
+                                    {
+                                        MyBanks && MyBanks.length === 0 ? MyBanks.map((bank, i) => {
+                                            return (
+                                                <div style={{
+                                                    display: 'flex',
+                                                    position: 'relative',
+                                                    alignItems: 'center',
+                                                    backgroundColor: colors.white,
+                                                    margin: '20px 0',
+                                                    padding: '20px',
+                                                }}>
+                                                    <div style={{ margin: "0 20px" }}>
+                                                        <AiFillCreditCard color={colors.primary} size={30} />
+                                                    </div>
+
+                                                    <div>
+                                                        <div style={{ padding: "10px" }}>
+                                                            <span>Bank Name:</span>
+                                                            <span style={{
+                                                                color: colors.primary,
+                                                                padding: '15px'
+                                                            }}>{bank.bank_name}</span>
+                                                        </div>
+                                                        <div style={{ padding: "10px" }}>
+                                                            <span>Account Number:</span>
+                                                            <span style={{
+                                                                color: colors.primary,
+                                                                padding: '15px'
+                                                            }}>{bank.account_number}</span>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <span style={{ position: 'absolute', bottom: '40px', right: '10px', zIndex: 9 }}>
+                                                        <FormField
+                                                            formData={{
+                                                                checkBox: {
+                                                                    element: 'checkbox',
+                                                                    checked: WithdrawalFormData.withdrawal_bank.value === bank.id ? true : false,
+                                                                    data: bank,
+                                                                    label: false,
+                                                                    props: {
+                                                                        name: `address_${i}_input`,
+                                                                        type: 'checkbox',
+                                                                    },
+                                                                }
+                                                            }}
+                                                            change={(withdrawalFormData) => {
+                                                                console.log("Clicking")
+                                                                if (WithdrawalFormData.withdrawal_bank.value === bank.id) { return }
+                                                                // Set new address
+                                                                if (withdrawalFormData.checkBox.checked) {
+                                                                    let newWithdrawalFormData = WithdrawalFormData
+                                                                    newWithdrawalFormData.withdrawal_bank.value = withdrawalFormData.checkBox.data.id
+                                                                    setWithdrawalFormData({ ...newWithdrawalFormData })
+                                                                }
+                                                            }}
+                                                            field={{
+                                                                id: 'checkBox',
+                                                                config: {
+                                                                    element: 'checkbox',
+                                                                    checked: WithdrawalFormData.withdrawal_bank.value === bank.id ? true : false,
+                                                                    data: bank,
+                                                                    label: false,
+                                                                    props: {
+                                                                        name: `address_${i}_input`,
+                                                                        type: 'checkbox',
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                    </span>
+                                                </div>
+                                            )
+                                        }) : (
+                                            <div style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                textAlign: 'center',
+                                                backgroundColor: colors.white,
+                                                color: colors.grey3,
+                                                margin: '20px 0',
+                                                padding: '20px',
+                                            }}>
+                                                You have not added your bank account.
+                                                Click the button above to add your withdrawal bank account.
+                                            </div>
+                                        )
+                                    }     
+
+
                                     <FormField
-                                        formData={FormData}
-                                        change={(newFormData) => setFormData({ ...newFormData })}
+                                        formData={WithdrawalFormData}
+                                        change={(newWithdrawalFormData) => setWithdrawalFormData({ ...newWithdrawalFormData })}
                                         field={{
-                                            id: 'first_name',
-                                            config: FormData.first_name
+                                            id: 'withdrawal_amount',
+                                            config: WithdrawalFormData.withdrawal_amount
                                         }}
                                     />
+
+                                    <Button {...PageButtons.attemptWithdrawToBank} />
+
                                 </div>
                             </div>
                         </div>
@@ -540,13 +592,74 @@ function AccountProfileScreen(props) {
 
                         <div className="col-12 col-md-6">
                             <div style={styles.sectionTitle}>
-                                Withdrawal History
+                                Transaction History
                             </div>
 
                             <div className={"row"}>
-                                <div className="col-12">
-                                    
-                                </div>
+                                
+                                {
+                                    Transactions && Transactions.map(transaction => {
+                                        console.log("transaction: ", transaction)
+                                        return (
+                                            <div className="col-12"
+                                                style={{
+                                                    borderLeft: '3px solid green',
+                                                    backgroundColor: colors.white,
+                                                    margin: '0 0 15px',
+                                                }}
+                                            >
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    padding: '10px',
+                                                    borderBottom: '1px solid black'
+                                                }}>
+                                                    <div style={{
+                                                        fontSize: '20px'
+                                                    }}>
+                                                        ₦{transaction.amount}
+                                                    </div>
+
+                                                    <div>
+                                                        <span style={{ color: colors.grey, margin: '0 10px 0 0' }}>
+                                                            Transaction ID:
+                                                        </span>
+                                                        <span style={{ color: colors.primary }}>
+                                                            {transaction.reference}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'space-between',
+                                                    padding: '10px',
+                                                }}>
+                                                    {
+                                                        transaction.payment_source === "card" ? (
+                                                            <div></div>
+                                                        ) : null
+                                                    }
+
+                                                    {
+                                                        transaction._type.value === "withdrawal" ? (
+                                                            <div style={{ color: colors.primary }}>
+                                                                <span>Polaris Bank</span>
+                                                                <span style={{ padding: '0 10px', color: colors.grey3 }}>|</span>
+                                                                <span>1921521344</span>
+                                                            </div>
+                                                        ) : null
+                                                    }
+
+                                                    <div style={{ color: colors.success, alignSelf: 'flex-end', }}>
+                                                        {transaction._type.display} {transaction.status.value}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+
                             </div>
                         </div>
 
@@ -566,13 +679,10 @@ function AccountProfileScreen(props) {
             <ToastContainer />
 
             {
-                ShowModalImageUpload ? (
-                    <ModalImageUpload
-                        imageToUpload={ProfileImage}
-                        hideModal={() => {
-                            setProfileImage(null)
-                            setShowModalImageUpload(false)
-                        }}
+                ShowAddAccountModal ? (
+                    <ModalAddBankAccount
+                        // orderPayload={OrderPayload}
+                        hideModal={() => setShowAddAccountModal(false)}
                     />
                 ) : null
             }
@@ -580,6 +690,9 @@ function AccountProfileScreen(props) {
             <IsDesktop>
                 {
                     MainContent({
+                        statsWrapper: {
+                            justifyContent: 'space-between',
+                        },
                         profileImage: {
                             top: '100px',
                             left: '50px',
@@ -600,6 +713,9 @@ function AccountProfileScreen(props) {
             <IsTablet>
                 {
                     MainContent({
+                        statsWrapper: {
+                            justifyContent: 'space-between',
+                        },
                         profileImage: {
                             top: '100px',
                             left: '50px',
@@ -620,6 +736,9 @@ function AccountProfileScreen(props) {
             <IsPhone>
                 {
                     MainContent({
+                        statsWrapper: {
+                            justifyContent: 'space-between',
+                        },
                         profileImage: {
                             top: '170px',
                             left: '20px',
@@ -689,7 +808,7 @@ const styles = {
     sectionTitle: {
         fontSize: "18px",
         color: colors.grey3,
-        margin: "50px 0 20px",
+        margin: "50px 0 30px",
         fontFamily: 'Nunito Sans',
         textTransform: 'uppercase'
     },
@@ -708,7 +827,53 @@ const styles = {
         fontSize: '14px',
         width: "300px",
         color: colors.primary
-    }
+    },
+
+
+    statsWrapper: {
+        display: 'flex',
+        flexFlow: 'row wrap'
+    },
+    statsBox: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        backgroundColor: colors.white,
+        boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
+        borderRadius: "8px",
+        minWidth: '235px',
+        margin: '20px 0',
+    },
+    statsBoxChild: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        flexDirection: 'column',
+        height: "110px",
+        padding: "15px 20px",
+        fontSize: "12px",
+        color: colors.grey3,
+    },
+    stat: {
+        // fontFamily: "Gothic A1",
+        color: colors.primary,
+        fontStyle: 'normal',
+        fontWeight: 500,
+        fontSize: '25px',
+    },
+    divider: {
+        height: "75%",
+        width: "1px",
+        backgroundColor: "#DEDFDF",
+    },
+
+    contentSectionHeader: {
+        color: colors.primary,
+        fontWeight: 800,
+        fontSize: "18px",
+        textAlign: "center",
+        margin: "35px",
+    },
 }
 
 

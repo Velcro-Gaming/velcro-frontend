@@ -456,17 +456,6 @@ export default function OrdersScreen(props) {
                             flexGrow: `${config.rightSidePanelGrow}`,
                             margin: `${config.rightSidePanelMargin}`,
                         }}>
-                            {/* <div style={{ backgroundColor: "white", padding: "20px", margin: "20px 0" }}>
-                            
-
-                                <div>
-                                    <div>
-
-                                    </div>
-                                </div>
-
-
-                            </div> */}
 
                             {
                                 RenderOffers()

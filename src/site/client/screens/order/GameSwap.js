@@ -7,15 +7,23 @@ import {
     Redirect
 } from 'react-router-dom';
 
+import SwapIcon from '../../../../assets/icons/swap_icon.png'
+
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
 import IsPhone from '../../../../utils/breakpoints/IsPhone'
 
+import Button from '../../../../utils/Button';
 import FormField from '../../../../utils/FormField';
+
+import { BiPlusMedical } from 'react-icons/bi'
+import ModalSelectMyGames from '../../components/main/ModalSelectMyGames';
+
+import GameCard from '../../components/main/GameCard'
 
 
 export default function GameSwap(props) {
-    const [SwapGames, setSwapGames] = useState([])
+    const [ShowModalSelectMyGames, setShowModalSelectMyGames] = useState(false)
     const match = useRouteMatch();
     const gameSlug = match.params.gameSlug;
     // console.log("gameSlug: ", gameSlug)
@@ -27,6 +35,30 @@ export default function GameSwap(props) {
         updateOrderFormData
     } = props
     // console.log("props: ", props)
+
+    const SetSwapItems = (games) => {
+        let newOrderFormData = orderFormData
+        let swap_items = orderFormData.swap_items
+        console.log("swap_items: ", swap_items)
+        newOrderFormData.swap_items.value = []
+        games.map(game => {
+            newOrderFormData.swap_items.value.push(game)
+        })
+        return updateOrderFormData({ ...newOrderFormData })
+    }
+
+    const RemoveSwapItem = (game) => {
+        let newOrderFormData = orderFormData
+        let swap_items = orderFormData.swap_items
+        console.log("swap_items: ", swap_items)
+        newOrderFormData.swap_items = []
+        if (game in swap_items) {
+            newOrderFormData.swap_items = swap_items.filter(swap_item => {
+                return swap_item.id !== game.id
+            })
+        }
+        return updateOrderFormData({ ...newOrderFormData })
+    }
 
     useEffect(() => {
         // Set Listing in Parent Component State
@@ -59,6 +91,26 @@ export default function GameSwap(props) {
             gameWrapper
         } = config
 
+        const SwapItems = orderFormData.swap_items.value
+
+        const removeSwapItem = (game) => {
+            // let newSwapItems = SwapItems
+            let newSwapItems = SwapItems.filter(swap_item => {
+                return swap_item.id !== game.id
+            })
+            SetSwapItems(newSwapItems)
+            return newSwapItems
+        }
+
+        function isSwapItem(game) {
+            let filterset = SwapItems.filter(swap_item => {
+                return swap_item.id === game.id
+            })
+            if (filterset.length > 0) {
+                return true
+            } else { return false }
+        }
+
         return (
             <div style={{ ...styles.container, padding: container.padding }}>
                 <div style={{
@@ -71,7 +123,7 @@ export default function GameSwap(props) {
                     GAME SWAP
                 </div>
 
-                <div style={{ display: "flex", flexDirection: wrapper.flexDirection }}>
+                <div style={{ display: "flex", flexDirection: wrapper.flexDirection, margin: "0 0 50px" }}>
                     <div style={{ ...styles.gameWrapper, alignItems: gameWrapper.alignItems, }}>
                         <div style={styles.gameCover}>
                             <img src={Game && Game.image} style={styles.gameCoverImage} />
@@ -90,17 +142,79 @@ export default function GameSwap(props) {
                     </div>
 
 
+                    <img src={SwapIcon} style={{
+                        height: '50px',
+                        // width: '100px',
+                        margin: '80px 20px',
+                        ...config.swapIcon
+                    }} />
+
+
                     <div style={styles.orderInfoWrapper}>
                         <div>
-                            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div style={{ display: 'flex', ...config.gameSwapWrapper }}>
                                 {
-                                    SwapGames.length > 0 ? (
-                                        <div style={styles.gameCover}>
-                                            <img src={Game && Game.image} style={styles.gameCoverImage} />
+                                    SwapItems.length > 0 ? (
+                                        <div style={styles.gameSwapWrapper}>
+                                            <div className={"horizontal-scrolling-wrapper"}>
+                                                <div className={"tray"}>
+                                                    <div
+                                                        className={"hover-primary"}
+                                                        onClick={() => setShowModalSelectMyGames(true)}
+                                                        style={styles.gameSwapButton}
+                                                    >
+                                                        <BiPlusMedical size={20} color={colors.primary} />
+                                                    </div>
+
+                                                    {
+                                                        SwapItems.map(swap_item => {
+                                                            return (
+                                                                <div style={{ margin: '5px 3px', maxWidth: '180px' }}>
+                                                                    <GameCard
+                                                                        self={swap_item.game}
+                                                                        listing={swap_item}
+                                                                        showListingStatus={false}
+                                                                    >
+                                                                        <Button {...{
+                                                                            text: {
+                                                                                color: colors.white,
+                                                                                value: isSwapItem(swap_item) ? "Remove" : "Select",
+                                                                            },
+                                                                            styles: {
+                                                                                height: '30px',
+                                                                                width: '100%',
+                                                                                margin: '10px 0',
+                                                                                backgroundColor: isSwapItem(swap_item) ? colors.primary : colors.grey3,
+                                                                                border: {
+                                                                                    width: "1px",
+                                                                                    style: "solid",
+                                                                                    color: colors.white,
+                                                                                    radius: "3px",
+                                                                                },
+                                                                                color: colors.white
+                                                                            },
+                                                                            onClick: () => removeSwapItem(swap_item),
+                                                                            loader: null
+                                                                        }} />
+                                                                    </GameCard>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    }
+
+                                                    {/* <img src={Game && Game.image} style={styles.gameCoverImage} /> */}
+                                                </div>
+                                            </div>
                                         </div>
                                     ) : (
-                                        <div style={styles.gameSwapPlaceholder}>
-                                            {/* <img src={Game && Game.image} style={styles.gameCoverImage} /> */}
+                                        <div style={styles.gameSwapWrapper}>
+                                            <div
+                                                className={"hover-primary"}
+                                                onClick={() => setShowModalSelectMyGames(true)}
+                                                style={styles.gameSwapButton}
+                                            >
+                                                <BiPlusMedical size={20} color={colors.primary} />
+                                            </div>
                                         </div>
                                     )
                                 }
@@ -136,8 +250,19 @@ export default function GameSwap(props) {
         )
     }
 
+
     return (
         <div>
+            {
+                ShowModalSelectMyGames ? (
+                    <ModalSelectMyGames
+                        swapItems={orderFormData.swap_items.value}
+                        updateSwapItems={(games) => SetSwapItems(games)}
+                        hideModal={() => setShowModalSelectMyGames(false)}
+                    />
+                ) : null
+            }
+
             <IsDesktop>
                 {
                     MainContent({
@@ -149,8 +274,11 @@ export default function GameSwap(props) {
                         },
                         gameWrapper: {
                             alignItems: "start"
-                        }
-
+                        },
+                        gameSwapWrapper: {
+                            justifyContent: 'flex-end'
+                        },
+                        swapIcon: { }
                     })
                 }
             </IsDesktop>
@@ -166,8 +294,11 @@ export default function GameSwap(props) {
                         },
                         gameWrapper: {
                             alignItems: "center"
-                        }
-
+                        },
+                        gameSwapWrapper: {
+                            justifyContent: 'flex-end'
+                        },
+                        swapIcon: { }
                     })
                 }
             </IsTablet>
@@ -183,6 +314,13 @@ export default function GameSwap(props) {
                         },
                         gameWrapper: {
                             alignItems: "center"
+                        },
+                        gameSwapWrapper: {
+                            justifyContent: 'center'
+                        },
+                        swapIcon: {
+                            alignSelf: 'center',
+                            transform: "rotate(90deg)",
                         }
 
                     })
@@ -200,7 +338,6 @@ const styles = {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        margin: "0 0 50px"
     },
     gameCover: {
         borderRadius: "14px",
@@ -212,7 +349,7 @@ const styles = {
         height: "200px",
         objectFit: "cover",
         borderRadius: "10px",
-        margin: "3px"
+        margin: "5px"
     },
     gameName: {
         fontFamily: 'Roboto',
@@ -238,10 +375,22 @@ const styles = {
         padding: "0 30px"
     },
 
-    gameSwapPlaceholder: {
+    gameSwapWrapper: {
         borderRadius: "14px",
         border: "2px dashed #7F3F98",
+        minHeight: "200px",
+        minWidth: "160px",
+        maxWidth: "480px",
+        padding: "5px",
+    },
+    gameSwapButton: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.grey2,
         width: "160px",
-        height: "200px",
+        minHeight: "200px",
+        borderRadius: "10px",
+        margin: "5px 3px"
     }
 }

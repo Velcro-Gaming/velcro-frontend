@@ -5,11 +5,10 @@ import {
     paystack_pub_key
 } from '../../../../App.json'
 
-import FormField from '../../../../utils/FormField';
-import { Link, Redirect } from 'react-router-dom';
 import Button from '../../../../utils/Button';
 import { PostMan } from '../../../../Helpers';
-import SearchableInput from '../../../../utils/SearchableInput';
+
+import SwapIcon from '../../../../assets/icons/swap_icon.png'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -25,7 +24,9 @@ function OrderConfirmationModal(props) {
     const {
         auth,
         hideModal,
-        orderPayload
+        orderPayload,
+        orderFormData,
+        listing,
     } = props
 
 
@@ -84,7 +85,8 @@ function OrderConfirmationModal(props) {
         const config = {
             reference: paymentReference,
             email: auth.user.email,
-            amount: orderPayload.fee * 100,
+            // amount: (orderPayload.serice_fee + orderPayload.fee) * 100,
+            amount: getTotalFee() * 100,
             publicKey: paystack_pub_key,
         };
 
@@ -107,28 +109,6 @@ function OrderConfirmationModal(props) {
             btnColor = colors.grey1
             txtColor = colors.primary
         }
-
-
-        // return (<Button {...{
-        //     text: {
-        //         color: txtColor,
-        //         value: <span>Confirm and Pay <img src={mastercard_logo} /></span>,
-        //     },
-        //     styles: {
-        //         height: '50px',
-        //         width: '100%',
-        //         margin: '20px 0',
-        //         backgroundColor: btnColor,
-        //         border: {
-        //             width: '1px',
-        //             style: 'solid',
-        //             color: colors.primary,
-        //             radius: '4px',
-        //         },
-        //         color: colors.white
-        //     },
-        //     onClick: () => onClick()
-        // }} {...Buttons.confirmOrder} />)
 
         return (<Button { ...Buttons.confirmOrder }
             {...{
@@ -208,8 +188,16 @@ function OrderConfirmationModal(props) {
         }
     }
 
-    // console.log("orderPayload: ", orderPayload)
+    function getTotalFee() {
+        const {
+            delivery_fee,
+            service_fee,
+            fee
+        } = orderPayload
+        return parseInt(fee) + parseInt(delivery_fee) + parseInt(service_fee)
+    }
 
+    // console.log("orderPayload: ", orderPayload)
 
     useEffect(() => {
         //
@@ -256,24 +244,85 @@ function OrderConfirmationModal(props) {
 
 
                         <div className="col-12 my-4">
+                            {
+                                orderPayload._type === 'swap' ? (
+                                    <>
+                                        <div style={styles.orderFeesWrapper}>
+                                            <span>Swap Items</span>
+                                            <span style={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                fontFamily: 'Roboto',
+                                                fontSize: '14px',
+                                            }}>
+                                                <span style={{
+                                                    backgroundColor: colors.primary,
+                                                    color: colors.white,
+                                                    padding: "5px 15px",
+                                                    margin: "3px 0"
+                                                }}>
+                                                    {listing.game.name} | {listing.console.short_name}
+                                                </span>
+
+                                                <img src={SwapIcon} style={{
+                                                    height: '20px',
+                                                    margin: '10px',
+                                                    alignSelf: 'center',
+                                                    transform: "rotate(90deg)",
+                                                }} />
+
+                                                {
+                                                    orderFormData.swap_items.value.map(swap_item => {
+                                                        return (
+                                                            <span style={{
+                                                                backgroundColor: colors.primary,
+                                                                color: colors.white,
+                                                                padding: "5px 15px",
+                                                                margin: "3px 0"
+                                                            }}>
+                                                                {swap_item.game.name} | {swap_item.console.short_name}
+                                                            </span>
+                                                        )
+                                                    })
+                                                }
+                                            </span>
+                                        </div>
+
+                                        <div style={styles.orderFeesWrapper}>
+                                            <span>Additional Fee</span>
+                                            <span style={styles.orderFees}>
+                                                ₦{orderPayload.fee}
+                                            </span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div style={styles.orderFeesWrapper}>
+                                        <span>Order Fee</span>
+                                        <span style={styles.orderFees}>
+                                            ₦{orderPayload.fee}
+                                        </span>
+                                    </div>
+                                )
+                            }
+
                             <div style={styles.orderFeesWrapper}>
                                 <span>Service Fee</span>
                                 <span style={styles.orderFees}>
-                                    ${orderPayload.fee}
+                                    ₦{orderPayload.service_fee}
                                 </span>
                             </div>
 
                             <div style={styles.orderFeesWrapper}>
                                 <span>Delivery Fee</span>
                                 <span style={styles.orderFees}>
-                                    $1500
+                                    ₦{orderPayload.delivery_fee}
                                 </span>
                             </div>
 
                             <div style={{ ...styles.orderFeesWrapper, padding: '15px 15px', fontWeight: 600,}}>
                                 <span>Total</span>
                                 <span style={styles.orderFees}>
-                                    ${parseInt(orderPayload.fee) + 1500}
+                                    ₦{getTotalFee()}
                                 </span>
                             </div>
 

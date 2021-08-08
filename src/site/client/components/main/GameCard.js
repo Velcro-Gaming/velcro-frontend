@@ -12,6 +12,7 @@ function GameCard(props) {
         auth,
         self,
         listing,
+        showListingStatus=true,
         children: GameMeta
     } = props
 
@@ -60,7 +61,7 @@ function GameCard(props) {
                     </div>
 
                     {
-                        listing ? (
+                        listing && showListingStatus ? (
                             <div>
                                 {
                                     auth.user && auth.user.id === listing.owner.id ? (
