@@ -17,6 +17,9 @@ export default function CategoryTray(props) {
         category
     } = props
 
+    const carouselDisplayCount = 4
+    const [currentIndex, setSlide] = useState(0)
+
     const [IsOpen, setIsOpen] = useState(false)
     const [CategoryGames, setCategoryGames] = useState(null)
 
@@ -74,6 +77,10 @@ export default function CategoryTray(props) {
                                 stopOnHover={false}
                                 infiniteLoop={true}
                                 interval={4500}
+
+                                centerMode={true}
+                                centerSlidePercentage={100 / carouselDisplayCount}
+                                selectedItem={currentIndex}
                             >
                                 {
                                     CategoryGames && CategoryGames.map(game => {

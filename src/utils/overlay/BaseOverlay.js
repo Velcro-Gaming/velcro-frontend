@@ -1,7 +1,6 @@
 import React from 'react'
 
 export default function BaseOverlay(props) {
-    console.log("BaseOverlay", props)
     return (
         <span style={styles.container}>
             {props.children}

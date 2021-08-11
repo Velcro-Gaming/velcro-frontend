@@ -28,8 +28,6 @@ export default class Button extends Component {
             fontSize
         } = buttonState.styles
 
-        // console.log("BTN fontSize: ", fontSize)
-
         const RenderButton = () => {
             if (buttonState.linkTo) {
                 return (
@@ -76,23 +74,12 @@ export default class Button extends Component {
                                     <HashLoader
                                         color={buttonState.loader.color}
                                         loading={buttonState.loader.isLoading}
-                                        // css={override}
                                         size={buttonState.loader.size}
                                     />
                                 </span>
                             ) : null
                         }
 
-                        
-
-                        {/* <span className="ml-4">
-                            <HashLoader
-                                color={buttonState.loader.color}
-                                loading={buttonState.loader.isLoading}
-                                // css={override}
-                                size={buttonState.loader.size}
-                            />
-                        </span> */}
                     </div>
                 )
             } else {

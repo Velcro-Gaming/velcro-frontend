@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react'
 import ModalOverlay from '../../../../utils/overlay/ModalOverlay'
 import {
     colors,
-    cities
 } from '../../../../App.json'
 
 import FormField from '../../../../utils/FormField';
-import { Link, Redirect } from 'react-router-dom';
 import Button from '../../../../utils/Button';
 import { PostMan } from '../../../../Helpers';
-import SearchableInput from '../../../../utils/SearchableInput';
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,7 +19,6 @@ function UploadGameModal(props) {
     const{
         auth,
         hideModal,
-        deliveryFormData
     } = props
 
     const [BankInfo, setBankInfo] = useState(null)
@@ -73,7 +69,6 @@ function UploadGameModal(props) {
                 color: colors.white
             },
             onClick: () => AttemptAddBankAccount(),
-            // onClick: () => {},
             loader: {
                 isLoading: false,
                 size: 15,

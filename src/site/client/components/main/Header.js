@@ -40,7 +40,6 @@ function Header(props) {
     const location = useLocation()
     const { state } = location
 
-    console.log("match: ", match)
 
     const [redirect, setRedirect] = useState(false)
 
@@ -54,7 +53,6 @@ function Header(props) {
     const [ShowModalConfirmOrder, setShowModalConfirmOrder] = useState(false)
 
     const getUserInitials = () => {
-        console.log("auth.user.fullName: ", auth.user.full_name)
         if (auth.user.full_name) {
             let userFullName = auth.user.full_name
             let firstName = userFullName.split(' ')[0]
@@ -65,8 +63,9 @@ function Header(props) {
 
     }
 
+    const [HasNotification, setHasNotification] = useState(false)
     const [Notifications, setNotifications] = useState({
-        title: <Notify notification={true} />,
+        title: <Notify notification={HasNotification} />,
         data: [],
         wrapperStyles: {
             placeholder: {
@@ -259,7 +258,6 @@ function Header(props) {
     const AttemptGameSearch = (query, timer = null) => {
         let queryFormattedToLowerCase = String(query).toLocaleLowerCase()
 
-        console.log("queryFormattedToLowerCase: ", queryFormattedToLowerCase)
 
         //
         const _doGameSearch = async (query) => {
@@ -284,7 +282,6 @@ function Header(props) {
         }
 
         if (timer) {
-            console.log(1)
             if (queryFormattedToLowerCase.length === 0) {
                 return
             } else {
@@ -308,7 +305,6 @@ function Header(props) {
             let notifications = responseObject.data
             // Sort Notifications
             let notificationsArray = RenderNotifications(notifications)
-            console.log("notificationsArray: ", notificationsArray)
             // Set Notifications in state
             let notificationsBuffer = Notifications
             notificationsBuffer.data = notificationsArray
@@ -316,7 +312,6 @@ function Header(props) {
         }
         else {
             //
-            console.log("Notifications error: ", responseObject.data)
         }
     }
 
@@ -324,21 +319,12 @@ function Header(props) {
         const responseObject = await PostMan(`wallet/`, 'GET')
         if (responseObject.status === 'success') {
             let responseData = responseObject.data
-            console.log("Wallet responseData: ", responseData)
             let wallet = responseData.wallet
             // Update Wallet in state.
             await setWallet({ ...wallet })
         }
         else { }
-    }
-
-    // const getUserNames = () => {
-    //     let userFullName = auth.user.name
-    //     let firstName = userFullName.split(' ')[0]
-    //     let lastName = userFullName.split(' ')[1]
-    //     return [firstName,lastName]
-    // }
-    
+    }    
 
     const GoToSearchResult = (game) => {
         // 
@@ -346,18 +332,20 @@ function Header(props) {
     }
 
     useEffect(() => {
-        // Fetch Notifications
-        FetchMyNotifications()
+        // Run only if logged in
+        if (auth && auth.loggedIn) {
+            // Fetch Notifications
+            FetchMyNotifications()
 
-        // Fetch Wallet
-        FetchWallet()
+            // Fetch Wallet
+            FetchWallet()
+        }
     }, [])
 
     if (redirect) {
         return <Redirect to={redirect} />
     }
 
-    console.log("HeaderConfig.authHeaderButtons:====> ", HeaderConfig.authHeaderButtons)
 
     return (
         <div style={{ ...styles.container, backgroundColor: headerStyles && headerStyles.backgroundColor ? headerStyles.backgroundColor : 'transparent' }}>
@@ -403,8 +391,6 @@ function Header(props) {
                                         AttemptGameSearch(newFormData.search.value, 1200)
                                     }}
                                     keyUpHandler={() => {
-                                        console.log(Searching)
-                                        console.log(GameSearchResult)
                                         if (Searching || GameSearchResult.length > 0) {
                                             return
                                         } else {
@@ -438,14 +424,6 @@ function Header(props) {
                     </div>
                     
                 </IsDesktop>
-
-                {/* {
-                    auth.loggedIn ? (
-                        <div style={{ display: 'flex', alignItems: 'center', }}>
-                            <Dropdown {...Notifications} />
-                        </div>
-                    ) : null
-                } */}
                 
                 {
                     auth.loggedIn ? (

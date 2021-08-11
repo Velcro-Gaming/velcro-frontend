@@ -10,12 +10,8 @@ import {
 } from '../../../../redux/actions/AuthActions'
 import { useHistory } from 'react-router';
 
-import AviDefault from '../../../../assets/images/avi.png'
-
 import { FaChevronLeft } from 'react-icons/fa'
 import { AiFillCreditCard } from 'react-icons/ai'
-
-import ModalImageUpload from '../../components/main/ModalImageUpload'
 
 import IsDesktop from '../../../../utils/breakpoints/IsDesktop'
 import IsTablet from '../../../../utils/breakpoints/IsTablet'
@@ -38,18 +34,7 @@ function AccountProfileScreen(props) {
 
     const [ShowAddAccountModal, setShowAddAccountModal] = useState(false)
 
-    const [MyBanks, setMyBanks] = useState([
-        // {
-        //     id: 1,
-        //     bank_name: "Polaris Bank",
-        //     account_number: 208152344
-        // },
-        // {
-        //     id: 2,
-        //     bank_name: "First Bank",
-        //     account_number: 6802223011
-        // },
-    ])
+    const [MyBanks, setMyBanks] = useState([])
     const [Transactions, setTransactions] = useState(null)
     const [Wallet, setWallet] = useState(null)
     
@@ -62,39 +47,6 @@ function AccountProfileScreen(props) {
             backgroundColor: colors.black
         }
     })
-
-    // const [FormData, setFormData] = useState({
-    //     bank_name: {
-    //         element: 'select',
-    //         data: [
-    //             {
-    //                 value: 0,
-    //                 display: '---'
-    //             },
-    //         ],
-    //         value: '',
-    //         label: true,
-    //         labelText: 'Select Bank',
-    //         props: {
-    //             name: 'bank_name_input',
-    //             type: 'text',
-    //             placeholder: null,
-    //             required: true,
-    //         }
-    //     },
-    //     account_number: {
-    //         element: 'input',
-    //         value: "",
-    //         label: true,
-    //         labelText: 'Account Number',
-    //         props: {
-    //             name: 'account_number_input',
-    //             type: 'text',
-    //             placeholder: 'Enter Account number',
-    //             required: true,
-    //         }
-    //     },
-    // })
 
     const [WithdrawalFormData, setWithdrawalFormData] = useState({
         withdrawal_bank: {
